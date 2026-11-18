@@ -318,7 +318,7 @@ function createTannery(x,z){
     logBeam(g,w+.45,.18,0,y,d/2,'x',mat);
   }
   const shedEave=2.92,shedRise=1.15;
-  addGableEnd(g,w,shedEave,-d/2-.06,shedRise);
+  addGableEnd(g,w,-d/2-.06,shedEave,shedRise);
   addGableEnd(g,w,d/2+.06,shedEave,shedRise);
   const slope=Math.atan2(shedRise,d/2+.25),roofLen=Math.hypot(shedRise,d/2+.25);
   box(g,w+1.1,.24,roofLen,shingleMat,0,shedEave+shedRise/2,-(d/2+.25)/2,-slope,0,0);
@@ -347,7 +347,7 @@ function createTannery(x,z){
     hide.position.set(rackX-1.3+i*.85,1.92,rackZ-.1);
     hide.rotation.y=(rnd()-.5)*.12;g.add(hide);
   }
-  BUILDINGS.push({name:'Tanoaria de Gedric',x,z,rot,w:12,d:9,doorW:1.35});
+  BUILDINGS.push({name:'Tanoaria de Gedric',x,z,rot,w:12.5,d:10,doorW:1.35});
   return g;
 }
 
