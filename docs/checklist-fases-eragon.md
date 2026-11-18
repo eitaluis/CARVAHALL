@@ -70,7 +70,7 @@
 - Não acrescentar rebanhos ou acontecimentos que não façam parte do estado de Carvahall mostrado em *Eragon*.
 - Não criar uma versão incendiada ou arruinada da vila.
 - Não dar nome próprio à taverna.
-- Não incluir o poço de Fisk nem a oficina de Fisk.
+- Não acrescentar poços, oficinas secundárias ou outros estabelecimentos que não estejam descritos neste volume.
 - Não deslocar a fazenda de Garrow para dentro da vila.
 - Não tratar coordenadas artísticas como medidas fornecidas pelo livro.
 
