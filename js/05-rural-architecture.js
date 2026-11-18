@@ -563,7 +563,7 @@ function makeResident(x,z,coatColor,yaw=0,scale=1,gesture=0,role='villager'){
   nose.scale.set(.72,1.25,1.5);nose.position.set(0,.075,.198);headPivot.add(nose);
   const neck=new THREE.Mesh(new THREE.CapsuleGeometry(.075,.13,3,9),skin);
   neck.position.y=1.63;g.add(neck);
-  const shoulderPivots=[],legPivots=[];
+  const armPivots=[],legPivots=[];
   for(const side of [-1,1]){
     const shoulder=new THREE.Group();shoulder.position.set(side*.34,1.47,0);g.add(shoulder);
     const sleeve=new THREE.Mesh(new THREE.CapsuleGeometry(.083,.48,4,10),coat);
@@ -579,7 +579,7 @@ function makeResident(x,z,coatColor,yaw=0,scale=1,gesture=0,role='villager'){
     }
     const thumb=new THREE.Mesh(new THREE.CapsuleGeometry(.018,.045,3,6),skin);
     thumb.position.set(side*.09,-.67,.035);thumb.rotation.z=side*.75;shoulder.add(thumb);
-    shoulderPivots.push({pivot:shoulder,side,base:0});
+    armPivots.push({pivot:shoulder,side,base:0});
     const hip=new THREE.Group();hip.position.set(side*.145,.72,0);g.add(hip);
     const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.095,.48,4,10),role==='woman'||role==='katrina'?linen:boots);
     leg.position.y=-.31;hip.add(leg);
@@ -629,7 +629,7 @@ function makeResident(x,z,coatColor,yaw=0,scale=1,gesture=0,role='villager'){
     const shawl=new THREE.Mesh(new THREE.SphereGeometry(.37,14,10),new THREE.MeshStandardMaterial({color:0x8d5140,roughness:1}));
     shawl.scale.set(1,.28,.7);shawl.position.set(0,1.48,-.015);g.add(shawl);
   }
-  g.userData.animationRig={headPivot,shoulderPivots,legPivots,torso};
+  g.userData.animationRig={headPivot,armPivots,legPivots,torso};
   eveningActors.push(g);return g;
 }
 // Homens conversando do lado de fora, perto da taverna.
