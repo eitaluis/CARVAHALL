@@ -171,122 +171,143 @@ function addHearth(parent,x,z,forgeMode=false){
   return flame;
 }
 function addInterior(parent,kind,w,d){
-  const floor=new THREE.Mesh(
-    new THREE.BoxGeometry(w-.45,.16,d-.45),
-    new THREE.MeshStandardMaterial({color:0x59432e,roughness:1})
-  );
+  const floorMat=new THREE.MeshStandardMaterial({color:0x59432e,roughness:1});
+  const floor=new THREE.Mesh(new THREE.BoxGeometry(w-.45,.16,d-.45),floorMat);
   floor.position.set(0,.48,0);parent.add(floor);
+  // Tábuas individuais, travessas e luz ambiente tornam o espaço legível
+  // quando observado da porta; a disposição do mobiliário é interpretativa.
+  const plankMat=[darkWoodMat,woodMat,paleWoodMat];
+  for(let i=0;i<Math.floor((w-.8)/1.05);i++){
+    const x=-(w-.8)/2+i*1.05;
+    box(parent,1.0,.035,d-.8,plankMat[i%3],x,.585,0);
+    box(parent,.035,.035,d-.8,darkWoodMat,x+.5,.586,0);
+  }
+  for(const z of [-d*.39,d*.39]){
+    box(parent,w-.9,.18,.2,darkWoodMat,0,4.18,z);
+    for(let x=-w*.42;x<=w*.42;x+=w*.21)
+      box(parent,.16,.62,.18,darkWoodMat,x,3.9,z);
+  }
+  const warmRoomLight=new THREE.PointLight(kind==='forge'?0xff9a55:0xffc17a,kind==='forge'?1.05:.72,kind==='forge'?18:14);
+  warmRoomLight.position.set(0,3.25,0);parent.add(warmRoomLight);
+  const wallShelf=(x,y,z,length)=>{
+    box(parent,length,.13,.5,darkWoodMat,x,y,z);
+    for(let i=0;i<Math.max(2,Math.floor(length/.55));i++){
+      const px=x-length*.42+i*(length*.84/Math.max(1,Math.floor(length/.55)-1));
+      box(parent,.09,.45,.1,darkWoodMat,px,y-.28,z+.13);
+    }
+  };
 
   if(kind==='butcher'){
-    // Interior apoiado na descrição do açougue: sala ampla, lareira de pedra,
-    // balcão simples, chão de palha solta e limpeza rigorosa.
+    // Açougue de Sloan: sala ampla, lareira de pedra, balcão simples ao fundo,
+    // piso de palha e limpeza rigorosa — sem aparência de loja moderna.
     addHearth(parent,-w*.34,-d*.28,false);
     box(parent,w*.67,.12,1.1,paleWoodMat,0,1.08,d*.28);
     box(parent,w*.68,.12,1.18,darkWoodMat,0,1.42,d*.28);
+    for(let i=0;i<7;i++)box(parent,.045,.48,.055,darkWoodMat,-w*.29+i*w*.096,1.72,d*.28);
     const strawMat=new THREE.MeshStandardMaterial({color:0xb8a06a,roughness:1});
     for(let i=0;i<34;i++){
       const straw=new THREE.Mesh(new THREE.CylinderGeometry(.012,.018,.45+rnd()*.65,4),strawMat);
       straw.rotation.z=Math.PI/2+(rnd()-.5)*.35;
-      straw.position.set((rnd()-.5)*(w-2),.59+(rnd()-.5)*.04,(rnd()-.5)*(d-2));
-      parent.add(straw);
+      straw.position.set((rnd()-.5)*(w-2),.61,(rnd()-.5)*(d-2));parent.add(straw);
     }
-    // Ganchos e facas de açougue, sem exagerar a decoração.
     for(let i=0;i<4;i++){
       const hook=new THREE.Mesh(new THREE.TorusGeometry(.11,.025,5,8,Math.PI),ironMat);
       hook.position.set(-w*.25+i*1.05,2.55,-d*.34);hook.rotation.z=Math.PI;parent.add(hook);
-      const blade=box(parent,.045,.46,.035,ironMat,-w*.25+i*1.05,2.17,-d*.34);
-      blade.rotation.z=-.08;
+      const blade=box(parent,.045,.46,.035,ironMat,-w*.25+i*1.05,2.17,-d*.34);blade.rotation.z=-.08;
     }
+    wallShelf(w*.29,2.7,-d*.39,3.4);
   } else if(kind==='forge'){
     addHearth(parent,w*.25,-d*.26,true);
-    // Bigorna completa: cepo, corpo, face de aço e ponta afilada.
     const anvilX=-w*.22,anvilZ=d*.15;
     box(parent,1.3,.94,1.08,darkWoodMat,anvilX,.95,anvilZ);
     box(parent,1.6,.2,.78,ironMat,anvilX,1.53,anvilZ);
     box(parent,1.18,.28,.62,ironMat,anvilX,1.76,anvilZ);
     const horn=new THREE.Mesh(new THREE.CylinderGeometry(.055,.19,.72,9),ironMat);
-    horn.rotation.z=Math.PI/2;
-    horn.position.set(anvilX-.98,1.68,anvilZ);parent.add(horn);
-    const heel=box(parent,.42,.25,.65,ironMat,anvilX+.95,1.68,anvilZ);
-    // Quatro pés e travessas dão leitura de ferramenta pesada, não de mesa.
-    for(const sx of [-.48,.48])for(const sz of [-.34,.34]){
-      const foot=box(parent,.14,.4,.14,ironMat,anvilX+sx,.24,anvilZ+sz);
-    }
-    // Fole manual ao lado da forja.
+    horn.rotation.z=Math.PI/2;horn.position.set(anvilX-.98,1.68,anvilZ);parent.add(horn);
+    box(parent,.42,.25,.65,ironMat,anvilX+.95,1.68,anvilZ);
+    for(const sx of [-.48,.48])for(const sz of [-.34,.34])box(parent,.14,.4,.14,ironMat,anvilX+sx,.24,anvilZ+sz);
     const leather=new THREE.MeshStandardMaterial({color:0x68452f,roughness:1});
     box(parent,1.35,.62,.48,leather,w*.33,1.05,-d*.12,0,0,-.18);
     box(parent,1.42,.1,.55,darkWoodMat,w*.33,1.38,-d*.12,0,0,-.18);
     const nozzle=new THREE.Mesh(new THREE.CylinderGeometry(.09,.13,.85,8),ironMat);
-    nozzle.rotation.z=Math.PI/2;
-    nozzle.position.set(w*.24,1.22,-d*.2);parent.add(nozzle);
-    // Trough of cooling water and a stack of billets.
+    nozzle.rotation.z=Math.PI/2;nozzle.position.set(w*.24,1.22,-d*.2);parent.add(nozzle);
     const trough=new THREE.Mesh(new THREE.BoxGeometry(2.25,.68,.82),darkWoodMat);
     trough.position.set(-w*.05,.47,d*.34);parent.add(trough);
-    const water=new THREE.Mesh(new THREE.BoxGeometry(2.0,.055,.58),
-      new THREE.MeshStandardMaterial({color:0x536f70,roughness:.25,metalness:.12}));
+    const water=new THREE.Mesh(new THREE.BoxGeometry(2.0,.055,.58),new THREE.MeshStandardMaterial({color:0x536f70,roughness:.25,metalness:.12}));
     water.position.set(-w*.05,.83,d*.34);parent.add(water);
-    for(let i=0;i<5;i++){
-      const billet=logBeam(parent,1.15,.07,-w*.33+i*.42,1.95,d*.3,'x',ironMat);
-    }
-    // Ferramentas penduradas num suporte na parede do fundo.
-    const rackZ=-d*.41;
-    box(parent,w*.43,.16,.2,darkWoodMat,0,2.65,rackZ);
+    for(let i=0;i<5;i++)logBeam(parent,1.15,.07,-w*.33+i*.42,1.95,d*.3,'x',ironMat);
+    const rackZ=-d*.41;box(parent,w*.43,.16,.2,darkWoodMat,0,2.65,rackZ);
     for(let i=0;i<6;i++){
       const tx=-w*.19+i*w*.076;
       const handle=new THREE.Mesh(new THREE.CylinderGeometry(.045,.06,.78,7),woodMat);
       handle.position.set(tx,2.12,rackZ-.12);parent.add(handle);
-      const head=box(parent,.46,.17,.22,ironMat,tx,2.47,rackZ-.12);
+      box(parent,.46,.17,.22,ironMat,tx,2.47,rackZ-.12);
     }
-    // Uma bancada lateral com tenazes, limas e peças de ferro.
     box(parent,2.9,.2,1.0,darkWoodMat,w*.32,.95,d*.24);
     box(parent,2.98,.12,1.08,paleWoodMat,w*.32,1.12,d*.24);
-    for(let i=0;i<4;i++){
-      const tool=logBeam(parent,.9,.035,w*.22+i*.22,1.82,d*.24,'z',ironMat);
-      tool.rotation.x=Math.PI/2;
+    for(let i=0;i<4;i++)logBeam(parent,.9,.035,w*.22+i*.22,1.82,d*.24,'z',ironMat);
+    // Escória, barras e tenazes junto à área de trabalho.
+    for(let i=0;i<8;i++){
+      const billet=box(parent,.85,.09,.12,i%2?ironMat:darkWoodMat,-w*.39+(i%4)*.42,.68+i%2*.1,-d*.03+Math.floor(i/4)*.25);
+      billet.rotation.y=(rnd()-.5)*.18;
     }
   } else if(kind==='tavern'){
-    // A existência da taverna é canônica; mobiliário e decoração são interpretação.
+    // Morn's tavern: bar longo e baixo; os chifres de Urgal sobre a entrada
+    // e os bastões riscados são detalhes descritos no primeiro romance.
     addHearth(parent,-w*.34,-d*.28,false);
-    for(const z of [-d*.18,d*.19]){
-      box(parent,w*.42,.2,1.0,woodMat,0,1.02,z);
-      box(parent,w*.44,.16,1.1,paleWoodMat,0,1.48,z);
-      for(const x of [-w*.17,w*.17]){
-        box(parent,.16,.8,.16,darkWoodMat,x,.94,z+1.0);
-      }
-      // Bancos corridos dos dois lados da mesa.
+    box(parent,w*.68,.22,1.05,darkWoodMat,0,1.05,-d*.27);
+    box(parent,w*.7,.14,1.12,paleWoodMat,0,1.23,-d*.27);
+    for(let i=0;i<9;i++){
+      const stave=box(parent,.09,.48,.09,woodMat,-w*.29+i*w*.073,1.55,-d*.27);
+      stave.rotation.z=(rnd()-.5)*.05;
+      for(let mark=0;mark<3;mark++)box(parent,.012,.12,.012,ironMat,-w*.29+i*w*.073-.025,1.42+mark*.12,-d*.315);
+    }
+    for(const z of [-d*.04,d*.29]){
+      box(parent,w*.39,.18,.95,woodMat,0,1.02,z);
+      box(parent,w*.41,.14,1.02,paleWoodMat,0,1.43,z);
       for(const side of [-1,1]){
-        const benchZ=z+side*.98;
-        box(parent,w*.31,.16,.48,darkWoodMat,0,.68,benchZ);
+        const benchZ=z+side*.91;
+        box(parent,w*.3,.16,.43,darkWoodMat,0,.68,benchZ);
         for(const x of [-w*.13,w*.13])box(parent,.12,.58,.12,darkWoodMat,x,.37,benchZ);
       }
-      // Canecas e tigelas de barro, sem decoração de estabelecimento nomeado.
-      for(let i=0;i<3;i++){
-        const mug=new THREE.Mesh(new THREE.CylinderGeometry(.09,.1,.24,9),
-          new THREE.MeshStandardMaterial({color:0x8b765d,roughness:.9}));
-        mug.position.set(-w*.13+i*w*.13,1.68,z);parent.add(mug);
+      for(let i=0;i<4;i++){
+        const mug=new THREE.Mesh(new THREE.CylinderGeometry(.09,.1,.24,9),new THREE.MeshStandardMaterial({color:0x8b765d,roughness:.9}));
+        mug.position.set(-w*.14+i*w*.095,1.54,z);parent.add(mug);
         const rim=new THREE.Mesh(new THREE.TorusGeometry(.09,.018,5,10),darkWoodMat);
-        rim.rotation.x=Math.PI/2;rim.position.set(-w*.13+i*w*.13,1.81,z);parent.add(rim);
+        rim.rotation.x=Math.PI/2;rim.position.set(-w*.14+i*w*.095,1.67,z);parent.add(rim);
       }
     }
-    addBarrel(parent,-w*.36,.05,d*.29,.9);
-    addBarrel(parent,w*.36,.05,d*.29,.9);
+    // Par de chifres curvos, montados acima do campo de visão da porta.
+    for(const side of [-1,1]){
+      const hornCurve=new THREE.CatmullRomCurve3([
+        new THREE.Vector3(side*.22,2.75,0),new THREE.Vector3(side*.55,2.82,0),
+        new THREE.Vector3(side*.9,3.08,0),new THREE.Vector3(side*1.18,3.42,.02)
+      ]);
+      const hornMesh=new THREE.Mesh(new THREE.TubeGeometry(hornCurve,12,.105,7,false),darkWoodMat);
+      hornMesh.position.set(0,0,-d*.43);parent.add(hornMesh);
+    }
+    addBarrel(parent,-w*.36,.05,d*.29,.9);addBarrel(parent,w*.36,.05,d*.29,.9);
+    wallShelf(w*.27,2.65,d*.37,4.2);
   } else {
     addHearth(parent,-w*.3,-d*.26,false);
-    // Interior doméstico: mesa, cama, baú, banco e prateleiras.
     box(parent,2.45,.16,1.45,darkWoodMat,w*.18,.92,d*.16);
     box(parent,2.55,.12,1.5,paleWoodMat,w*.18,1.08,d*.16);
-    for(const x of [w*.07,w*.29])for(const z of [d*.08,d*.25])
-      box(parent,.14,.78,.14,darkWoodMat,x,.45,z);
+    for(const x of [w*.07,w*.29])for(const z of [d*.08,d*.25])box(parent,.14,.78,.14,darkWoodMat,x,.45,z);
     box(parent,2.15,.5,3.0,darkWoodMat,-w*.25,.8,d*.23);
     box(parent,2.02,.2,2.75,paleWoodMat,-w*.25,1.14,d*.23);
     box(parent,2.1,.24,2.8,new THREE.MeshStandardMaterial({color:0x74614a,roughness:1}),-w*.25,1.34,d*.23);
     box(parent,1.15,.72,.82,woodMat,w*.31,.85,-d*.15);
     box(parent,1.25,.12,.9,paleWoodMat,w*.31,1.27,-d*.15);
-    // Prateleira com louça e pequenos recipientes.
     box(parent,2.8,.14,.55,darkWoodMat,-w*.1,2.52,-d*.38);
     for(let i=0;i<4;i++){
       const pot=new THREE.Mesh(new THREE.SphereGeometry(.16,8,7),new THREE.MeshStandardMaterial({color:0x89785f,roughness:.9}));
       pot.scale.set(.8,1.1,.8);pot.position.set(-w*.2+i*.48,2.73,-d*.35);parent.add(pot);
+    }
+    // Baú menor, banquinho, cesto e utensílios domésticos.
+    box(parent,1.25,.82,1.0,darkWoodMat,-w*.37,.91,-d*.12);
+    for(let i=0;i<5;i++){
+      const bowl=new THREE.Mesh(new THREE.SphereGeometry(.17,8,6,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0x987d5d,roughness:1}));
+      bowl.position.set(-w*.16+i*.55,1.7,-d*.36);parent.add(bowl);
     }
   }
 }
@@ -497,35 +518,78 @@ const villageHouses=[
 // no romance. Roupas, rostos e posições individuais são escolhas interpretativas.
 const eveningResidents=new THREE.Group();
 scene.add(eveningResidents);
-function makeResident(x,z,coatColor,yaw=0,scale=1,gesture=0){
+function makeResident(x,z,coatColor,yaw=0,scale=1,gesture=0,role='villager'){
   const g=new THREE.Group();
   g.position.set(x,groundHeight(x,z),z);g.rotation.y=yaw;g.scale.setScalar(scale);
-  g.userData.baseYaw=yaw;g.userData.phase=rnd()*6.28;g.userData.gesture=gesture;
-  const movingArms=[];
-  eveningResidents.add(g);
+  g.userData.baseYaw=yaw;g.userData.phase=rnd()*6.28;g.userData.gesture=gesture;g.userData.role=role;
+  const movingArms=[];eveningResidents.add(g);
   const coat=new THREE.MeshStandardMaterial({color:coatColor,roughness:1});
-  const linen=new THREE.MeshStandardMaterial({color:0xb8aa8e,roughness:1});
-  const skin=new THREE.MeshStandardMaterial({color:0xb28a6a,roughness:1});
-  const hair=new THREE.MeshStandardMaterial({color:0x35291f,roughness:1});
+  const linen=new THREE.MeshStandardMaterial({color:role==='woman'?0x9d806d:0xb8aa8e,roughness:1});
+  const skin=new THREE.MeshStandardMaterial({color:role==='sloan'?0x9b755e:0xb98d6d,roughness:1});
+  const hair=new THREE.MeshStandardMaterial({color:role==='horst'?0x4b382c:role==='sloan'?0x777064:0x35291f,roughness:1});
   const boots=new THREE.MeshStandardMaterial({color:0x362d25,roughness:1});
-  const torso=new THREE.Mesh(new THREE.CylinderGeometry(.27,.34,.95,7),coat);
-  torso.position.y=1.13;torso.castShadow=true;g.add(torso);
-  const head=new THREE.Mesh(new THREE.SphereGeometry(.205,8,7),skin);
-  head.position.y=1.79;g.add(head);
-  const cap=new THREE.Mesh(new THREE.SphereGeometry(.218,8,7),hair);
-  cap.scale.set(1,.42,1);cap.position.y=1.94;g.add(cap);
+  const torso=new THREE.Mesh(new THREE.CylinderGeometry(.3,.38,1.0,9),coat);
+  torso.position.y=1.12;torso.castShadow=true;g.add(torso);
+  const shoulder=new THREE.Mesh(new THREE.CylinderGeometry(.39,.34,.25,9),coat);
+  shoulder.position.y=1.52;g.add(shoulder);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.215,12,10),skin);
+  head.position.y=1.82;head.scale.set(1,1.12,.92);g.add(head);
+  const neck=new THREE.Mesh(new THREE.CylinderGeometry(.095,.11,.2,8),skin);
+  neck.position.y=1.63;g.add(neck);
+  const cap=new THREE.Mesh(new THREE.SphereGeometry(.225,10,8),hair);
+  cap.scale.set(1,.48,1);cap.position.y=2.01;g.add(cap);
+  // Face with visible brow, eyes, nose and ears; keep details readable at street distance.
+  const eyeMat=new THREE.MeshStandardMaterial({color:0x29241f,roughness:1});
   for(const side of [-1,1]){
-    const arm=new THREE.Mesh(new THREE.CylinderGeometry(.075,.09,.7,6),coat);
-    arm.position.set(side*.34,1.25,0);
-    arm.rotation.z=side*(gesture&&side===1?-.75:.12);g.add(arm);movingArms.push({mesh:arm,side,baseZ:arm.rotation.z});
-    const leg=new THREE.Mesh(new THREE.CylinderGeometry(.095,.075,.72,6),boots);
-    leg.position.set(side*.14,.42,0);g.add(leg);
+    const eye=new THREE.Mesh(new THREE.SphereGeometry(.027,7,6),eyeMat);
+    eye.position.set(side*.078,1.84,.19);g.add(eye);
+    const brow=new THREE.Mesh(new THREE.BoxGeometry(.075,.025,.035),hair);
+    brow.position.set(side*.078,1.9,.185);g.add(brow);
+    const ear=new THREE.Mesh(new THREE.SphereGeometry(.065,7,6),skin);
+    ear.position.set(side*.215,1.81,0);ear.scale.set(.65,1,.65);g.add(ear);
+    const arm=new THREE.Mesh(new THREE.CylinderGeometry(.085,.105,.72,8),coat);
+    arm.position.set(side*.39,1.25,0);
+    arm.rotation.z=side*(gesture&&side===1?-.68:.1);arm.castShadow=true;g.add(arm);
+    movingArms.push({mesh:arm,side,baseZ:arm.rotation.z});
+    const hand=new THREE.Mesh(new THREE.SphereGeometry(.095,7,6),skin);
+    hand.position.set(side*.4,.88,.015);g.add(hand);
+    const leg=new THREE.Mesh(new THREE.CylinderGeometry(.105,.085,.72,8),boots);
+    leg.position.set(side*.15,.42,0);g.add(leg);
+    const boot=new THREE.Mesh(new THREE.BoxGeometry(.2,.16,.34),boots);
+    boot.position.set(side*.15,.1,.07);g.add(boot);
   }
-  const collar=new THREE.Mesh(new THREE.CylinderGeometry(.22,.25,.13,8),linen);
-  collar.position.y=1.56;g.add(collar);
-  g.userData.movingArms=movingArms;
-  eveningActors.push(g);
-  return g;
+  const nose=new THREE.Mesh(new THREE.ConeGeometry(.052,.13,6),skin);
+  nose.position.set(0,1.77,.205);nose.rotation.x=Math.PI/2;g.add(nose);
+  const collar=new THREE.Mesh(new THREE.CylinderGeometry(.24,.27,.15,9),linen);
+  collar.position.y=1.55;g.add(collar);
+  // Camadas de roupa, cinto e barra da túnica em vez de um único bloco colorido.
+  const belt=new THREE.Mesh(new THREE.TorusGeometry(.29,.035,5,12),darkWoodMat);
+  belt.position.y=.82;belt.rotation.x=Math.PI/2;g.add(belt);
+  const hem=new THREE.Mesh(new THREE.CylinderGeometry(.39,.43,.16,9),role==='woman'?linen:coat);
+  hem.position.y=.65;g.add(hem);
+  if(role==='horst'){
+    const beard=new THREE.Mesh(new THREE.ConeGeometry(.19,.48,9),hair);
+    beard.position.set(0,1.48,.18);beard.rotation.x=-.12;g.add(beard);
+    const apron=new THREE.Mesh(new THREE.BoxGeometry(.43,.72,.07),new THREE.MeshStandardMaterial({color:0x4a3829,roughness:1}));
+    apron.position.set(0,1.02,.23);g.add(apron);
+    const strap=new THREE.Mesh(new THREE.BoxGeometry(.07,.66,.07),darkWoodMat);
+    strap.position.set(-.22,1.17,.2);strap.rotation.z=-.25;g.add(strap);
+  }else if(role==='sloan'){
+    const beard=new THREE.Mesh(new THREE.SphereGeometry(.16,9,7),hair);
+    beard.scale.set(1,1.3,.8);beard.position.set(0,1.58,.15);g.add(beard);
+    const apron=new THREE.Mesh(new THREE.BoxGeometry(.5,.78,.08),new THREE.MeshStandardMaterial({color:0x544538,roughness:1}));
+    apron.position.set(0,1.03,.22);g.add(apron);
+  }else if(role==='katrina'||role==='woman'){
+    const skirt=new THREE.Mesh(new THREE.CylinderGeometry(.31,.48,.72,10),linen);
+    skirt.position.y=.55;g.add(skirt);
+    const hairBack=new THREE.Mesh(new THREE.SphereGeometry(.2,9,7),hair);
+    hairBack.scale.set(1,1.35,.7);hairBack.position.set(0,1.85,-.13);g.add(hairBack);
+    if(role==='katrina'){
+      const shawl=new THREE.Mesh(new THREE.BoxGeometry(.72,.2,.38),new THREE.MeshStandardMaterial({color:0x8d5140,roughness:1}));
+      shawl.position.set(0,1.47,0);g.add(shawl);
+    }
+  }
+  g.userData.movingArms=movingArms;eveningActors.push(g);return g;
 }
 // Homens conversando do lado de fora, perto da taverna.
 makeResident(49,-56,0x5b4937,-.2,1.0,1);
@@ -535,7 +599,12 @@ makeResident(67,-54,0x746144,-.5,.98,0);
 makeResident(3,54,0x5b4537,.2,1.0,1);
 makeResident(31,83,0x6d5a43,2.7,.96,0);
 // Uma moradora junto à varanda, em posição de chamar alguém para casa.
-makeResident(140,-64,0x6e5547,-1.2,.94,1);
+makeResident(140,-64,0x6e5547,-1.2,.94,1,'woman');
+// Figuras identificáveis da cena do açougue: Horst, Sloan e Katrina.
+// Traços físicos não especificados no texto permanecem escolhas discretas de arte.
+makeResident(9,61,0x574536,.15,1.12,1,'sloan');
+makeResident(25,58,0x4b4034,2.9,1.16,1,'horst');
+makeResident(35,70,0x765b4d,2.1,.98,0,'katrina');
 
 // Cercas baixas e pequenos campos quadrados nas bordas da povoação.
 function makeFence(points,rails=1){
