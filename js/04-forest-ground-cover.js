@@ -32,10 +32,6 @@ function makeFirCrown(){
         const light=.19+tiers[tier]*.075+(hash2(i,branch*9+tier)-.5)*.055;
         col.setHSL(.285+(hash2(i,branch)-.5)*.045,.34,light);
         colors.push(col.r,col.g,col.b);
-        if(i%pos.count>=0){} 
-      }
-      for(let i=0;i<pos.count;i+=1){
-        // Preserve the sphere's indexed triangles while duplicating each soft foliage tuft.
       }
       const sphereIndex=sphere.index.array;
       for(let k=0;k<sphereIndex.length;k++)indices.push(base+sphereIndex[k]);
