@@ -58,15 +58,43 @@ const thatchTex=canvasTexture((ctx,s)=>{
 },512,1);
 thatchTex.repeat.set(2,2);
 const shingleTex=canvasTexture((ctx,s)=>{
-  ctx.fillStyle='#695d4c';ctx.fillRect(0,0,s,s);
-  const rows=15,cols=14,h=s/rows,w=s/cols;
-  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
-    const x=c*w+(r%2)*w*.5,y=r*h;
-    const v=Math.floor(56+rnd()*45);
-    ctx.fillStyle=`rgb(${v},${v-5},${v-12})`;
-    ctx.fillRect(x+1,y+1,w-2,h-2);
-    ctx.strokeStyle='rgba(20,17,14,.45)';ctx.strokeRect(x+1,y+1,w-2,h-2);
-    ctx.strokeStyle='rgba(197,174,133,.12)';ctx.beginPath();ctx.moveTo(x+4,y+4);ctx.lineTo(x+w-4,y+4);ctx.stroke();
+  ctx.fillStyle='#766b59';ctx.fillRect(0,0,s,s);
+  // Telhas de madeira sobrepostas, com pontas arredondadas e larguras variadas.
+  // A textura evita a malha quadriculada de blocos regulares.
+  const rows=16,rowH=s/rows;
+  for(let row=-1;row<=rows;row++){
+    const offset=(row%2)*17+(row%3)*4;
+    let x=-58+offset;
+    while(x<s+50){
+      const width=27+rnd()*27,height=rowH*(.82+rnd()*.22);
+      const y=row*rowH+(rnd()-.5)*3;
+      const tone=82+Math.floor(rnd()*42);
+      ctx.fillStyle='rgb('+tone+','+(tone-8)+','+(tone-19)+')';
+      ctx.beginPath();
+      ctx.moveTo(x+1,y-3);
+      ctx.lineTo(x+width-2,y-3+rnd()*2);
+      ctx.lineTo(x+width-1,y+height*.56);
+      ctx.quadraticCurveTo(x+width*.86,y+height*.98,x+width*.52,y+height);
+      ctx.quadraticCurveTo(x+width*.16,y+height*.98,x+1,y+height*.58);
+      ctx.closePath();ctx.fill();
+      ctx.strokeStyle='rgba(26,22,17,.34)';ctx.lineWidth=1.2;ctx.stroke();
+      ctx.strokeStyle='rgba(215,194,153,.12)';ctx.lineWidth=.8;
+      ctx.beginPath();ctx.moveTo(x+4,y+2);ctx.quadraticCurveTo(x+width*.45,y+3,x+width-5,y+4);ctx.stroke();
+      // Rachaduras e fibras individuais, sem contorno retangular.
+      for(let k=0;k<3;k++){
+        const gx=x+5+rnd()*(width-10),gy=y+5+rnd()*(height-10);
+        ctx.strokeStyle=rnd()<.5?'rgba(31,25,18,.20)':'rgba(226,204,165,.13)';
+        ctx.lineWidth=.5+rnd()*.55;ctx.beginPath();
+        ctx.moveTo(gx,gy);ctx.lineTo(gx+(rnd()-.5)*5,gy+3+rnd()*9);ctx.stroke();
+      }
+      x+=width-2;
+    }
+  }
+  // Variação de desgaste e fuligem perto das bordas do telhado.
+  for(let i=0;i<360;i++){
+    const x=rnd()*s,y=rnd()*s,rx=2+rnd()*12,ry=1+rnd()*4;
+    ctx.fillStyle=rnd()<.5?'rgba(29,25,20,.055)':'rgba(223,203,167,.045)';
+    ctx.beginPath();ctx.ellipse(x,y,rx,ry,rnd()*.5,0,Math.PI*2);ctx.fill();
   }
 },512,1);
 shingleTex.repeat.set(2,2);
