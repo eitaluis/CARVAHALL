@@ -21,17 +21,11 @@ function box(parent,w,h,d,mat,x,y,z,rx=0,ry=0,rz=0){
   return softBox(parent,w,h,d,mat,x,y,z,rx,ry,rz);
 }
 function softBox(parent,w,h,d,mat,x,y,z,rx=0,ry=0,rz=0){
-  const bevel=Math.min(.055,w*.12,h*.12,d*.12);
-  const hw=w/2-bevel,hh=h/2-bevel,r=bevel*.72;
-  const shape=new THREE.Shape();
-  shape.moveTo(-hw+r,-hh);shape.lineTo(hw-r,-hh);shape.quadraticCurveTo(hw,-hh,hw,-hh+r);
-  shape.lineTo(hw,hh-r);shape.quadraticCurveTo(hw,hh,hw-r,hh);
-  shape.lineTo(-hw+r,hh);shape.quadraticCurveTo(-hw,hh,-hw,hh-r);
-  shape.lineTo(-hw,-hh+r);shape.quadraticCurveTo(-hw,-hh,-hw+r,-hh);
-  const depth=Math.max(.02,d-2*bevel);
-  const geo=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:bevel,bevelThickness:bevel,curveSegments:4});
-  geo.translate(0,0,-depth/2);
-  const mesh=new THREE.Mesh(geo,mat);mesh.position.set(x,y,z);mesh.rotation.set(rx,ry,rz);
+  // Geometria leve: milhares de peças da vila não devem gerar ExtrudeGeometry
+  // individual. O detalhe de superfície vem dos materiais e das peças de madeira.
+  const geo=new THREE.BoxGeometry(w,h,d);
+  const mesh=new THREE.Mesh(geo,mat);
+  mesh.position.set(x,y,z);mesh.rotation.set(rx,ry,rz);
   mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;
 }
 function logBeam(parent,length,radius,x,y,z,axis='x',mat=woodMat){
