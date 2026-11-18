@@ -88,7 +88,7 @@ function addDoor(parent,w,d,doorW=1.5){
   // Porta deixada entreaberta para que a entrada e o interior sejam legíveis.
   leaf.rotation.y=-.62;
 }
-function addPorch(parent,w,d){
+function addPorch(parent,w,d,roofMat=thatchMat){
   const depth=3.05,z=-d/2-depth/2,front=-d/2-depth;
   box(parent,w*.9,.24,depth,woodMat,0,.62,z);
   for(const x of [-w*.42,-w*.14,w*.14,w*.42]){
@@ -99,6 +99,19 @@ function addPorch(parent,w,d){
   }
   box(parent,w*.96,.22,.27,darkWoodMat,0,3.34,front+.16);
   box(parent,w*.97,.17,.24,woodMat,0,3.58,front+.16);
+  // Cobertura inclinada da varanda: deixa a entrada visualmente abrigada,
+  // com caibros aparentes e beiral à frente dos pilares.
+  const canopyDepth=depth+.5,canopyRise=.52;
+  const canopyLength=Math.hypot(canopyDepth,canopyRise);
+  const canopySlope=Math.atan2(canopyRise,canopyDepth);
+  const canopyCenterZ=-d/2-canopyDepth/2+.12;
+  const canopyCenterY=3.82;
+  box(parent,w+1.05,.2,canopyLength,roofMat,0,canopyCenterY,canopyCenterZ,-canopySlope,0,0);
+  for(let i=0;i<7;i++){
+    const x=-w*.43+i*w*.143;
+    const rafter=box(parent,.13,.15,canopyLength,darkWoodMat,x,canopyCenterY-.12,canopyCenterZ,-canopySlope);
+  }
+  box(parent,w+1.1,.2,.18,darkWoodMat,0,3.53,front-.28);
   // Guarda-corpos baixos e corrimãos nas laterais da varanda.
   for(const x of [-w*.46,w*.46]){
     box(parent,.17,.72,depth*.82,darkWoodMat,x,.98,z);
@@ -275,7 +288,7 @@ function createCabin(name,x,z,rot=0,opts={}){
   }
 
   if(opts.chimney!==false)addStoneChimney(g,w*.29,d*.18,eave+rise+1.1,kind==='forge'||kind==='butcher');
-  addDoor(g,w,d,doorW);addPorch(g,w,d);
+  addDoor(g,w,d,doorW);addPorch(g,w,d,roofMat);
   addWindow(g,-w*.31,2.35,-d/2-.18,0,opts.lit!==false);
   addWindow(g,w*.31,2.35,-d/2-.18,0,opts.lit!==false);
   addWindow(g,-w/2-.18,2.35,0,Math.PI/2,false);
