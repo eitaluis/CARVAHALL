@@ -72,12 +72,40 @@ function animate(){
   if(locked)updatePlayer(dt);
   // Fumaça leve, que sobe e se desfaz visualmente acima das chaminés.
   for(const s of smokeSprites){s.position.y=s.userData.baseY+Math.sin(waterTime*.7+s.userData.phase)*.16+((waterTime*.18+s.userData.phase)%1)*.7;s.material.opacity=.08+Math.sin(waterTime+s.userData.phase)*.025;}
-  for(let i=0;i<falls.length;i++)falls[i].position.y=43+Math.sin(waterTime*1.8+i)*.4;
+  for(let i=0;i<falls.length;i++){
+    const fall=falls[i];
+    fall.position.y=fall.userData.baseY+Math.sin(waterTime*1.8+i)*.18;
+  }
   riverMesh.material.opacity=.86+Math.sin(waterTime*1.7)*.025;
   for(let i=0;i<marketFires.length;i++){
-    const f=marketFires[i];
-    f.fire.scale.setScalar(.92+Math.sin(waterTime*8+i*1.7)*.12);
-    f.light.intensity=traderCamp.visible?1.55+Math.sin(waterTime*6+i)*.22:0;
+    const fire=marketFires[i];
+    fire.fire.scale.set(.8,.92+Math.sin(waterTime*8+i*1.7)*.13,.8);
+    fire.light.intensity=traderCamp.visible?1.55+Math.sin(waterTime*6+i)*.22:0;
+    for(let j=0;j<(fire.smoke||[]).length;j++){
+      const puff=fire.smoke[j],phase=(waterTime*.16+puff.userData.phase/(Math.PI*2)+j*.19)%1;
+      puff.position.y=puff.userData.baseY+phase*3.1;
+      puff.material.opacity=traderCamp.visible?.15*(1-phase):0;
+    }
+  }
+  if(traderCamp.visible){
+    const positions=marketSnowGeometry.attributes.position.array;
+    for(let i=0;i<marketSnowCount;i++){
+      const n=i*3;
+      positions[n+1]-=dt*(1.25+(i%5)*.22);
+      positions[n]+=.09*Math.sin(waterTime*.55+i*.23)*dt;
+      positions[n+2]+=.24*dt;
+      if(positions[n+1]<.12){
+        positions[n]=150+Math.random()*355;
+        positions[n+1]=29+Math.random()*10;
+        positions[n+2]=-105+Math.random()*235;
+      }
+    }
+    marketSnowGeometry.attributes.position.needsUpdate=true;
+    for(const actor of marketActors){
+      const phase=actor.userData.phase;
+      actor.rotation.y=actor.userData.baseYaw+Math.sin(waterTime*.42+phase)*.045;
+      actor.position.y=actor.userData.baseY+Math.sin(waterTime*1.5+phase)*.012;
+    }
   }
   drawMap();renderer.render(scene,camera);
 }
