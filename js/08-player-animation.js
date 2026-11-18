@@ -69,26 +69,31 @@ function updatePlayer(dt){
 function animateAmbientPerson(actor,time,dt,isMarket){
   const rig=actor.userData.animationRig;if(!rig)return;
   const phase=actor.userData.phase,role=actor.userData.role||'villager';
-  const slow=time*.7+phase,breath=Math.sin(time*1.35+phase)*.012;
+  const slow=time*.7+phase,breath=Math.sin(time*1.35+phase)*.019;
   actor.rotation.y=actor.userData.baseYaw+Math.sin(time*.31+phase)*.055;
   actor.position.y=actor.userData.baseY+Math.sin(time*1.7+phase)*.012;
   actor.position.x=actor.userData.baseX+Math.sin(time*.38+phase)*.045;
   rig.torso.scale.y=1+breath;
   rig.torso.position.y=(role==='child'?.76:1.12)+breath*.35;
-  rig.headPivot.rotation.y=Math.sin(time*.48+phase*1.7)*.19;
-  rig.headPivot.rotation.x=Math.sin(time*.73+phase)*.035;
+  rig.headPivot.rotation.y=Math.sin(time*.48+phase*1.7)*.24;
+  rig.headPivot.rotation.x=Math.sin(time*.73+phase)*.045;
   rig.headPivot.rotation.z=Math.sin(time*.62+phase)*.025;
   const talk=(role==='vendor'||role==='sloan'||role==='horst'||actor.userData.gesture)?1:0;
   for(const arm of rig.armPivots){
-    const gesture=talk&&arm.side===1?Math.sin(time*1.65+phase)*.16:0;
-    const idle=Math.sin(slow*1.55+arm.side)*.055;
+    const gesture=talk&&arm.side===1?Math.sin(time*1.65+phase)*.22:0;
+    const idle=Math.sin(slow*1.55+arm.side)*.075;
     arm.pivot.rotation.z=arm.base+gesture+idle;
     arm.pivot.rotation.x=Math.sin(time*.8+phase+arm.side)*.035;
   }
   const weight=Math.sin(time*.85+phase)*.025;
   for(const leg of rig.legPivots){
-    leg.pivot.rotation.x=Math.sin(time*.72+phase+leg.side*.8)*.035;
+    leg.pivot.rotation.x=Math.sin(time*.72+phase+leg.side*.8)*.065;
     leg.pivot.position.x=leg.side*(.14+weight);
+  }
+  if(isMarket&&role==='buyer'&&phase<2.1){
+    actor.position.x=actor.userData.baseX+Math.sin(time*.34+phase)*.28;
+    actor.position.z=actor.userData.baseZ+Math.cos(time*.34+phase)*.18;
+    actor.position.y=groundHeight(actor.position.x,actor.position.z)+Math.sin(time*1.7+phase)*.012;
   }
   // A cada personagem cabe uma pequena ação recorrente, sem coreografia sincronizada.
   if(role==='child'){
@@ -103,6 +108,7 @@ function animate(){
   requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);waterTime+=dt;
   if(locked)updatePlayer(dt);
   if(grassWindShader)grassWindShader.uniforms.uWindTime.value=waterTime;
+  for(const shader of treeWindShaders)shader.uniforms.uTreeWindTime.value=waterTime;
   // Fumaça leve, que sobe e se desfaz visualmente acima das chaminés.
   for(const s of smokeSprites){s.position.y=s.userData.baseY+Math.sin(waterTime*.7+s.userData.phase)*.16+((waterTime*.18+s.userData.phase)%1)*.7;s.material.opacity=.08+Math.sin(waterTime+s.userData.phase)*.025;}
   for(let i=0;i<falls.length;i++){
