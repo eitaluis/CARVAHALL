@@ -70,6 +70,7 @@ const clock=new THREE.Clock();let waterTime=0;
 function animate(){
   requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);waterTime+=dt;
   if(locked)updatePlayer(dt);
+  if(grassWindShader)grassWindShader.uniforms.uWindTime.value=waterTime;
   // Fumaça leve, que sobe e se desfaz visualmente acima das chaminés.
   for(const s of smokeSprites){s.position.y=s.userData.baseY+Math.sin(waterTime*.7+s.userData.phase)*.16+((waterTime*.18+s.userData.phase)%1)*.7;s.material.opacity=.08+Math.sin(waterTime+s.userData.phase)*.025;}
   for(let i=0;i<falls.length;i++){
