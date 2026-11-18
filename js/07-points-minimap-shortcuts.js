@@ -39,7 +39,7 @@ function teleport(i){
   }
 
   const destinations={
-    market:{x:p.x-25,z:p.z+7,yaw:3.0,pitch:0},
+    market:{x:p.x-15,z:p.z+100,yaw:0,pitch:0},
     street:{x:p.x+9,z:p.z-16,yaw:-.55,pitch:0},
     river:{x:p.x+18,z:p.z,yaw:1.7,pitch:0},
     field:{x:p.x-18,z:p.z-12,yaw:3.0,pitch:0},
