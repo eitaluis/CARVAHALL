@@ -14,9 +14,11 @@ https://eitaluis.github.io/CARVAHALL/
 - **J**: oficina de Horst
 - **G**: rio Anora
 - **F**: cataratas de Igualda
+- **L**: mostrar / ocultar o rebanho histórico de *Eldest*
+- **P**: mostrar / ocultar as defesas temporárias de *Eldest*
+- **O**: alternar para as ruínas após o incêndio
 - **M / N**: próximo / anterior ponto de interesse
 - **T**: acampamento sazonal dos mercadores
-- **L**: mostrar / ocultar variante histórica do rebanho (Eldest)
 - **Tab**: mostrar / ocultar minimapa
 - **Roda do mouse sobre o mapa**: alternar escala
 
@@ -35,7 +37,9 @@ O projeto foi organizado em módulos carregados em sequência pelo index.html:
 8. js/06-seasonal-merchants.js — acampamento sazonal
 9. js/07-points-minimap-shortcuts.js — POIs, minimapa e atalhos
 10. js/08-player-animation.js — jogador, colisões, controles e loop de animação
-11. css/style.css — interface e estilos
+11. js/09-wartime-defenses.js — variante defensiva de *Eldest*
+12. js/10-burned-village.js — ruínas após o incêndio
+13. css/style.css — interface e estilos
 
 A ordem de carregamento é importante: módulos posteriores usam objetos e funções criados pelos anteriores.
 
