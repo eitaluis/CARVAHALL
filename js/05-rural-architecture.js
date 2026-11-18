@@ -27,7 +27,7 @@ function logBeam(parent,length,radius,x,y,z,axis='x',mat=woodMat){
   mesh.position.set(x,y,z);
   if(axis==='x')mesh.rotation.z=Math.PI/2;
   else if(axis==='z')mesh.rotation.x=Math.PI/2;
-  mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;
+  mesh.castShadow=false;mesh.receiveShadow=true;parent.add(mesh);return mesh;
 }
 function addStoneChimney(parent,x,z,yTop=6.0,sooty=false){
   const h=yTop-2.2;
