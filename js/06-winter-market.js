@@ -218,17 +218,19 @@ function marketPerson(parent,x,z,coatColor,heading=0,scale=1,child=false){
   head.position.set(0,headY,0);g.add(head);
   const hair=new THREE.Mesh(new THREE.SphereGeometry(child?.2:.22,8,7),hairMat);
   hair.scale.set(1,.52,1);hair.position.set(0,headY+.13,0);g.add(hair);
+  const movingArms=[];
   const armLength=child?.52:.7;
   for(const side of [-1,1]){
     const arm=new THREE.Mesh(new THREE.CylinderGeometry(.07,.09,armLength,7),coatMat);
     arm.position.set(side*(child?.29:.35),child?.78:1.25,.02);
-    arm.rotation.z=side*(.14+(side===1?.12:0));g.add(arm);
+    arm.rotation.z=side*(.14+(side===1?.12:0));g.add(arm);movingArms.push({mesh:arm,side});
     const leg=new THREE.Mesh(new THREE.CylinderGeometry(.075,.06,child?.43:.7,7),bootMat);
     leg.position.set(side*.13,child?.22:.36,0);g.add(leg);
     const foot=new THREE.Mesh(new THREE.BoxGeometry(.16,.12,.28),bootMat);
     foot.position.set(side*.13,.06,.07);g.add(foot);
   }
   // Algumas figuras carregam uma cesta ou um pequeno embrulho.
+  g.userData.head=head;g.userData.movingArms=movingArms;
   if(Math.abs(x%3)<1.35){
     const parcel=new THREE.Mesh(new THREE.BoxGeometry(.32,.27,.28),
       new THREE.MeshStandardMaterial({color:0x9a744c,roughness:1}));
