@@ -221,6 +221,7 @@ for(let k=0;k<5;k++){
   geo.computeVertexNormals();
   const mesh=new THREE.Mesh(geo,fallMat);
   mesh.position.set(-181+k*15,54+(k%2)*3,-622+(k%3)*1.7);
+  mesh.userData.baseY=mesh.position.y;
   scene.add(mesh);falls.push(mesh);
 }
 const pool=new THREE.Mesh(
