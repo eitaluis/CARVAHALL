@@ -58,10 +58,23 @@
 - [x] Atalhos H, J, G e F para locais principais.
 - [x] Animação de fumaça, água e fogo.
 - [ ] Revisar colisões e a velocidade de deslocamento no mundo inteiro.
-- [ ] Revisar sombras, distância de visão e densidade de geometria.
+- [ ] Revisar sombras, distância de visão, densidade de geometria e transição da neblina.
 - [ ] Conferir desempenho em computador comum e ajustar o nível de detalhe.
 
-## Fase 6 — validação de fidelidade
+## Fase 6 — refinamento da direção visual
+- [x] Trocar o céu chapado por céu em gradiente e suavizar o horizonte com neblina linear.
+- [x] Refinar o relevo do vale com ondulações contínuas e malha de terreno mais detalhada.
+- [x] Enriquecer a textura do solo com variações minerais, marcas finas e pedras pequenas.
+- [x] Substituir os grandes agrupamentos de rochas arredondadas por escarpa estratificada e cadeias montanhosas contínuas.
+- [x] Trocar copas de pinheiros em cones repetidos por silhuetas altas, irregulares e sobrepostas.
+- [x] Substituir a grama em cones por tufos de folhas finas e moitas irregulares.
+- [x] Aumentar as dimensões das casas e dos três edifícios principais.
+- [x] Preencher as empenas e acrescentar caibros, venezianas, portas entreabertas, varandas estruturadas e objetos de uso.
+- [x] Substituir as partículas de fumaça esféricas por sprites translúcidos.
+- [x] Aproximar o ponto inicial da rua principal e ajustar o campo de visão da câmera.
+- [ ] Inspecionar a nova composição no navegador e ajustar densidade, escala e iluminação a partir da imagem real.
+
+## Fase 7 — validação de fidelidade
 - [ ] Testar a página publicada no navegador.
 - [ ] Percorrer a rua principal e visitar cada edifício.
 - [ ] Inspecionar o açougue, a forja e a tanoaria por dentro.
@@ -82,7 +95,7 @@
 - `js/01-procedural-materials.js`: texturas e materiais.
 - `js/02-valley-terrain.js`: superfície e paleta do vale.
 - `js/03-river-roads-falls.js`: Anora, caminhos e cataratas.
-- `js/04-forest-ground-cover.js`: pinheiros, capim e vegetação rasteira.
+- `js/04-forest-ground-cover.js`: pinheiros de copas orgânicas, capim e moitas.
 - `js/05-rural-architecture.js`: casas, açougue, forja, taverna e tanoaria.
 - `js/06-winter-market.js`: acampamento, feira, cavalos e multidão de inverno.
 - `js/07-points-minimap-shortcuts.js`: pontos, minimapa e teletransportes.
