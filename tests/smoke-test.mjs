@@ -112,6 +112,29 @@ try {
   await sleep(1200);
   await saveCanvas(page, "artifacts/carvahall-evening.png");
 
+  // Capturas internas: os quatro estabelecimentos precisam ter teto, paredes,
+  // chão e mobiliário legível a partir da posição de exploração.
+  const interiors = [
+    ["Taverna (nome não indicado)", "carvahall-interior-tavern.png"],
+    ["Açougue de Sloan", "carvahall-interior-butcher.png"],
+    ["Forja de Horst", "carvahall-interior-forge.png"],
+    ["Tanoaria de Gedric", "carvahall-interior-tannery.png"]
+  ];
+  for (const [buildingName, fileName] of interiors) {
+    await page.evaluate(name => {
+      const building = BUILDINGS.find(item => item.name === name);
+      if (!building) throw new Error("Construção não encontrada para captura: " + name);
+      placePlayer(building.x, building.z, building.rot, 0);
+    }, buildingName);
+    await sleep(700);
+    await saveCanvas(page, "artifacts/" + fileName);
+  }
+
+  // Captura frontal da catarata a partir do vale, olhando para a escarpa.
+  await page.evaluate(() => placePlayer(-96, -505, .36, .20));
+  await sleep(900);
+  await saveCanvas(page, "artifacts/carvahall-waterfall.png");
+
   // Ativa a feira e avança os pontos até a área do acampamento.
   await page.keyboard.press("t");
   await page.waitForFunction(() => window.CARVAHALL_MARKET_VISIBLE === true, {
