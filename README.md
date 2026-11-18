@@ -39,7 +39,7 @@ O HTML carrega os arquivos JavaScript em sequência, mantendo a divisão por res
 4. `js/03-river-roads-falls.js` — rio Anora, estradas e cataratas de Igualda
 5. `js/04-forest-ground-cover.js` — pinheiros, capim seco, moitas e seixos
 6. `js/05-rural-architecture.js` — casas, açougue de Sloan, forja de Horst, taverna não nomeada e tanoaria de Gedric
-7. `js/06-winter-market.js` — feira, tendas dos trovadores, carroças, fogueiras, cavalos e pessoas
+7. `js/06-winter-market.js` — feira, tendas de lona texturizada, carroças, fogueiras, cavalos e visitantes
 8. `js/07-points-minimap-shortcuts.js` — pontos de interesse, minimapa e teletransportes
 9. `js/08-player-animation.js` — movimento, colisões, controles e animação ambiente
 10. `css/style.css` — interface e estilos
