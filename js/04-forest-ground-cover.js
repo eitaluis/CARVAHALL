@@ -121,10 +121,10 @@ const firDetailMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1
 const trunkMat=new THREE.MeshStandardMaterial({color:0x56402d,roughness:1});
 const crownMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1});
 const treeClusters=[
-  [-660,-455],[-330,-770],[310,-805],[735,-450],
-  [-770,120],[770,190],[-540,650],[510,710]
+  [-310,-310],[-500,-590],[405,-365],[690,-470],
+  [-430,315],[520,315],[-520,670],[560,680]
 ];
-const treeCount=470;
+const treeCount=640;
 const trunkInst=new THREE.InstancedMesh(trunkGeo,trunkMat,treeCount);
 const crownInst=new THREE.InstancedMesh(firCrownGeo,crownMat,treeCount);
 const firDetailInst=new THREE.InstancedMesh(firDetailGeo,firDetailMat,treeCount);
@@ -146,7 +146,7 @@ for(let i=0;i<treeCount;i++){
     if(villageDistance>300&&!nearRiver(x,z,34)&&Math.abs(x)<930&&Math.abs(z)<930){valid=true;break;}
   }
   if(!valid)continue;
-  const h=16+rnd()*17,radius=3.8+rnd()*3.6,ground=groundHeight(x,z);
+  const h=21+rnd()*18,radius=4.5+rnd()*4.8,ground=groundHeight(x,z);
   const rot=rnd()*Math.PI*2;
   treeDummy.position.set(x,ground+h*.34,z);
   treeDummy.rotation.set(0,rot,0);
@@ -196,19 +196,26 @@ const grassGeo=makeGrassTuft();
 const grassMat=new THREE.MeshStandardMaterial({
   color:0xb4a071,roughness:1,side:THREE.DoubleSide
 });
-const grassCount=5200;
+const grassCount=12000;
 const grassInst=new THREE.InstancedMesh(grassGeo,grassMat,grassCount);
 const grassDummy=new THREE.Object3D();
 let grassPlaced=0;
 for(let i=0;i<grassCount;i++){
-  const x=(rnd()-.5)*1900,z=(rnd()-.5)*1900;
-  if(Math.hypot(x-100,z-25)<135||nearRiver(x,z,8))continue;
-  const h=.45+rnd()*1.1;
+  let x,z;
+  if(i<8500){
+    // Faixas de capim seco no vale aberto, fora do núcleo construído.
+    const a=rnd()*Math.PI*2,rad=70+Math.sqrt(rnd())*420;
+    x=100+Math.cos(a)*rad;z=25+Math.sin(a)*rad;
+  }else{
+    x=(rnd()-.5)*1900;z=(rnd()-.5)*1900;
+  }
+  if(Math.hypot(x-100,z-25)<58||nearRiver(x,z,8))continue;
+  const h=.5+rnd()*1.25;
   grassDummy.position.set(x,groundHeight(x,z)+.025,z);
-  grassDummy.rotation.set((rnd()-.5)*.12,rnd()*Math.PI*2,(rnd()-.5)*.12);
-  grassDummy.scale.set(.55+rnd()*.85,h,.55+rnd()*.85);
+  grassDummy.rotation.set((rnd()-.5)*.14,rnd()*Math.PI*2,(rnd()-.5)*.14);
+  grassDummy.scale.set(.58+rnd()*.95,h,.58+rnd()*.95);
   grassDummy.updateMatrix();grassInst.setMatrixAt(grassPlaced,grassDummy.matrix);
-  const tint=new THREE.Color().setHSL(.105+rnd()*.035,.30,.38+rnd()*.14);
+  const tint=new THREE.Color().setHSL(.105+rnd()*.04,.32,.37+rnd()*.16);
   grassInst.setColorAt(grassPlaced,tint);
   grassPlaced++;
 }
