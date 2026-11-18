@@ -162,14 +162,15 @@ function makeBramble(){
 const shrubGeo=makeBramble();
 const shrubMat=new THREE.MeshStandardMaterial({color:0x71744c,roughness:1,side:THREE.DoubleSide});
 const shrubs=new THREE.InstancedMesh(shrubGeo,shrubMat,145);
+let shrubPlaced=0;
 for(let i=0;i<145;i++){
   const x=(rnd()-.5)*1500,z=(rnd()-.5)*1500;
   if(Math.hypot(x-100,z-25)<180||nearRiver(x,z,14))continue;
   treeDummy.position.set(x,groundHeight(x,z)+.025,z);
   treeDummy.rotation.set(0,rnd()*Math.PI*2,0);
   treeDummy.scale.set(.9+rnd()*1.8,.8+rnd()*.8,.9+rnd()*1.8);
-  treeDummy.updateMatrix();shrubs.setMatrixAt(i,treeDummy.matrix);
+  treeDummy.updateMatrix();shrubs.setMatrixAt(shrubPlaced++,treeDummy.matrix);
 }
-shrubs.instanceMatrix.needsUpdate=true;shrubs.castShadow=false;scene.add(shrubs);
+shrubs.count=shrubPlaced;shrubs.instanceMatrix.needsUpdate=true;shrubs.castShadow=false;scene.add(shrubs);
 
 // ============================================================================
