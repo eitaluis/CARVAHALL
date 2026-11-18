@@ -1,9 +1,9 @@
 // PONTOS DE INTERESSE, MINIMAPA E TELEPORTES — ERAGON
 const POIS=[
-  {name:'Taverna de Carvahall (nome não indicado)',x:76,z:-42,r:9,type:'tavern'},
-  {name:'Açougue de Sloan',x:18,z:67,r:8,type:'butcher'},
-  {name:'Forja de Horst',x:206,z:48,r:9,type:'forge'},
-  {name:'Tanoaria de Gedric',x:-96,z:174,r:9,type:'tannery'},
+  {name:'Taverna de Carvahall (nome não indicado)',x:76,z:-42,r:9,type:'tavern',building:'Taverna (nome não indicado)'},
+  {name:'Açougue de Sloan',x:18,z:67,r:8,type:'butcher',building:'Açougue de Sloan'},
+  {name:'Forja de Horst',x:206,z:48,r:9,type:'forge',building:'Forja de Horst'},
+  {name:'Tanoaria de Gedric',x:-96,z:174,r:9,type:'tannery',building:'Tanoaria de Gedric'},
   {name:'Campo dos mercadores',x:407,z:18,r:18,type:'market'},
   {name:'Rua principal',x:240,z:78,r:12,type:'street'},
   {name:'Rio Anora',x:-102,z:25,r:10,type:'river'},
@@ -22,13 +22,31 @@ function placePlayer(x,z,yaw=null,pitch=0){
 function teleport(i){
   tpIndex=(i+POIS.length)%POIS.length;
   const p=POIS[tpIndex];
-  const offsets={
-    tavern:[16,12],butcher:[-14,15],forge:[-18,15],tannery:[18,12],
-    market:[-25,7],street:[-10,16],river:[18,0],field:[-18,-12],falls:[70,30]
+
+  // Os quatro estabelecimentos têm aproximação calculada pela posição real
+  // da fachada e pela rotação do edifício; o teleporte não termina dentro da parede.
+  if(p.building){
+    const building=BUILDINGS.find(b=>b.name===p.building);
+    if(building){
+      const distance=building.d/2+5.35;
+      const outwardX=-Math.sin(building.rot),outwardZ=-Math.cos(building.rot);
+      const x=building.x+outwardX*distance;
+      const z=building.z+outwardZ*distance;
+      placePlayer(x,z,building.rot+Math.PI,0);
+      document.getElementById('tp').textContent='Entrada: '+p.name;
+      return;
+    }
+  }
+
+  const destinations={
+    market:{x:p.x-25,z:p.z+7,yaw:3.0,pitch:0},
+    street:{x:p.x+9,z:p.z-16,yaw:-.55,pitch:0},
+    river:{x:p.x+18,z:p.z,yaw:1.7,pitch:0},
+    field:{x:p.x-18,z:p.z-12,yaw:3.0,pitch:0},
+    falls:{x:p.x+70,z:p.z+30,yaw:1.5,pitch:-.15}
   };
-  const o=offsets[p.type]||[12,12];
-  const yaw=p.type==='falls'?1.5:(p.type==='river'?1.7:Math.PI*.95);
-  placePlayer(p.x+o[0],p.z+o[1],yaw,p.type==='falls'?-.15:0);
+  const target=destinations[p.type]||{x:p.x+12,z:p.z+12,yaw:Math.PI*.95,pitch:0};
+  placePlayer(target.x,target.z,target.yaw,target.pitch);
   document.getElementById('tp').textContent='Ponto: '+p.name;
 }
 function setMapVisibility(v){
