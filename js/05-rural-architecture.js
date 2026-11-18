@@ -5,6 +5,7 @@
 
 const BUILDINGS=[];
 const smokeSprites=[];
+const eveningActors=[];
 const smokeCanvas=document.createElement('canvas');
 smokeCanvas.width=smokeCanvas.height=128;
 const smokeCtx=smokeCanvas.getContext('2d');
@@ -501,6 +502,8 @@ scene.add(eveningResidents);
 function makeResident(x,z,coatColor,yaw=0,scale=1,gesture=0){
   const g=new THREE.Group();
   g.position.set(x,groundHeight(x,z),z);g.rotation.y=yaw;g.scale.setScalar(scale);
+  g.userData.baseYaw=yaw;g.userData.phase=rnd()*6.28;g.userData.gesture=gesture;
+  const movingArms=[];
   eveningResidents.add(g);
   const coat=new THREE.MeshStandardMaterial({color:coatColor,roughness:1});
   const linen=new THREE.MeshStandardMaterial({color:0xb8aa8e,roughness:1});
@@ -516,12 +519,14 @@ function makeResident(x,z,coatColor,yaw=0,scale=1,gesture=0){
   for(const side of [-1,1]){
     const arm=new THREE.Mesh(new THREE.CylinderGeometry(.075,.09,.7,6),coat);
     arm.position.set(side*.34,1.25,0);
-    arm.rotation.z=side*(gesture&&side===1?-.75:.12);g.add(arm);
+    arm.rotation.z=side*(gesture&&side===1?-.75:.12);g.add(arm);movingArms.push({mesh:arm,side});
     const leg=new THREE.Mesh(new THREE.CylinderGeometry(.095,.075,.72,6),boots);
     leg.position.set(side*.14,.42,0);g.add(leg);
   }
   const collar=new THREE.Mesh(new THREE.CylinderGeometry(.22,.25,.13,8),linen);
   collar.position.y=1.56;g.add(collar);
+  g.userData.movingArms=movingArms;
+  eveningActors.push(g);
   return g;
 }
 // Homens conversando do lado de fora, perto da taverna.
