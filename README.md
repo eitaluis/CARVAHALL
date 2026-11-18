@@ -1,49 +1,54 @@
-# Carvahall — Palancar Valley
+# Carvahall — Eragon
 
-Reconstrução explorável em Three.js do vilarejo de Carvahall, no vale Palancar, baseada principalmente em *Eragon* e *Eldest*, de Christopher Paolini.
+Reconstrução 3D explorável de Carvahall, no vale Palancar, baseada **exclusivamente em *Eragon*, de Christopher Paolini**.
 
 ## Abrir
 https://eitaluis.github.io/CARVAHALL/
+
+## Cena-base
+A entrada padrão reproduz a vila ao anoitecer: construções robustas de troncos, telhados baixos de palha ou shingles, varandas largas, fumaça nas chaminés, janelas com luz quente, solo claro e capim seco. O Anora, as cataratas de Igualda e a paisagem do vale estruturam o cenário.
+
+A tecla **T** ativa o mercado de inverno, outra situação descrita no mesmo romance.
 
 ## Controles
 - **WASD**: mover
 - **Mouse**: olhar
 - **Shift**: correr
 - **Espaço**: pular
-- **H**: núcleo / Seven Sheaves
-- **J**: oficina de Horst
+- **H**: centro da vila
+- **J**: forja de Horst
 - **G**: rio Anora
 - **F**: cataratas de Igualda
-- **L**: mostrar / ocultar o rebanho histórico de *Eldest*
-- **P**: mostrar / ocultar as defesas temporárias de *Eldest*
-- **O**: alternar para as ruínas após o incêndio
 - **M / N**: próximo / anterior ponto de interesse
-- **T**: acampamento sazonal dos mercadores
+- **T**: alternar o mercado de inverno
 - **Tab**: mostrar / ocultar minimapa
-- **Roda do mouse sobre o mapa**: alternar escala
+- **Roda do mouse sobre o mapa**: alternar visão geral / zoom local
+- **Esc**: liberar o cursor
 
-Clique na tela para capturar o mouse; use **Esc** para liberar o cursor.
+Clique na cena para capturar o mouse.
 
-## Estrutura
-O projeto foi organizado em módulos carregados em sequência pelo index.html:
+## Estrutura do projeto
+O HTML carrega os arquivos JavaScript em sequência, mantendo a divisão por responsabilidade:
 
-1. js/00-scene-core.js — cena, câmera, renderer, aleatoriedade e iluminação
-2. js/01-procedural-materials.js — texturas e materiais procedurais
-3. js/02-valley-terrain.js — relevo do vale
-4. js/03-river-roads-falls.js — estradas, rio Anora e cataratas
-5. js/04-forest-ground-cover.js — pinheiros e vegetação baixa
-6. js/05-rural-architecture.js — casas, estruturas rurais e edifícios nomeados
-7. js/06-rural-life-details.js — celeiro e rebanho histórico opcional (L)
-8. js/06-seasonal-merchants.js — acampamento sazonal
-9. js/07-points-minimap-shortcuts.js — POIs, minimapa e atalhos
-10. js/08-player-animation.js — jogador, colisões, controles e loop de animação
-11. js/09-wartime-defenses.js — variante defensiva de *Eldest*
-12. js/10-burned-village.js — ruínas após o incêndio
-13. css/style.css — interface e estilos
+1. `js/00-scene-core.js` — cena, câmera, aleatoriedade, terreno-base e iluminação
+2. `js/01-procedural-materials.js` — solo, madeira, palha, shingles e pedra
+3. `js/02-valley-terrain.js` — superfície e cores do vale Palancar
+4. `js/03-river-roads-falls.js` — rio Anora, estradas e cataratas de Igualda
+5. `js/04-forest-ground-cover.js` — pinheiros, capim seco, moitas e seixos
+6. `js/05-rural-architecture.js` — casas, açougue de Sloan, forja de Horst, taverna não nomeada e tanoaria de Gedric
+7. `js/06-winter-market.js` — feira, tendas dos trovadores, carroças, fogueiras, cavalos e pessoas
+8. `js/07-points-minimap-shortcuts.js` — pontos de interesse, minimapa e teletransportes
+9. `js/08-player-animation.js` — movimento, colisões, controles e animação
+10. `css/style.css` — interface e estilos
 
-A ordem de carregamento é importante: módulos posteriores usam objetos e funções criados pelos anteriores.
+## Documentação
+- [Documento-base de cânone e interpretação](docs/base-canon-eragon.md)
+- [Checklist de desenvolvimento por fases](docs/checklist-fases-eragon.md)
 
-## Critério de fidelidade
-As relações geográficas, materiais, edifícios e elementos descritos nos romances são tratados como cânone. A posição exata de casas, caminhos secundários, cercas e objetos de uso cotidiano é interpretativa sempre que os livros não fornecem um mapa ou coordenadas. Consulte docs/base-canon-e-interpretacoes.md.
+O documento-base separa descrições diretas do romance das decisões interpretativas (coordenadas, planta da vila e detalhes não descritos). O checklist registra o que já foi reconstruído e o que ainda precisa de validação visual.
 
-A divisão em arquivos melhora a manutenção e permite evoluir cada parte separadamente; por si só, ela não garante aumento de FPS. Otimizações de desempenho devem ser feitas na geometria, nos materiais, nas sombras e no número de chamadas de desenho.
+## Desempenho
+A separação em módulos facilita manutenção e evolução, mas não aumenta FPS por si só. O desempenho depende principalmente da geometria, do número de chamadas de desenho, das sombras, dos materiais e da distância de renderização.
+
+## Escopo
+Carvahall deve permanecer fiel ao primeiro romance. A feira de inverno é a única alternância de situação narrativa incluída nesta versão; não há variantes de épocas posteriores. A fazenda de Garrow é um cenário separado e distante da vila, não parte do núcleo urbano.
