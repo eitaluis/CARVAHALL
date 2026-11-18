@@ -204,7 +204,8 @@ grassMat.onBeforeCompile=shader=>{
     '#include <common>',
     `#include <common>
 uniform float uWindTime;`
-  );  shader.vertexShader=shader.vertexShader.replace(
+  );
+  shader.vertexShader=shader.vertexShader.replace(
     '#include <begin_vertex>',
     `#include <begin_vertex>
     float windPhase=uWindTime*1.15+dot(instanceMatrix[3].xz,vec2(.017,.013));
