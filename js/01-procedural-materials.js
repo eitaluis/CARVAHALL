@@ -40,10 +40,10 @@ const groundTex=canvasTexture((ctx,s)=>{
 },1024,1);
 groundTex.repeat.set(38,38);
 const barkTex=canvasTexture((ctx,s)=>{
-  ctx.fillStyle='#63462f';ctx.fillRect(0,0,s,s);
+  ctx.fillStyle='#795c3e';ctx.fillRect(0,0,s,s);
   for(let i=0;i<260;i++){
     const x=rnd()*s,w=1+rnd()*9;
-    ctx.strokeStyle=rnd()<.5?'rgba(20,14,10,.29)':'rgba(186,139,91,.34)';
+    ctx.strokeStyle=rnd()<.5?'rgba(20,14,10,.29)':'rgba(207,164,116,.38)';
     ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x,0);ctx.bezierCurveTo(x-7,150+rnd()*80,x+8,340+rnd()*60,x-3,s);ctx.stroke();
   }
 },512,1);
