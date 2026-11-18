@@ -286,16 +286,16 @@ function createCabin(name,x,z,rot=0,opts={}){
     const L=1.25+rnd()*.65;
     const wood=new THREE.Mesh(new THREE.CylinderGeometry(.11,.13,L,8),woodMat);
     wood.rotation.z=Math.PI/2;
-    wood.position.set(-w*.34+(i%3)*.48,.76+Math.floor(i/3)*.22,d*.5+.5);
+    wood.position.set(-w*.54+(i%3)*.42,.76+Math.floor(i/3)*.22,-d*.5-2.25);
     g.add(wood);
   }
   if(kind==='tavern'||kind==='butcher'||kind==='forge'){
-    addBarrel(g,-w*.38,.04,d*.5+.95,.92);
-    addBarrel(g,w*.38,.04,d*.5+.95,.78);
+    addBarrel(g,-w*.52,.04,-d*.5-3.45,.92);
+    addBarrel(g,w*.52,.04,-d*.5-3.45,.78);
   }else{
     const bucket=new THREE.Mesh(new THREE.CylinderGeometry(.25,.2,.48,9),darkWoodMat);
-    bucket.position.set(w*.38,.78,d*.5+.58);g.add(bucket);
-    box(g,1.25,.16,.65,paleWoodMat,w*.31,.9,d*.5+.85);
+    bucket.position.set(w*.53,.78,-d*.5-2.45);g.add(bucket);
+    box(g,1.25,.16,.65,paleWoodMat,w*.53,.9,-d*.5-2.8);
   }
   BUILDINGS.push({name,x,z,rot,w,d,doorW});
   return g;
