@@ -104,10 +104,10 @@ const cliffMat=new THREE.MeshStandardMaterial({
   color:0x918b7d,map:stoneTex,roughness:1,metalness:0,side:THREE.DoubleSide
 });
 const cliffDarkMat=new THREE.MeshStandardMaterial({
-  color:0x66645d,map:stoneTex,roughness:1,side:THREE.DoubleSide
+  color:0x66645d,roughness:1,side:THREE.DoubleSide
 });
 const cliffLightMat=new THREE.MeshStandardMaterial({
-  color:0xa39b8a,map:stoneTex,roughness:1,side:THREE.DoubleSide
+  color:0xa39b8a,roughness:1,side:THREE.DoubleSide
 });
 
 function cliffTop(x){
@@ -116,7 +116,7 @@ function cliffTop(x){
 }
 function buildEscarpment(){
   const nx=112,ny=34,x0=-395,x1=95,zFace=-646;
-  const vertices=[],colors=[],indices=[];
+  const vertices=[],colors=[],uvs=[],indices=[];
   const color=new THREE.Color();
   for(let j=0;j<=ny;j++){
     const v=j/ny;
@@ -125,7 +125,7 @@ function buildEscarpment(){
       const y=3+v*top+(fbm(x*.035+v*7,v*9-4,3)-.5)*4.2;
       const z=zFace+(fbm(x*.018+v*5,v*8+2,4)-.5)*17+
         Math.sin(x*.052+v*8)*2.4;
-      vertices.push(x,y,z);
+      vertices.push(x,y,z);uvs.push(u*5,v*3);
       const shade=.36+v*.18+(fbm(x*.045,v*13,3)-.5)*.12;
       color.setHSL(.105,.075,THREE.MathUtils.clamp(shade,.22,.62));
       colors.push(color.r,color.g,color.b);
@@ -138,6 +138,7 @@ function buildEscarpment(){
   const g=new THREE.BufferGeometry();
   g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
   g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+  g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
   g.setIndex(indices);g.computeVertexNormals();
   const face=new THREE.Mesh(g,new THREE.MeshStandardMaterial({
     map:stoneTex,vertexColors:true,roughness:1,side:THREE.DoubleSide
@@ -182,7 +183,8 @@ function addMountainRidge(axis,alongStart,alongEnd,front,depth,amplitude,base,ph
       colors.push(color.r,color.g,color.b);
       if(i<na&&j<nd){
         const a=j*(na+1)+i,b=a+1,c=a+na+1,d=c+1;
-        indices.push(a,c,b,b,c,d);
+        if(axis==='x')indices.push(a,c,b,b,c,d);
+        else indices.push(a,b,c,b,d,c);
       }
     }
   }
@@ -225,7 +227,7 @@ const pool=new THREE.Mesh(
   new THREE.CircleGeometry(36,56),
   new THREE.MeshStandardMaterial({color:0x789499,roughness:.24,transparent:true,opacity:.88})
 );
-pool.rotation.x=-Math.PI/2;pool.position.set(-146,-.48,-564);scene.add(pool);
+pool.rotation.x=-Math.PI/2;pool.position.set(-146,groundHeight(-146,-564)-.62,-564);scene.add(pool);
 
 // Rochas de base da cachoeira: fragmentos angulares apoiados no chão, não empilhados em esfera.
 const talusGeo=new THREE.IcosahedronGeometry(1,1);
