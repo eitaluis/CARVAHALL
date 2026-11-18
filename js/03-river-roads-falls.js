@@ -215,7 +215,7 @@ const waterfallHeight=Math.max(82,waterfallTop-waterfallBottom);
 const fallsGlow=new THREE.PointLight(0xc8d9d9,.72,190);
 fallsGlow.position.set(-146,waterfallBottom+waterfallHeight*.22,-613);scene.add(fallsGlow);
 const fallMat=new THREE.MeshStandardMaterial({
-  color:0xc5d7d6,transparent:true,opacity:.58,roughness:.18,metalness:.025,
+  color:0xc5d7d6,vertexColors:true,transparent:true,opacity:.58,roughness:.18,metalness:.025,
   side:THREE.DoubleSide,emissive:0x263f42,emissiveIntensity:.12,depthWrite:false
 });
 const falls=[];
