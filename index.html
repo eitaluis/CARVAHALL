@@ -8,11 +8,12 @@
 
 </head>
 <body>
-<div id="phase">CARVAHALL · BASE 0.1 · FASE 1 / GEOGRAFIA + VILA</div>
+<div id="phase">CARVAHALL · FASE 2 · VILA E VIDA RURAL</div>
 <div id="hud">
   <b>CARVAHALL — PALANCAR VALLEY</b><br>
   WASD mover · Mouse olhar · Shift correr · Espaço pular<br>
   <b>H</b> centro · <b>J</b> forja de Horst · <b>G</b> rio Anora · <b>F</b> cataratas<br>
+  <b>L</b> rebanho histórico (Eldest)<br>
   <b>M/N</b> próximo/anterior ponto · <b>TAB</b> minimapa · roda do mouse no mapa: zoom
 </div>
 <div id="help">
@@ -24,6 +25,7 @@
   G — margem do Anora<br>
   F — cataratas de Igualda<br><br>
   <b>T</b> acampamento sazonal dos mercadores<br>
+  <b>L</b> variante histórica: rebanho com mais de 100 ovelhas<br>
   <span style="color:#b89b70">O arranjo dos edifícios é interpretativo; as relações geográficas principais seguem os livros.</span>
 </div>
 <div id="coords">—</div>
@@ -31,12 +33,12 @@
 <div id="crosshair"></div>
 <div id="map-legend"><span>N ↑ · S ↓ · L → · O ←</span><span id="map-scale">visão geral</span></div>
 <div id="map-wrap"><canvas id="map" width="220" height="220"></canvas></div>
-<div id="layout-note">Reconstrução inicial · posições internas provisórias quando não fixadas no texto</div>
+<div id="layout-note">Vila cotidiana · rebanho histórico opcional em L · posições interpretativas quando não fixadas no texto</div>
 <div id="start"><div class="card">
   <h1>CARVAHALL</h1>
   <div class="sub">um vilarejo no vale Palancar</div>
   <p>Casas robustas de troncos, telhados baixos de palha ou tábuas, varandas largas, fumaça de lenha, campos abertos e o rio Anora guardando o flanco oeste. Ao norte, a Espinha e as cataratas de Igualda.</p>
-  <div class="keyline">WASD · mouse · Shift · Espaço · H vila · J forja · G Anora · F cataratas · M/N pontos · TAB mapa</div>
+  <div class="keyline">WASD · mouse · Shift · Espaço · H vila · J forja · G Anora · F cataratas · L rebanho · M/N pontos · TAB mapa</div>
   <span class="warning">Clique para entrar. Esta é a primeira base explorável, não a versão final da vila. A posição exata de vários edifícios não é determinada pelos livros.</span>
 </div></div>
 <div id="resume"><div class="card">Clique para retomar a exploração</div></div>
@@ -55,6 +57,7 @@ const scripts = [
   "./js/03-river-roads-falls.js",
   "./js/04-forest-ground-cover.js",
   "./js/05-rural-architecture.js",
+  "./js/06-rural-life-details.js",
   "./js/06-seasonal-merchants.js",
   "./js/07-points-minimap-shortcuts.js",
   "./js/08-player-animation.js"
