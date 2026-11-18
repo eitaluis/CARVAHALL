@@ -78,15 +78,52 @@ const stoneTex=canvasTexture((ctx,s)=>{
     ctx.beginPath();ctx.ellipse(x,y,r,r*.6,rnd(),0,Math.PI*2);ctx.fill();
   }
 },512,1);
-const woodMat=new THREE.MeshStandardMaterial({map:barkTex,color:0x92704c,roughness:1});
+// Mapas normais derivados das próprias texturas: relevo muito sutil e sem ruído exagerado.
+function makeNormalMap(source,strength=2.2){
+  const image=source.image,size=image.width;
+  const srcCanvas=document.createElement('canvas');srcCanvas.width=srcCanvas.height=size;
+  const srcCtx=srcCanvas.getContext('2d');srcCtx.drawImage(image,0,0);
+  const pixels=srcCtx.getImageData(0,0,size,size).data;
+  const outCanvas=document.createElement('canvas');outCanvas.width=outCanvas.height=size;
+  const outCtx=outCanvas.getContext('2d'),out=outCtx.createImageData(size,size);
+  const luminance=(x,y)=>{
+    const xx=(x+size)%size,yy=(y+size)%size,i=(yy*size+xx)*4;
+    return (pixels[i]*.299+pixels[i+1]*.587+pixels[i+2]*.114)/255;
+  };
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+    const dx=(luminance(x+1,y)-luminance(x-1,y))*strength;
+    const dy=(luminance(x,y+1)-luminance(x,y-1))*strength;
+    let nx=-dx,ny=-dy,nz=1;
+    const len=Math.hypot(nx,ny,nz);nx/=len;ny/=len;nz/=len;
+    const i=(y*size+x)*4;
+    out.data[i]=Math.round((nx*.5+.5)*255);
+    out.data[i+1]=Math.round((ny*.5+.5)*255);
+    out.data[i+2]=Math.round((nz*.5+.5)*255);
+    out.data[i+3]=255;
+  }
+  outCtx.putImageData(out,0,0);
+  const tex=new THREE.CanvasTexture(outCanvas);
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+  tex.repeat.copy(source.repeat);
+  tex.colorSpace=THREE.NoColorSpace;
+  tex.anisotropy=8;
+  return tex;
+}
+const groundNormalTex=makeNormalMap(groundTex,2.0);
+const barkNormalTex=makeNormalMap(barkTex,2.6);
+const thatchNormalTex=makeNormalMap(thatchTex,2.4);
+const shingleNormalTex=makeNormalMap(shingleTex,2.2);
+const stoneNormalTex=makeNormalMap(stoneTex,2.1);
+
+const woodMat=new THREE.MeshStandardMaterial({map:barkTex,normalMap:barkNormalTex,normalScale:new THREE.Vector2(.32,.32),color:0x92704c,roughness:1});
 const darkWoodMat=new THREE.MeshStandardMaterial({map:barkTex,color:0x59402b,roughness:1});
 const paleWoodMat=new THREE.MeshStandardMaterial({color:0xa9895c,roughness:1});
-const stoneMat=new THREE.MeshStandardMaterial({map:stoneTex,color:0xaaa08d,roughness:1});
+const stoneMat=new THREE.MeshStandardMaterial({map:stoneTex,normalMap:stoneNormalTex,normalScale:new THREE.Vector2(.28,.28),color:0xaaa08d,roughness:1});
 const ironMat=new THREE.MeshStandardMaterial({color:0x343536,metalness:.55,roughness:.65});
-const thatchMat=new THREE.MeshStandardMaterial({map:thatchTex,color:0xd1b783,roughness:1});
-const shingleMat=new THREE.MeshStandardMaterial({map:shingleTex,color:0xb5a58b,roughness:1});
+const thatchMat=new THREE.MeshStandardMaterial({map:thatchTex,normalMap:thatchNormalTex,normalScale:new THREE.Vector2(.34,.34),color:0xd1b783,roughness:1});
+const shingleMat=new THREE.MeshStandardMaterial({map:shingleTex,normalMap:shingleNormalTex,normalScale:new THREE.Vector2(.26,.26),color:0xb5a58b,roughness:1});
 const glassMat=new THREE.MeshStandardMaterial({color:0x242b29,emissive:0x503d21,emissiveIntensity:.28,roughness:.3});
 const warmGlassMat=new THREE.MeshStandardMaterial({color:0xffc66e,emissive:0xffa33d,emissiveIntensity:1.1,roughness:.3});
-const dirtMat=new THREE.MeshStandardMaterial({color:0x9b8056,map:groundTex,roughness:1});
+const dirtMat=new THREE.MeshStandardMaterial({color:0x9b8056,map:groundTex,normalMap:groundNormalTex,normalScale:new THREE.Vector2(.22,.22),roughness:1});
 
 // ============================================================================
