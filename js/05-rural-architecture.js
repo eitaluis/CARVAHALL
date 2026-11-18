@@ -256,8 +256,8 @@ function createCabin(name,x,z,rot=0,opts={}){
 
   // Empenas preenchidas, estrutura de sustentação e telhado inclinado com beirais largos.
   const eave=base+rows*step+.14,rise=1.78,run=d/2+1.12;
-  addGableEnd(g,w,eave,-d/2-.07,eave,rise);
-  addGableEnd(g,w,eave,d/2+.07,eave,rise);
+  addGableEnd(g,w,-d/2-.07,eave,rise);
+  addGableEnd(g,w,d/2+.07,eave,rise);
   const slope=Math.atan2(rise,run),length=Math.hypot(run,rise);
   const roofMat=roofType==='shingle'?shingleMat:thatchMat;
   box(g,w+2.0,.30,length,roofMat,0,eave+rise/2,-run/2,-slope,0,0);
