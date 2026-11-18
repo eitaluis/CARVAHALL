@@ -578,6 +578,13 @@ function makeResident(x,z,coatColor,yaw=0,scale=1,gesture=0,role='villager'){
     cuff.scale.set(1,.48,1);cuff.position.set(side*.018,-.55,0);shoulder.add(cuff);
     const hand=new THREE.Mesh(new THREE.SphereGeometry(.075,12,9),skin);
     hand.position.set(side*.025,-.64,.025);shoulder.add(hand);
+    for(let finger=0;finger<4;finger++){
+      const digit=new THREE.Mesh(new THREE.CapsuleGeometry(.014,.052,3,6),skin);
+      digit.position.set(side*.025+(finger-1.5)*.027,-.705,.055);
+      digit.rotation.x=-.18;shoulder.add(digit);
+    }
+    const thumb=new THREE.Mesh(new THREE.CapsuleGeometry(.018,.045,3,6),skin);
+    thumb.position.set(side*.09,-.67,.035);thumb.rotation.z=side*.75;shoulder.add(thumb);
     shoulderPivots.push({pivot:shoulder,side,base:0});
     const hip=new THREE.Group();hip.position.set(side*.145,.72,0);g.add(hip);
     const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.095,.48,4,10),role==='woman'||role==='katrina'?linen:boots);
@@ -592,6 +599,26 @@ function makeResident(x,z,coatColor,yaw=0,scale=1,gesture=0,role='villager'){
   belt.position.y=.83;belt.rotation.x=Math.PI/2;g.add(belt);
   const hem=new THREE.Mesh(new THREE.CylinderGeometry(.32,.37,.15,16),role==='woman'||role==='katrina'?linen:coat);
   hem.position.y=.66;g.add(hem);
+  // Costuras, carcela e pequenos botões quebram a silhueta lisa da roupa.
+  const seamMat=new THREE.MeshStandardMaterial({color:role==='woman'||role==='katrina'?0x6f5748:0x3e3429,roughness:1});
+  for(const side of [-1,1]){
+    const seamCurve=new THREE.CatmullRomCurve3([
+      new THREE.Vector3(side*.16,1.38,.245),
+      new THREE.Vector3(side*.19,1.18,.286),
+      new THREE.Vector3(side*.18,.91,.292),
+      new THREE.Vector3(side*.16,.72,.265)
+    ]);
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(seamCurve,10,.009,5,false),seamMat));
+  }
+  for(const y of [1.34,1.16,.98]){
+    const button=new THREE.Mesh(new THREE.SphereGeometry(.025,8,6),ironMat);
+    button.position.set(0,y,.292);g.add(button);
+  }
+  // Bolsa de couro e fivela simples, presas ao cinto.
+  const pouch=softBox(g,.22,.24,.12,darkWoodMat,.245,.84,.205,0,0,-.08);
+  const pouchFlap=softBox(g,.24,.07,.135,woodMat,.245,.96,.215);
+  const buckle=new THREE.Mesh(new THREE.BoxGeometry(.095,.09,.025),ironMat);
+  buckle.position.set(0,.84,.325);g.add(buckle);
   if(role==='horst'||role==='sloan'){
     const beard=new THREE.Mesh(new THREE.SphereGeometry(.14,14,11),hair);
     beard.scale.set(.95,1.35,.8);beard.position.set(0,1.67,.16);g.add(beard);
