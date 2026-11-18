@@ -107,7 +107,7 @@ function animate(){
       actor.position.y=actor.userData.baseY+Math.sin(waterTime*1.5+phase)*.012;
       if(actor.userData.head)actor.userData.head.rotation.y=Math.sin(waterTime*.65+phase)*.16;
       for(const arm of actor.userData.movingArms||[]){
-        arm.mesh.rotation.z+=Math.sin(waterTime*1.8+phase+arm.side)*.0008;
+        arm.mesh.rotation.z=arm.baseZ+Math.sin(waterTime*1.8+phase+arm.side)*.055;
       }
     }
   }
@@ -117,7 +117,7 @@ function animate(){
     const phase=actor.userData.phase;
     actor.rotation.y=actor.userData.baseYaw+Math.sin(waterTime*.32+phase)*.035;
     for(const arm of actor.userData.movingArms||[]){
-      const target=actor.userData.gesture&&arm.side===1?-.75:.12;
+      const target=arm.baseZ+(actor.userData.gesture&&arm.side===1?-.07:0)+Math.sin(waterTime*.9+phase)*.035;
       arm.mesh.rotation.z+=(target+Math.sin(waterTime*.9+phase)*.08-arm.mesh.rotation.z)*Math.min(1,dt*1.4);
     }
   }
