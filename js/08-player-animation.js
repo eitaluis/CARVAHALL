@@ -126,7 +126,7 @@ function animate(){
     for(let i=0;i<mist.length/3;i++){
       mist[i*3]+=Math.sin(waterTime*.32+i*.7)*dt*.12;
       mist[i*3+1]=waterfallBottom+.7+((i*.37+waterTime*.22)%1)*4.2;
-      mist[i*3+2]=-583+Math.sin(waterTime*.24+i*.4)*2;
+      mist[i*3+2]=-629+Math.sin(waterTime*.24+i*.4)*2;
     }
     waterfallMist.geometry.attributes.position.needsUpdate=true;
   }
