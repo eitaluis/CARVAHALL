@@ -17,13 +17,25 @@ smokeCtx.fillStyle=smokeGrad;smokeCtx.fillRect(0,0,128,128);
 const smokeTexture=new THREE.CanvasTexture(smokeCanvas);
 smokeTexture.colorSpace=THREE.SRGBColorSpace;
 
+// Geometrias cúbicas compartilhadas: muitas tábuas e peças repetem dimensões.
+const boxGeometryCache=new Map();
+function sharedBoxGeometry(w,h,d){
+  const key=[w,h,d].map(v=>Number(v).toFixed(3)).join("|");
+  let geometry=boxGeometryCache.get(key);
+  if(!geometry){
+    geometry=new THREE.BoxGeometry(w,h,d);
+    boxGeometryCache.set(key,geometry);
+  }
+  return geometry;
+}
+
 function box(parent,w,h,d,mat,x,y,z,rx=0,ry=0,rz=0){
   return softBox(parent,w,h,d,mat,x,y,z,rx,ry,rz);
 }
 function softBox(parent,w,h,d,mat,x,y,z,rx=0,ry=0,rz=0){
   // Geometria leve: milhares de peças da vila não devem gerar ExtrudeGeometry
   // individual. O detalhe de superfície vem dos materiais e das peças de madeira.
-  const geo=new THREE.BoxGeometry(w,h,d);
+  const geo=sharedBoxGeometry(w,h,d);
   const mesh=new THREE.Mesh(geo,mat);
   mesh.position.set(x,y,z);mesh.rotation.set(rx,ry,rz);
   mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;
@@ -646,6 +658,12 @@ makeResident(140,-64,0x6e5547,-1.2,.94,1,'woman');
 makeResident(9,61,0x574536,.15,1.12,1,'sloan');
 makeResident(25,58,0x4b4034,2.9,1.16,1,'horst');
 makeResident(35,70,0x765b4d,2.1,.98,0,'katrina');
+// Moradores adicionais na rua principal: pequenos encontros em pontos diferentes,
+// com fases de animação independentes e circulação preservada.
+makeResident(88,-8,0x62503c,.3,.98,1);
+makeResident(108,-22,0x46504c,2.0,1.02,0);
+makeResident(143,-7,0x80634d,-1.1,.96,0,'woman');
+makeResident(164,18,0x5b493b,.8,1.0,1);
 
 // Cercas baixas e pequenos campos quadrados nas bordas da povoação.
 function makeFence(points,rails=1){
