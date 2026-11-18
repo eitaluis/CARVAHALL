@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Carvahall — Eragon · Palancar Valley</title>
-<link rel="stylesheet" href="./css/style.css">
+<meta name="carvahall-build" content="20261118-02">
+<link rel="stylesheet" href="./css/style.css?v=20261118-02">
 
 </head>
 <body>
@@ -71,15 +72,15 @@ import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
 window.THREE = THREE;
 
 const scripts = [
-  "./js/00-scene-core.js",
-  "./js/01-procedural-materials.js",
-  "./js/02-valley-terrain.js",
-  "./js/03-river-roads-falls.js",
-  "./js/04-forest-ground-cover.js",
-  "./js/05-rural-architecture.js",
-  "./js/06-winter-market.js",
-  "./js/07-points-minimap-shortcuts.js",
-  "./js/08-player-animation.js"
+  "./js/00-scene-core.js?v=20261118-02",
+  "./js/01-procedural-materials.js?v=20261118-02",
+  "./js/02-valley-terrain.js?v=20261118-02",
+  "./js/03-river-roads-falls.js?v=20261118-02",
+  "./js/04-forest-ground-cover.js?v=20261118-02",
+  "./js/05-rural-architecture.js?v=20261118-02",
+  "./js/06-winter-market.js?v=20261118-02",
+  "./js/07-points-minimap-shortcuts.js?v=20261118-02",
+  "./js/08-player-animation.js?v=20261118-02"
 ];
 
 const phase = document.getElementById("phase");
@@ -98,7 +99,7 @@ try {
     });
   }
   window.CARVAHALL_READY = true;
-  phase.textContent = "CARVAHALL · PALANCAR VALLEY · MÓDULOS CARREGADOS";
+  phase.textContent = "CARVAHALL · PALANCAR VALLEY · BUILD 20261118-02";
 } catch (error) {
   console.error(error);
   phase.textContent = "FALHA AO CARREGAR · " + error.message;
