@@ -12,7 +12,7 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.16;
+renderer.toneMappingExposure = 1.24;
 document.body.appendChild(renderer.domElement);
 renderer.domElement.classList.add('webgl');
 
@@ -78,14 +78,15 @@ function groundHeight(x,z){
 // ============================================================================
 // 3. ILUMINAÇÃO — FIM DE TARDE FRIO, COM LUZ QUENTE NAS JANELAS
 // ============================================================================
-const hemi = new THREE.HemisphereLight(0xe4e7e2, 0x655744, 1.28); scene.add(hemi);
-const sun = new THREE.DirectionalLight(0xffdfba, 1.82);
+const hemi = new THREE.HemisphereLight(0xe8e9e3, 0x78644c, 1.58); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xffe2c0, 2.08);
 sun.position.set(-310,285,330); sun.castShadow=true;
 sun.shadow.mapSize.set(1536,1536);
 sun.shadow.camera.near=1; sun.shadow.camera.far=1550;
 sun.shadow.camera.left=-620; sun.shadow.camera.right=620;
 sun.shadow.camera.top=620; sun.shadow.camera.bottom=-620;
 sun.shadow.bias=-0.00018; scene.add(sun); scene.add(sun.target);
-const fill = new THREE.DirectionalLight(0xa9bdc5,.56); fill.position.set(350,180,-430); scene.add(fill);
+const fill = new THREE.DirectionalLight(0xb7c7cb,.72); fill.position.set(350,180,-430); scene.add(fill);
+const warmBounce = new THREE.DirectionalLight(0xffd5a5,.32);warmBounce.position.set(190,90,520);scene.add(warmBounce);
 
 // ============================================================================
