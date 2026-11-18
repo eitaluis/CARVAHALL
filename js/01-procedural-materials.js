@@ -8,8 +8,8 @@ function canvasTexture(draw, size=512, repeat=1){
   return tex;
 }
 const groundTex=canvasTexture((ctx,s)=>{
-  ctx.fillStyle='#777052'; ctx.fillRect(0,0,s,s);
-  const colors=['rgba(45,58,35,.24)','rgba(139,119,77,.34)','rgba(177,151,105,.22)','rgba(48,51,33,.21)','rgba(106,91,64,.30)'];
+  ctx.fillStyle='#a18d68'; ctx.fillRect(0,0,s,s);
+  const colors=['rgba(89,75,50,.23)','rgba(151,124,82,.31)','rgba(202,174,126,.27)','rgba(104,91,66,.19)','rgba(174,148,106,.28)'];
   for(let i=0;i<1150;i++){
     const x=rnd()*s,y=rnd()*s,rx=5+rnd()*48,ry=3+rnd()*27;
     ctx.fillStyle=colors[Math.floor(rnd()*colors.length)];
@@ -17,12 +17,12 @@ const groundTex=canvasTexture((ctx,s)=>{
   }
   for(let i=0;i<36000;i++){
     const x=rnd()*s,y=rnd()*s;
-    ctx.fillStyle=rnd()<.52?'rgba(35,37,26,.34)':'rgba(196,166,112,.26)';
+    ctx.fillStyle=rnd()<.52?'rgba(75,66,47,.25)':'rgba(220,195,151,.30)';
     ctx.fillRect(x,y,.5+rnd()*2,.5+rnd()*1.2);
   }
   for(let i=0;i<5000;i++){
     const x=rnd()*s,y=rnd()*s,a=rnd()*Math.PI*2,l=2+rnd()*15;
-    ctx.strokeStyle=rnd()<.5?'rgba(41,47,28,.5)':'rgba(162,139,90,.48)';
+    ctx.strokeStyle=rnd()<.5?'rgba(83,72,49,.43)':'rgba(194,169,124,.50)';
     ctx.lineWidth=.4+rnd()*.8;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(a)*l,y+Math.sin(a)*l);ctx.stroke();
   }
 },512,1);
@@ -36,7 +36,7 @@ const barkTex=canvasTexture((ctx,s)=>{
   }
 },512,1);
 const thatchTex=canvasTexture((ctx,s)=>{
-  ctx.fillStyle='#86734b';ctx.fillRect(0,0,s,s);
+  ctx.fillStyle='#927a4d';ctx.fillRect(0,0,s,s);
   for(let i=0;i<12000;i++){
     const x=rnd()*s,y=rnd()*s;
     ctx.strokeStyle=rnd()<.58?'rgba(218,190,126,.35)':'rgba(52,43,28,.32)';
