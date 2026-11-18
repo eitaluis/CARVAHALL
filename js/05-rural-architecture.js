@@ -207,7 +207,11 @@ function createTannery(x,z){
     const y=.62+i*.36,mat=i%3===0?darkWoodMat:woodMat;
     logBeam(g,d+.45,.18,-w/2,y,0,'z',mat);
     logBeam(g,d+.45,.18,w/2,y,0,'z',mat);
-    logBeam(g,w+.45,.18,0,y,-d/2,'x',mat);
+    if(y-.62<1.95){
+      const side=(w-1.35)/2;
+      logBeam(g,side+.15,.18,-w/2+side/2,y,-d/2,'x',mat);
+      logBeam(g,side+.15,.18,w/2-side/2,y,-d/2,'x',mat);
+    }else logBeam(g,w+.45,.18,0,y,-d/2,'x',mat);
     logBeam(g,w+.45,.18,0,y,d/2,'x',mat);
   }
   const slope=Math.atan2(1.1,d/2+.25),roofLen=Math.hypot(1.1,d/2+.25);
