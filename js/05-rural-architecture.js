@@ -152,7 +152,7 @@ function addPorch(parent,w,d,roofMat=thatchMat){
   box(parent,w*.97,.17,.24,woodMat,0,3.58,front+.16);
   // Cobertura inclinada da varanda: deixa a entrada visualmente abrigada,
   // com caibros aparentes e beiral à frente dos pilares.
-  const canopyDepth=depth+.5,canopyRise=.52;
+  const canopyDepth=depth+.5,canopyRise=.92;
   const canopyLength=Math.hypot(canopyDepth,canopyRise);
   const canopySlope=Math.atan2(canopyRise,canopyDepth);
   const canopyCenterZ=-d/2-canopyDepth/2+.12;
@@ -368,83 +368,104 @@ function addInterior(parent,kind,w,d,eave=4.25,rise=2.8){
     }
   }
 }
-function createCabin(name,x,z,rot=0,opts={}){
-  const w=opts.w||13.4,d=opts.d||11.2,base=.58,kind=opts.kind||'home';
-  const roofType=opts.roof||'thatch',doorW=opts.doorW||1.65;
-  const g=new THREE.Group();
-  const facing=rot+Math.PI; // Fachadas voltadas para a aproximação pela rua principal.
-  g.position.set(x,groundHeight(x,z),z);g.rotation.y=facing;scene.add(g);
-
-  // Fundação irregular de pedra e soleira elevada de madeira.
-  for(const xx of [-w/2+.7,w/2-.7])for(const zz of [-d/2+.7,d/2-.7]){
-    const stone=new THREE.Mesh(new THREE.IcosahedronGeometry(.62,1),stoneMat);
-    stone.position.set(xx,.3,zz);stone.scale.set(1.15,.58,1.05);g.add(stone);
-  }
-  box(g,w,.24,d,darkWoodMat,0,.48,0);
-
-  // Paredes de troncos grossos, encaixados nos cantos e com sombras entre cursos.
-  const radius=.235,step=.415,rows=9;
-  for(let i=0;i<rows;i++){
-    const y=base+i*step,mat=i%4===0?darkWoodMat:woodMat;
-    logBeam(g,d+1.15,radius,-w/2,y,0,'z',mat);
-    logBeam(g,d+1.15,radius,w/2,y,0,'z',mat);
-    if(y-base<2.12){
-      const segment=(w-doorW)/2;
-      logBeam(g,segment+.25,radius,-w/2+segment/2,y,-d/2,'x',mat);
-      logBeam(g,segment+.25,radius,w/2-segment/2,y,-d/2,'x',mat);
-    }else logBeam(g,w+1.15,radius,0,y,-d/2,'x',mat);
-    logBeam(g,w+1.15,radius,0,y,d/2,'x',mat);
-  }
-
-  // Empenas preenchidas, estrutura de sustentação e telhado inclinado com beirais largos.
-  const eave=base+rows*step+.14,rise=1.78,run=d/2+1.12;
-  addGableEnd(g,w,-d/2-.07,eave,rise);
-  addGableEnd(g,w,d/2+.07,eave,rise);
-  const slope=Math.atan2(rise,run),length=Math.hypot(run,rise);
-  const roofMat=roofType==='shingle'?shingleMat:thatchMat;
-  box(g,w+2.0,.30,length,roofMat,0,eave+rise/2,-run/2,-slope,0,0);
-  box(g,w+2.0,.30,length,roofMat,0,eave+rise/2,run/2,slope,0,0);
-  logBeam(g,w+1.65,.2,0,eave+rise+.02,0,'x',darkWoodMat);
-  for(const xx of [-w/2-.5,w/2+.5]){
-    // Caibros acompanham a inclinação do telhado; não são postes verticais.
-    box(g,.17,.17,length,darkWoodMat,xx,eave+rise/2,-run/2,-slope);
-    box(g,.17,.17,length,darkWoodMat,xx,eave+rise/2,run/2,slope);
-  }
-  // Mãos-francesas curtas sob os beirais laterais.
-  for(const side of [-1,1]){
-    for(const zz of [-d/2-.72,d/2+.72]){
-      const bracket=box(g,.16,.16,.9,darkWoodMat,side*(w/2+.12),eave-.18,zz,.52,0,0);
+function subtractWallOpenings(min,max,holes){
+  let spans=[[min,max]];
+  for(const [h0,h1] of holes){
+    const next=[];
+    for(const [a,b] of spans){
+      if(h1<=a||h0>=b){next.push([a,b]);continue;}
+      if(h0>a)next.push([a,h0]);
+      if(h1<b)next.push([h1,b]);
     }
+    spans=next;
   }
-
+  return spans.filter(([a,b])=>b-a>.48);
+}
+function addStoneFooting(parent,w,d){
+  const geo=new THREE.IcosahedronGeometry(1,1);
+  const stones=new THREE.InstancedMesh(geo,stoneMat,40);
+  const dummy=new THREE.Object3D();let n=0;
+  const place=(x,z,angle)=>{
+    dummy.position.set(x,.31+(rnd()-.5)*.035,z);
+    dummy.rotation.set((rnd()-.5)*.10,angle+(rnd()-.5)*.18,(rnd()-.5)*.08);
+    dummy.scale.set(.46+rnd()*.15,.28+rnd()*.08,.38+rnd()*.12);
+    dummy.updateMatrix();stones.setMatrixAt(n++,dummy.matrix);
+  };
+  for(let i=0;i<14;i++){
+    const x=-w/2+.35+i*(w-.7)/13;
+    place(x,-d/2+.1,0);place(x,d/2-.1,0);
+  }
+  for(let i=0;i<6;i++){
+    const z=-d/2+.5+i*(d-1)/5;
+    place(-w/2+.1,z,Math.PI/2);place(w/2-.1,z,Math.PI/2);
+  }
+  stones.count=n;stones.instanceMatrix.needsUpdate=true;stones.castShadow=true;stones.receiveShadow=true;parent.add(stones);
+}
+function addDoorLantern(parent,x,y,z){
+  const bracket=new THREE.Mesh(new THREE.CylinderGeometry(.035,.045,.42,8),ironMat);
+  bracket.rotation.x=Math.PI/2;bracket.position.set(x,y,z);parent.add(bracket);
+  const cage=new THREE.Mesh(new THREE.SphereGeometry(.16,10,8),new THREE.MeshStandardMaterial({color:0x3c3327,metalness:.45,roughness:.65}));
+  cage.scale.set(.8,1.25,.8);cage.position.set(x,y-.25,z+.1);parent.add(cage);
+  const glow=new THREE.Mesh(new THREE.SphereGeometry(.10,10,8),warmGlassMat);
+  glow.position.copy(cage.position);parent.add(glow);
+}
+function createCabin(name,x,z,rot=0,opts={}){
+  const w=opts.w||13.4,d=opts.d||11.2,base=.62,kind=opts.kind||'home';
+  const roofType=opts.roof||'thatch',doorW=opts.doorW||1.65;
+  const g=new THREE.Group(),facing=rot+Math.PI;
+  g.position.set(x,groundHeight(x,z),z);g.rotation.y=facing;scene.add(g);
+  addStoneFooting(g,w,d);
+  box(g,w,.20,d,darkWoodMat,0,.50,0);
+  const radius=.205,step=.385,rows=10;
+  for(let i=0;i<rows;i++){
+    const y=base+i*step+(i%2)*.012;
+    const courseRadius=radius+(i%3)*.008,mat=i%5===0?darkWoodMat:woodMat;
+    const sideHoles=(y>1.72&&y<3.02)?[[-.86,.86]]:[];
+    for(const side of [-1,1]){
+      const spans=subtractWallOpenings(-d/2-.55,d/2+.55,sideHoles);
+      for(const [lo,hi] of spans)logBeam(g,hi-lo,courseRadius,side*w/2,y,(lo+hi)/2,'z',mat);
+    }
+    const frontHoles=[];
+    if(y>1.72&&y<3.02)frontHoles.push([-w*.31-.83,-w*.31+.83],[w*.31-.83,w*.31+.83]);
+    if(y<3.00)frontHoles.push([-doorW/2-.18,doorW/2+.18]);
+    const frontSpans=subtractWallOpenings(-w/2-.55,w/2+.55,frontHoles);
+    for(const [lo,hi] of frontSpans)logBeam(g,hi-lo,courseRadius,(lo+hi)/2,y,-d/2,'x',mat);
+    logBeam(g,w+1.1,courseRadius,0,y,d/2,'x',i%4===0?darkWoodMat:woodMat);
+  }
+  const eave=base+rows*step+.10,rise=3.0,run=d/2+1.25;
+  addGableEnd(g,w,-d/2-.06,eave,rise);addGableEnd(g,w,d/2+.06,eave,rise);
+  const roofMat=roofType==='shingle'?shingleMat:thatchMat;
+  addRoofHalf(g,w,run,eave,rise,-1,roofMat);addRoofHalf(g,w,run,eave,rise,1,roofMat);
+  logBeam(g,w+1.5,.18,0,eave+rise+.02,0,'x',darkWoodMat);
+  for(const side of [-1,1])
+    beamBetween(g,new THREE.Vector3(-w/2-.45,eave+.04,side*run),new THREE.Vector3(w/2+.45,eave+.04,side*run),.12,darkWoodMat);
+  for(const xx of [-w/2-.48,w/2+.48]){
+    beamBetween(g,new THREE.Vector3(xx,eave+.02,-run),new THREE.Vector3(xx,eave+rise,0),.095,woodMat);
+    beamBetween(g,new THREE.Vector3(xx,eave+.02,run),new THREE.Vector3(xx,eave+rise,0),.095,woodMat);
+  }
   if(opts.chimney!==false)addStoneChimney(g,w*.29,d*.18,eave+rise+1.1,kind==='forge'||kind==='butcher');
   addDoor(g,w,d,doorW);addPorch(g,w,d,roofMat);
-  addWindow(g,-w*.31,2.35,-d/2-.18,0,opts.lit!==false);
-  addWindow(g,w*.31,2.35,-d/2-.18,0,opts.lit!==false);
-  addWindow(g,-w/2-.18,2.35,0,Math.PI/2,false);
-  addWindow(g,w/2+.18,2.35,0,-Math.PI/2,opts.lit===true);
-  addInterior(g,kind,w,d);
-
-  // Elementos de uso diário junto à entrada.
+  addWindow(g,-w*.31,2.36,-d/2-.18,0,opts.lit!==false);
+  addWindow(g,w*.31,2.36,-d/2-.18,0,opts.lit!==false);
+  addWindow(g,-w/2-.18,2.36,0,Math.PI/2,false);
+  addWindow(g,w/2+.18,2.36,0,-Math.PI/2,opts.lit===true);
+  addDoorLantern(g,-doorW*.78,2.85,-d/2-.42);
+  addInterior(g,kind,w,d,eave,rise);
   for(let i=0;i<7;i++){
-    const L=1.25+rnd()*.65;
-    const wood=new THREE.Mesh(new THREE.CylinderGeometry(.11,.13,L,8),woodMat);
+    const L=1.2+rnd()*.65;
+    const wood=new THREE.Mesh(new THREE.CylinderGeometry(.105,.13,L,12,3),woodMat);
     wood.rotation.z=Math.PI/2;
-    wood.position.set(-w*.54+(i%3)*.42,.76+Math.floor(i/3)*.22,-d*.5-2.25);
-    g.add(wood);
+    wood.position.set(-w*.54+(i%3)*.42,.73+Math.floor(i/3)*.20,-d*.5-2.25);g.add(wood);
   }
   if(kind==='tavern'||kind==='butcher'||kind==='forge'){
     addBarrel(g,-w*.52,.04,-d*.5-3.45,.92);
     addBarrel(g,w*.52,.04,-d*.5-3.45,.78);
   }else{
-    const bucket=new THREE.Mesh(new THREE.CylinderGeometry(.25,.2,.48,9),darkWoodMat);
-    bucket.position.set(w*.53,.78,-d*.5-2.45);g.add(bucket);
-    box(g,1.25,.16,.65,paleWoodMat,w*.53,.9,-d*.5-2.8);
+    const bucket=new THREE.Mesh(new THREE.CylinderGeometry(.23,.2,.46,14),darkWoodMat);
+    bucket.position.set(w*.53,.75,-d*.5-2.45);g.add(bucket);
   }
-  BUILDINGS.push({name,x,z,rot:facing,w,d,doorW});
-  return g;
+  BUILDINGS.push({name,x,z,rot:facing,w,d,doorW});return g;
 }
-
 // A tanoaria é situada nos arredores, como no episódio em que Eragon vai
 // às tinas de Gedric e ao barracão de peles curtidas.
 function createTannery(x,z){
