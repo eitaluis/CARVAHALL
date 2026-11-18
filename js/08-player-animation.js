@@ -1,6 +1,6 @@
 // 15. JOGADOR, MOVIMENTO, COLISÕES E POINTER LOCK
 // ============================================================================
-const jogador={pos:new THREE.Vector3(115,2,0),vel:new THREE.Vector3(),eye:1.68,grounded:true,radius:.36};
+const jogador={pos:new THREE.Vector3(112,2,42),vel:new THREE.Vector3(),eye:1.68,grounded:true,radius:.36};
 camera.position.copy(jogador.pos);camera.position.y=groundHeight(jogador.pos.x,jogador.pos.z)+jogador.eye;camera.rotation.set(0,1.02,0);
 const keys={};let locked=false,started=false;
 const startEl=document.getElementById('start'),resumeEl=document.getElementById('resume');
@@ -16,16 +16,15 @@ addEventListener('keydown',e=>{
   if(e.code==='Tab')setMapVisibility(!mapVisible);
   if(e.code==='KeyM')teleport(tpIndex+1);
   if(e.code==='KeyN')teleport(tpIndex-1);
-  if(e.code==='KeyH'){placePlayer(115,0,1.02,0);document.getElementById('tp').textContent='Núcleo de Carvahall';}
-  if(e.code==='KeyJ')teleport(0);
-  if(e.code==='KeyG')teleport(5);
+  if(e.code==='KeyH'){placePlayer(112,42,1.02,0);document.getElementById('tp').textContent='Núcleo de Carvahall';}
+  if(e.code==='KeyJ')teleport(2);
+  if(e.code==='KeyG')teleport(6);
   if(e.code==='KeyF')teleport(8);
-  if(e.code==='KeyT'&&!window.carvahallBurnedMode){traderCamp.visible=!traderCamp.visible;document.getElementById('tp').textContent=traderCamp.visible?'Evento: mercadores na periferia':'Acampamento sazonal oculto';}
+  if(e.code==='KeyT'){traderCamp.visible=!traderCamp.visible;document.getElementById('tp').textContent=traderCamp.visible?'Mercado de inverno — Eragon':'Carvahall ao anoitecer';}
 });
 addEventListener('keyup',e=>{keys[e.code]=false;});
 function localOf(b,x,z){const dx=x-b.x,dz=z-b.z,c=Math.cos(b.rot),s=Math.sin(b.rot);return {x:c*dx-s*dz,z:s*dx+c*dz};}
 function collidesBuilding(x,z){
-  if(window.carvahallBurnedMode)return false;
   for(const b of BUILDINGS){const p=localOf(b,x,z),r=jogador.radius+.22;
     const insideX=Math.abs(p.x)<b.w/2+r,insideZ=Math.abs(p.z)<b.d/2+r;
     if(!insideX||!insideZ)continue;
@@ -75,11 +74,14 @@ function animate(){
   for(const s of smokeSprites){s.position.y=s.userData.baseY+Math.sin(waterTime*.7+s.userData.phase)*.16+((waterTime*.18+s.userData.phase)%1)*.7;s.material.opacity=.08+Math.sin(waterTime+s.userData.phase)*.025;}
   for(let i=0;i<falls.length;i++)falls[i].position.y=43+Math.sin(waterTime*1.8+i)*.4;
   riverMesh.material.opacity=.86+Math.sin(waterTime*1.7)*.025;
-  campFire.scale.setScalar(.92+Math.sin(waterTime*9)*.12);
-  if(traderCamp.visible)campLight.intensity=1.05+Math.sin(waterTime*7)*.2;
+  for(let i=0;i<marketFires.length;i++){
+    const f=marketFires[i];
+    f.fire.scale.setScalar(.92+Math.sin(waterTime*8+i*1.7)*.12);
+    f.light.intensity=traderCamp.visible?1.55+Math.sin(waterTime*6+i)*.22:0;
+  }
   drawMap();renderer.render(scene,camera);
 }
 animate();
 
-// Teleporte inicial aponta para o centro sem alterar a posição de entrada.
-document.getElementById('tp').textContent='Entrada pelo caminho sul · Palancar Valley';
+// Posição inicial na rua de entrada da vila.
+document.getElementById('tp').textContent='Entrada de Carvahall · Palancar Valley';
