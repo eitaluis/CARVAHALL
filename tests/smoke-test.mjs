@@ -90,7 +90,9 @@ try {
   await sleep(1200);
   await page.screenshot({
     path: "artifacts/carvahall-evening.png",
-    fullPage: true
+    fullPage: false,
+    animations: "disabled",
+    timeout: 120000
   });
 
   // Ativa a feira e avança os pontos até a área do acampamento.
@@ -102,7 +104,9 @@ try {
   await sleep(1600);
   await page.screenshot({
     path: "artifacts/carvahall-winter-market.png",
-    fullPage: true
+    fullPage: false,
+    animations: "disabled",
+    timeout: 120000
   });
 
   const finalState = await page.evaluate(() => ({
