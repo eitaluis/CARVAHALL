@@ -125,3 +125,17 @@ A direção visual é uma interpretação artística, separada do cânone textua
 - Local exato da tanoaria e do campo dos mercadores.
 
 Não apresentar uma decisão artística como se fosse uma coordenada ou descrição fornecida pelo romance.
+
+## Atualização de direção visual — naturalismo (novembro de 2026)
+A referência de qualidade deve ser naturalista, não low-poly e não blocada. As formas grandes precisam ter silhuetas contínuas e assimétricas; detalhes menores devem nascer da estrutura e do uso, não parecer cubos colocados por cima.
+
+- Montanhas: cristas quebradas, encostas assimétricas, vales de erosão e variação de rocha; sem cones repetidos, paredes planas ou picos com espaçamento regular.
+- Cataratas: uma queda contínua, conectada visualmente à borda da escarpa e ao curso d'água inferior; espuma e névoa restritas ao encontro da água, sem faixas suspensas no céu.
+- Árvores: troncos com variação e raízes, galhos com hierarquia natural, copas assimétricas em tufos de folhagem, variação de espécie e escala; movimento de vento lento e não sincronizado.
+- Construções: volumes legíveis e estrutura de madeira coerente; bordas suavizadas pelo desgaste, troncos não perfeitamente cilíndricos, telhados e paredes com materiais distintos.
+- Interiores: escala humana, móveis com cantos e superfícies trabalhados, objetos apoiados em superfícies reais, circulação desimpedida, iluminação local e sinais de uso.
+- Personagens: proporções humanas, articulações nos ombros e quadris, roupas com volume, mãos e rostos legíveis; animações de respiração, mudança de peso, olhares e gestos pequenos, cada pessoa em fase diferente.
+- Materiais: preferir variação de rugosidade, mapas de relevo e cor em escala adequada; evitar padrões repetidos, superfícies lisas demais e aparência de brinquedo.
+- Performance: manter o cenário explorável em tempo real, priorizando instancing, geometrias compartilhadas e animação de vértices onde fizer sentido.
+
+As referências de jogos e projetos open-source servem como referência técnica e de qualidade visual, não como autorização para importar elementos que contradigam o primeiro romance.
