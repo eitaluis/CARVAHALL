@@ -79,16 +79,23 @@ function animateAmbientPerson(actor,time,dt,isMarket){
   rig.headPivot.rotation.x=Math.sin(time*.73+phase)*.045;
   rig.headPivot.rotation.z=Math.sin(time*.62+phase)*.025;
   const talk=(role==='vendor'||role==='sloan'||role==='horst'||actor.userData.gesture)?1:0;
+  const strolling=role==='walker'||role==='messenger';
   for(const arm of rig.armPivots){
     const gesture=talk&&arm.side===1?Math.sin(time*1.65+phase)*.22:0;
     const idle=Math.sin(slow*1.55+arm.side)*.075;
-    arm.pivot.rotation.z=arm.base+gesture+idle;
+    const walkingSwing=strolling?Math.sin(time*2.05+phase+arm.side*Math.PI)*.095:0;
+    arm.pivot.rotation.z=arm.base+gesture+idle+walkingSwing;
     arm.pivot.rotation.x=Math.sin(time*.8+phase+arm.side)*.035;
   }
   const weight=Math.sin(time*.85+phase)*.025;
   for(const leg of rig.legPivots){
-    leg.pivot.rotation.x=Math.sin(time*.72+phase+leg.side*.8)*.065;
+    leg.pivot.rotation.x=Math.sin(time*.72+phase+leg.side*.8)*.065+(strolling?Math.sin(time*2.05+phase+leg.side*Math.PI)*.19:0);
     leg.pivot.position.x=leg.side*(.14+weight);
+  }
+  if(!isMarket&&strolling){
+    actor.position.x=actor.userData.baseX+Math.sin(time*.28+phase)*.62;
+    actor.position.z=actor.userData.baseZ+Math.cos(time*.28+phase)*.30;
+    actor.position.y=groundHeight(actor.position.x,actor.position.z)+Math.sin(time*1.7+phase)*.012;
   }
   if(isMarket&&role==='buyer'&&phase<2.1){
     actor.position.x=actor.userData.baseX+Math.sin(time*.34+phase)*.28;
