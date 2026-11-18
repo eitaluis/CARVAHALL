@@ -82,6 +82,8 @@ function setBurnedVillage(active){
   if(Array.isArray(smokeSprites))smokeSprites.forEach(object=>{object.visible=!active;});
   window.carvahallBurnedMode=active;
   if(active){
+    historicFlockVisible=false;
+    wartimeDefensesVisible=false;
     historicFlock.visible=false;
     wartimeDefenses.visible=false;
     traderCamp.visible=false;
