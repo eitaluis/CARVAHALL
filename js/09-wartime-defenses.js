@@ -105,6 +105,23 @@ const wartimeDefenses = (() => {
     }
   }
 
+  // As duas extremidades da trincheira avançam até a margem do Anora.
+  for(const endpoint of [pointAt(start),pointAt(end)]){
+    let nearest=null,best=Infinity;
+    for(let j=0;j<=220;j++){
+      const p=riverCurve.getPointAt(j/220);
+      const d=Math.hypot(p.x-endpoint.x,p.z-endpoint.z);
+      if(d<best){best=d;nearest=p;}
+    }
+    if(nearest&&best>1){
+      const dx=nearest.x-endpoint.x,dz=nearest.z-endpoint.z,len=Math.hypot(dx,dz);
+      const mx=(nearest.x+endpoint.x)/2,mz=(nearest.z+endpoint.z)/2;
+      const connector=new THREE.Mesh(new THREE.BoxGeometry(4.6,.14,len),trenchMat);
+      connector.position.set(mx,groundHeight(mx,mz)+.08,mz);
+      connector.rotation.y=Math.atan2(dx,dz);connector.receiveShadow=true;group.add(connector);
+    }
+  }
+
   for(const mesh of [trench,berm,posts,points,rails,brambles,thornTips]){
     mesh.instanceMatrix.needsUpdate=true;
     mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);
