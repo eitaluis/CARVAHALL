@@ -145,12 +145,14 @@ function marketTent(parent,x,z,w,d,topColor,lowerColor,striped=false){
   }
 
   const ropeMat=new THREE.MeshStandardMaterial({color:0x9b8968,roughness:1});
+  // Um mastro central sustenta o vértice da tenda; nenhum poste atravessa a lona nas quinas.
+  const mast=new THREE.Mesh(new THREE.CylinderGeometry(.09,.14,3.82,9),darkWoodMat);
+  mast.position.set(0,1.91,0);mast.castShadow=true;g.add(mast);
   for(const [px,pz] of [[-w/2,-d/2],[w/2,-d/2],[-w/2,d/2],[w/2,d/2]]){
-    const pole=new THREE.Mesh(new THREE.CylinderGeometry(.065,.085,2.15,8),darkWoodMat);
-    pole.position.set(px,1.02,pz);pole.castShadow=true;g.add(pole);
     const stake=new THREE.Mesh(new THREE.CylinderGeometry(.045,.075,.48,6),darkWoodMat);
-    const sx=px*1.28,sz=pz*1.38;stake.position.set(sx,.22,sz);stake.rotation.z=(px<0?-.22:.22);g.add(stake);
-    const start=new THREE.Vector3(px,2.02,pz),end=new THREE.Vector3(sx,.36,sz);
+    const sx=px*1.28,sz=pz*1.38;
+    stake.position.set(sx,.22,sz);stake.rotation.z=(px<0?-.22:.22);g.add(stake);
+    const start=new THREE.Vector3(px,.12,pz),end=new THREE.Vector3(sx,.24,sz);
     const direction=new THREE.Vector3().subVectors(end,start),length=direction.length();
     const rope=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,length,5),ropeMat);
     rope.position.copy(start).add(end).multiplyScalar(.5);
