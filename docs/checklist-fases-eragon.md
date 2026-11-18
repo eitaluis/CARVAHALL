@@ -82,7 +82,14 @@
 - [x] Preencher as empenas e acrescentar caibros, venezianas, portas entreabertas, varandas estruturadas e objetos de uso.
 - [x] Substituir as partículas de fumaça esféricas por sprites translúcidos.
 - [x] Aproximar o ponto inicial da rua principal, orientar fachadas para a aproximação e ajustar o campo de visão da câmera.
-- [ ] Inspecionar a nova composição no navegador e ajustar densidade, escala e iluminação a partir da imagem real.
+- [x] Abrir capturas headless da cena e detectar a fachada excessivamente próxima, a madeira escura e os caibros verticais indevidos.
+- [x] Afastar o ponto de entrada para mostrar a composição da vila, não apenas uma fachada.
+- [x] Corrigir a orientação dos caibros e retirar as falsas hastes acima dos telhados.
+- [x] Clarear a resposta da madeira e a iluminação difusa de fim de tarde.
+- [x] Aumentar a presença de capim seco e aproximar os bosques de pinheiros do vale aberto.
+- [x] Tornar as cristas montanhosas mais quebradas e aplicar relevo/textura de rocha.
+- [x] Mover o atalho do mercado para junto do acampamento, voltado para as tendas.
+- [ ] Inspecionar novamente as capturas da versão atual e ajustar a composição final.
 
 ## Fase 7 — validação de fidelidade
 - [ ] Testar a página publicada no navegador.
@@ -99,6 +106,7 @@
 - [x] Completar a taverna genérica com mesas, bancos, canecas e barris, mantendo o nome indefinido.
 - [x] Construir o contexto de encosta e pátio da tanoaria de Gedric, com tinas externas e peles no barracão.
 - [x] Dar movimento sutil às figuras da feira e acrescentar neve e fumaça ambiente.
+- [x] Animar gestos discretos dos moradores de Carvahall ao anoitecer.
 - [x] Corrigir a animação das cataratas para preservar a altura original das quedas.
 - [x] Exibir a mensagem e o arquivo de origem quando ocorrer erro de execução; expor o estado de carregamento dos módulos.
 - [ ] Conferir visualmente a qualidade de cada espaço no navegador.
