@@ -77,11 +77,12 @@ const wartimeDefenses = (() => {
     o.position.set(x,y+3.42,z);o.rotation.set(0,0,0);
     o.scale.set(1,1,1);o.updateMatrix();points.setMatrixAt(i,o.matrix);
 
-    const angle=Math.atan2(p2x(p.x),p2z(p.z));
+    const before=pointAt(Math.max(start,t-.006)),after=pointAt(Math.min(end,t+.006));
+    const tangentAngle=Math.atan2(after.x-before.x,after.z-before.z);
     for(let row=0;row<2;row++){
       const k=i*2+row;
       o.position.set(x+n.x*.55,y+1.05+row*.85,z+n.z*.55);
-      o.rotation.set(0,angle,0);o.scale.set(1,1,1);o.updateMatrix();
+      o.rotation.set(0,tangentAngle,0);o.scale.set(1,1,4.8);o.updateMatrix();
       rails.setMatrixAt(k,o.matrix);
     }
   }
@@ -108,9 +109,7 @@ const wartimeDefenses = (() => {
     mesh.instanceMatrix.needsUpdate=true;
     mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);
   }
-
-  function p2x(x){return x-centerX;}
-  function p2z(z){return z-centerZ;}
+ 
   group.visible=false;
   return group;
 })();
