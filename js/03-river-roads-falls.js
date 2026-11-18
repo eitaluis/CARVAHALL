@@ -80,9 +80,54 @@ const roadCurves=[];
 for(const pts of roadPaths){
   const curve=new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(p[0],0,p[1])));
   roadCurves.push(curve);
-  makeRibbon(curve,pts.length===5?8.5:6.5,dirtMat,.065,100);
+  const roadWidth=pts.length===5?8.5:6.5;
+  makeRibbon(curve,roadWidth,dirtMat,.065,100);
+  // Ombros de terra mais solta integram o leito à relva seca, sem bordas de placa.
+  const shoulderMat=new THREE.MeshStandardMaterial({color:0x806d4e,map:groundTex,normalMap:groundNormalTex,normalScale:new THREE.Vector2(.12,.12),roughness:1});
+  for(const sideSign of [-1,1]){
+    const shoulderPoints=[];
+    for(let j=0;j<=72;j++){
+      const t=j/72,p=curve.getPointAt(t),tan=curve.getTangentAt(t).normalize();
+      const side=new THREE.Vector3(-tan.z,0,tan.x).normalize();
+      shoulderPoints.push(new THREE.Vector3(p.x+side.x*sideSign*(roadWidth*.5+1.0),0,p.z+side.z*sideSign*(roadWidth*.5+1.0)));
+    }
+    const shoulderCurve=new THREE.CatmullRomCurve3(shoulderPoints);
+    makeRibbon(shoulderCurve,1.7,shoulderMat,.028,90,t=>1.25+.28*Math.sin(t*Math.PI*5));
+  }
 }
-// Marcas discretas de roda, interrompidas pela irregularidade do solo.
+// Marcas de roda escurecidas, rasas e irregulares, acompanhando os caminhos de terra.
+const wheelRutMat=new THREE.MeshStandardMaterial({color:0x594b37,roughness:1,transparent:true,opacity:.34,depthWrite:false});
+for(const curve of roadCurves){
+  for(const sideSign of [-1,1]){
+    const rutPoints=[];
+    for(let j=0;j<=78;j++){
+      const t=j/78,p=curve.getPointAt(t),tan=curve.getTangentAt(t).normalize();
+      const side=new THREE.Vector3(-tan.z,0,tan.x).normalize();
+      const offset=sideSign*(curve===roadCurves[0]?2.05:1.55);
+      rutPoints.push(new THREE.Vector3(p.x+side.x*offset,0,p.z+side.z*offset));
+    }
+    const rutCurve=new THREE.CatmullRomCurve3(rutPoints);
+    makeRibbon(rutCurve,.58,wheelRutMat,.095,85,t=>.46+.12*Math.sin(t*Math.PI*7));
+  }
+}
+// Pequenas pedras roladas nos ombros, instanciadas para evitar uma placa uniforme.
+const vergeStoneGeo=new THREE.IcosahedronGeometry(.13,1);
+const vergeStoneMat=new THREE.MeshStandardMaterial({color:0x8d826f,map:stoneTex,roughness:1});
+const vergeStones=new THREE.InstancedMesh(vergeStoneGeo,vergeStoneMat,260);
+const vergeDummy=new THREE.Object3D();
+for(let i=0;i<260;i++){
+  const curve=roadCurves[Math.floor(rnd()*roadCurves.length)],t=rnd(),p=curve.getPointAt(t),tan=curve.getTangentAt(t).normalize();
+  const side=new THREE.Vector3(-tan.z,0,tan.x).normalize(),sign=rnd()<.5?-1:1;
+  const distance=(curve===roadCurves[0]?5.0:4.1)+rnd()*2.4;
+  const x=p.x+side.x*sign*distance,z=p.z+side.z*sign*distance;
+  vergeDummy.position.set(x,groundHeight(x,z)+.08,z);
+  vergeDummy.rotation.set(rnd()*.2,rnd()*Math.PI*2,rnd()*.2);
+  vergeDummy.scale.set(.55+rnd()*1.3,.28+rnd()*.38,.45+rnd()*.9);
+  vergeDummy.updateMatrix();vergeStones.setMatrixAt(i,vergeDummy.matrix);
+}
+vergeStones.instanceMatrix.needsUpdate=true;vergeStones.castShadow=false;vergeStones.receiveShadow=true;scene.add(vergeStones);
+
+// Marcas de roda discretas já incorporadas às faixas escuras acima.
 for(const curve of roadCurves.slice(0,1)){
   for(const side of [-1,1]){
     const pts=[];
