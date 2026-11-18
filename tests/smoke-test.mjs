@@ -56,9 +56,25 @@ try {
   await page.waitForFunction(() => window.CARVAHALL_READY === true, {
     timeout: 60000
   });
-  await page.waitForFunction(() => window.CARVAHALL_RENDERED_FRAMES >= 3, {
-    timeout: 30000
-  });
+  // Dá tempo para o primeiro frame e coleta diagnóstico mesmo se o loop travar.
+  await sleep(5000);
+  const earlyDiagnostics = await page.evaluate(() => ({
+    ready: window.CARVAHALL_READY,
+    loadedModules: window.CARVAHALL_LOADED_MODULES || [],
+    frames: window.CARVAHALL_RENDERED_FRAMES || 0,
+    runtimeErrors: window.CARVAHALL_RUNTIME_ERRORS || [],
+    canvas: (() => {
+      const element = document.querySelector("canvas.webgl");
+      return element ? { width: element.width, height: element.height } : null;
+    })()
+  }));
+  if (earlyDiagnostics.frames < 3) {
+    throw new Error("A cena não iniciou o loop de renderização: " + JSON.stringify({
+      ...earlyDiagnostics,
+      pageErrors,
+      consoleErrors
+    }));
+  }
 
   const initial = await page.evaluate(() => ({
     ready: window.CARVAHALL_READY,
