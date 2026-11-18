@@ -130,6 +130,16 @@ const firDetailGeo=makeFirDetailGeometry();
 const firDetailMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,side:THREE.DoubleSide});
 const trunkMat=new THREE.MeshStandardMaterial({color:0x56402d,roughness:1});
 const crownMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1});
+const treeWindShaders=[];
+function addTreeWind(material,amount){
+  material.onBeforeCompile=shader=>{
+    shader.uniforms.uTreeWindTime={value:0};treeWindShaders.push(shader);
+    shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nuniform float uTreeWindTime;');
+    shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',
+      '#include <begin_vertex>\n      float treePhase=uTreeWindTime*.42+dot(instanceMatrix[3].xz,vec2(.012,.016));\n      transformed.x+=sin(treePhase+transformed.y*2.1)*transformed.y*'+amount.toFixed(3)+';\n      transformed.z+=cos(treePhase*.76+transformed.y*1.7)*transformed.y*'+(amount*.58).toFixed(3)+';');
+  };
+}
+addTreeWind(crownMat,.045);addTreeWind(firDetailMat,.06);
 const treeClusters=[
   [-310,-310],[-500,-590],[405,-365],[690,-470],
   [-430,315],[520,315],[-520,670],[560,680]
@@ -269,9 +279,9 @@ function makeBramble(){
 }
 const shrubGeo=makeBramble();
 const shrubMat=new THREE.MeshStandardMaterial({color:0x71744c,roughness:1,side:THREE.DoubleSide});
-const shrubs=new THREE.InstancedMesh(shrubGeo,shrubMat,145);
+const shrubs=new THREE.InstancedMesh(shrubGeo,shrubMat,340);
 let shrubPlaced=0;
-for(let i=0;i<145;i++){
+for(let i=0;i<340;i++){
   const x=(rnd()-.5)*1500,z=(rnd()-.5)*1500;
   if(Math.hypot(x-100,z-25)<180||nearRiver(x,z,14))continue;
   treeDummy.position.set(x,groundHeight(x,z)+.025,z);
