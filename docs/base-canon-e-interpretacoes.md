@@ -30,6 +30,11 @@ Este documento resume as informações com palavras próprias; não substitui a 
 - Essa defesa é uma condição temporária de guerra e não deve ser confundida com a aparência cotidiana de Carvahall.
 - Mais tarde, a vila é incendiada e destruída. Esse estado pertence a uma fase narrativa posterior.
 
+### Celeiro e rebanho em Eldest
+- A narrativa associa um incêndio a um celeiro de feno e à casa de Delwin, ressaltando o risco do fogo na vila.
+- Em outro momento, famílias preparam a retirada de seus animais; mais de cem ovelhas são conduzidas do lado oriental do vale Palancar em direção à extremidade norte.
+- A reconstrução oferece esse rebanho como variante histórica opcional, acionada pela tecla L. Ele não aparece no estado cotidiano inicial.
+
 ### Fazenda de Garrow
 - A fazenda fica a cerca de dez milhas de Carvahall, afastada da povoação.
 - A casa é caiada, com telhado de tábuas e chaminé de tijolos; há varanda fechada, lenha e ferramentas agrícolas.
@@ -43,6 +48,7 @@ Os romances não fornecem uma planta cadastral ou coordenadas para todas as cons
 - Localização exata de cada edifício nomeado em relação aos demais, salvo quando a narrativa estabelece uma relação espacial.
 - Repetição de casas genéricas para preencher a paisagem e permitir exploração.
 - Distribuição de árvores individuais, rochas, capim e pequenos objetos.
+- A posição exata do celeiro, do cercado e do traçado visual do rebanho é interpretativa; os livros não fornecem coordenadas para esses elementos.
 
 ## Separação de fases
 1. **Vila cotidiana:** casas, jardins, varandas, poço, oficina, açougue, taverna, campos e rio.
