@@ -6,7 +6,7 @@ function makeFirCrown(){
   const verts=[],colors=[],indices=[],col=new THREE.Color();
   const tiers=[.19,.30,.42,.54,.66,.77,.87,.94];
   const spreads=[.48,.62,.67,.64,.57,.47,.34,.20];
-  const sphere=new THREE.SphereGeometry(1,10,7);
+  const sphere=new THREE.SphereGeometry(1,8,5);
   const pos=sphere.attributes.position;
   for(let tier=0;tier<tiers.length;tier++){
     for(let branch=0;branch<9;branch++){
