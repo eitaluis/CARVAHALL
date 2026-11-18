@@ -40,15 +40,15 @@ const groundTex=canvasTexture((ctx,s)=>{
 },1024,1);
 groundTex.repeat.set(38,38);
 const barkTex=canvasTexture((ctx,s)=>{
-  ctx.fillStyle='#493324';ctx.fillRect(0,0,s,s);
+  ctx.fillStyle='#63462f';ctx.fillRect(0,0,s,s);
   for(let i=0;i<260;i++){
     const x=rnd()*s,w=1+rnd()*9;
-    ctx.strokeStyle=rnd()<.5?'rgba(20,14,10,.42)':'rgba(157,111,67,.27)';
+    ctx.strokeStyle=rnd()<.5?'rgba(20,14,10,.29)':'rgba(186,139,91,.34)';
     ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x,0);ctx.bezierCurveTo(x-7,150+rnd()*80,x+8,340+rnd()*60,x-3,s);ctx.stroke();
   }
 },512,1);
 const thatchTex=canvasTexture((ctx,s)=>{
-  ctx.fillStyle='#927a4d';ctx.fillRect(0,0,s,s);
+  ctx.fillStyle='#a28a5d';ctx.fillRect(0,0,s,s);
   for(let i=0;i<12000;i++){
     const x=rnd()*s,y=rnd()*s;
     ctx.strokeStyle=rnd()<.58?'rgba(218,190,126,.35)':'rgba(52,43,28,.32)';
@@ -58,7 +58,7 @@ const thatchTex=canvasTexture((ctx,s)=>{
 },512,1);
 thatchTex.repeat.set(2,2);
 const shingleTex=canvasTexture((ctx,s)=>{
-  ctx.fillStyle='#51483a';ctx.fillRect(0,0,s,s);
+  ctx.fillStyle='#695d4c';ctx.fillRect(0,0,s,s);
   const rows=15,cols=14,h=s/rows,w=s/cols;
   for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
     const x=c*w+(r%2)*w*.5,y=r*h;
@@ -115,13 +115,13 @@ const thatchNormalTex=makeNormalMap(thatchTex,2.4);
 const shingleNormalTex=makeNormalMap(shingleTex,2.2);
 const stoneNormalTex=makeNormalMap(stoneTex,2.1);
 
-const woodMat=new THREE.MeshStandardMaterial({map:barkTex,normalMap:barkNormalTex,normalScale:new THREE.Vector2(.32,.32),color:0x92704c,roughness:1});
-const darkWoodMat=new THREE.MeshStandardMaterial({map:barkTex,color:0x59402b,roughness:1});
-const paleWoodMat=new THREE.MeshStandardMaterial({color:0xa9895c,roughness:1});
+const woodMat=new THREE.MeshStandardMaterial({map:barkTex,normalMap:barkNormalTex,normalScale:new THREE.Vector2(.28,.28),color:0xb18b62,roughness:1});
+const darkWoodMat=new THREE.MeshStandardMaterial({map:barkTex,normalMap:barkNormalTex,normalScale:new THREE.Vector2(.24,.24),color:0x79593b,roughness:1});
+const paleWoodMat=new THREE.MeshStandardMaterial({color:0xc09d70,roughness:1});
 const stoneMat=new THREE.MeshStandardMaterial({map:stoneTex,normalMap:stoneNormalTex,normalScale:new THREE.Vector2(.28,.28),color:0xaaa08d,roughness:1});
 const ironMat=new THREE.MeshStandardMaterial({color:0x343536,metalness:.55,roughness:.65});
-const thatchMat=new THREE.MeshStandardMaterial({map:thatchTex,normalMap:thatchNormalTex,normalScale:new THREE.Vector2(.34,.34),color:0xd1b783,roughness:1});
-const shingleMat=new THREE.MeshStandardMaterial({map:shingleTex,normalMap:shingleNormalTex,normalScale:new THREE.Vector2(.26,.26),color:0xb5a58b,roughness:1});
+const thatchMat=new THREE.MeshStandardMaterial({map:thatchTex,normalMap:thatchNormalTex,normalScale:new THREE.Vector2(.34,.34),color:0xe0c58e,roughness:1});
+const shingleMat=new THREE.MeshStandardMaterial({map:shingleTex,normalMap:shingleNormalTex,normalScale:new THREE.Vector2(.26,.26),color:0xc9b797,roughness:1});
 const glassMat=new THREE.MeshStandardMaterial({color:0x242b29,emissive:0x503d21,emissiveIntensity:.28,roughness:.3});
 const warmGlassMat=new THREE.MeshStandardMaterial({color:0xffc66e,emissive:0xffa33d,emissiveIntensity:1.1,roughness:.3});
 const dirtMat=new THREE.MeshStandardMaterial({color:0x9b8056,map:groundTex,normalMap:groundNormalTex,normalScale:new THREE.Vector2(.22,.22),roughness:1});
