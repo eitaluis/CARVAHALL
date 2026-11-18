@@ -4,6 +4,20 @@
 
 const traderCamp=new THREE.Group();
 scene.add(traderCamp);
+const marketActors=[];
+const marketSnowCount=190;
+const marketSnowPositions=new Float32Array(marketSnowCount*3);
+for(let i=0;i<marketSnowCount;i++){
+  marketSnowPositions[i*3]=150+rnd()*355;
+  marketSnowPositions[i*3+1]=4+rnd()*33;
+  marketSnowPositions[i*3+2]=-105+rnd()*235;
+}
+const marketSnowGeometry=new THREE.BufferGeometry();
+marketSnowGeometry.setAttribute('position',new THREE.BufferAttribute(marketSnowPositions,3));
+const marketSnow=new THREE.Points(marketSnowGeometry,new THREE.PointsMaterial({
+  color:0xe6ecea,size:.12,transparent:true,opacity:.72,depthWrite:false,sizeAttenuation:true
+}));
+traderCamp.add(marketSnow);
 traderCamp.visible=false;
 
 // Carroça de mercadores: estrutura de madeira, rodas e eixo.
@@ -94,7 +108,17 @@ function marketBonfire(parent,x,z,scale=1){
   fire.position.y=.8;fire.scale.set(.8,1.2,.8);g.add(fire);
   const light=new THREE.PointLight(0xff8d42,1.8*scale,34*scale);
   light.position.set(0,2,0);g.add(light);
-  return {group:g,fire,light};
+  const smoke=[];
+  for(let i=0;i<5;i++){
+    const puff=new THREE.Sprite(new THREE.SpriteMaterial({
+      map:smokeTexture,color:0x89877f,transparent:true,opacity:.0,depthWrite:false
+    }));
+    puff.scale.set(2.4+i*.2,2.8+i*.25,1);
+    puff.position.set((rnd()-.5)*.6,2.3+i*.7,(rnd()-.5)*.5);
+    puff.userData.baseY=puff.position.y;puff.userData.phase=rnd()*6.28;
+    g.add(puff);smoke.push(puff);
+  }
+  return {group:g,fire,light,smoke};
 }
 function marketHorse(parent,x,z,scale=1,rot=0){
   const g=new THREE.Group();g.position.set(x,groundHeight(x,z),z);g.rotation.y=rot;g.scale.setScalar(scale);parent.add(g);
@@ -179,6 +203,8 @@ for(const [x,z,w,d] of [[105,65,22,10],[145,78,25,9],[190,96,29,9],[235,80,25,9]
 // Pessoas no mercado: vendedores, compradores e crianças entre as bancas.
 function marketPerson(parent,x,z,coatColor,heading=0,scale=1,child=false){
   const g=new THREE.Group();g.position.set(x,groundHeight(x,z),z);g.rotation.y=heading;g.scale.setScalar(scale);parent.add(g);
+  g.userData.baseY=g.position.y;g.userData.baseYaw=heading;g.userData.phase=rnd()*6.28;
+  marketActors.push(g);
   const coatMat=new THREE.MeshStandardMaterial({color:coatColor,roughness:1});
   const shirtMat=new THREE.MeshStandardMaterial({color:0xc2b08b,roughness:1});
   const skinMat=new THREE.MeshStandardMaterial({color:0xb88e6d,roughness:1});
