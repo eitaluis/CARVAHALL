@@ -215,26 +215,27 @@ const waterfallHeight=Math.max(82,waterfallTop-waterfallBottom);
 const fallsGlow=new THREE.PointLight(0xc8d9d9,.72,190);
 fallsGlow.position.set(-146,waterfallBottom+waterfallHeight*.22,-613);scene.add(fallsGlow);
 const fallMat=new THREE.MeshStandardMaterial({
-  color:0xc5d7d6,vertexColors:true,transparent:true,opacity:.58,roughness:.18,metalness:.025,
-  side:THREE.DoubleSide,emissive:0x263f42,emissiveIntensity:.12,depthWrite:false
+  color:0xb8d8dc,vertexColors:true,transparent:true,opacity:.74,roughness:.16,metalness:.02,
+  side:THREE.DoubleSide,emissive:0x294c52,emissiveIntensity:.16,depthWrite:false
 });
 const falls=[];
 {
-  const nx=72,ny=54,verts=[],uvs=[],colors=[],indices=[],col=new THREE.Color();
+  const nx=48,ny=54,verts=[],uvs=[],colors=[],indices=[],col=new THREE.Color();
   for(let j=0;j<=ny;j++){
     const v=j/ny;
     for(let i=0;i<=nx;i++){
-      const u=i/nx,x=(u-.5)*62;
+      const u=i/nx,x=(u-.5)*34;
       const top=cliffTop(-146+x)-1.8;
       const bottom=waterfallBottom+Math.sin(u*Math.PI)*.6;
       const y=bottom+(top-bottom)*v;
-      const waviness=Math.sin(v*19+u*8)*.34+Math.sin(v*43-u*17)*.12;
-      const z=-646+(1-v)*82+waviness;
+      const waviness=Math.sin(v*19+u*8)*.22+Math.sin(v*43-u*17)*.075;
+      // A lâmina acompanha a face da escarpa e avança suavemente até a piscina.
+      const z=-642+(1-v)*50+waviness;
       verts.push(x,y-waterfallBottom,z);
       uvs.push(u*2.5,v*3.8);
       const streak=.5+.5*Math.sin(u*92+Math.sin(v*13)*2);
-      const shade=.72+streak*.18;
-      col.setRGB(shade*.82,shade*.91,shade*.92);
+      const shade=.76+streak*.18;
+      col.setRGB(shade*.72,shade*.88,shade*.92);
       colors.push(col.r,col.g,col.b);
       if(i<nx&&j<ny){
         const n=j*(nx+1)+i;
