@@ -138,10 +138,9 @@ function addTreeWind(material,amount){
 addTreeWind(crownMat,.045);addTreeWind(firDetailMat,.06);
 const treeClusters=[
   [-310,-310],[-500,-590],[405,-365],[690,-470],
-  [-430,315],[520,315],[-520,670],[560,680],
-  [-175,-265],[360,-95],[420,265],[-365,410],[40,585]
+  [-430,315],[520,315],[-520,670],[560,680]
 ];
-const treeCount=760;
+const treeCount=520;
 const trunkInst=new THREE.InstancedMesh(trunkGeo,trunkMat,treeCount);
 const crownInst=new THREE.InstancedMesh(firCrownGeo,crownMat,treeCount);
 const firDetailInst=new THREE.InstancedMesh(firDetailGeo,firDetailMat,treeCount);
@@ -153,14 +152,14 @@ for(let i=0;i<treeCount;i++){
   for(let attempt=0;attempt<26;attempt++){
     if(rnd()<.84){
       const center=treeClusters[Math.floor(rnd()*treeClusters.length)];
-      const angle=rnd()*Math.PI*2,rad=58+Math.sqrt(rnd())*168;
+      const angle=rnd()*Math.PI*2,rad=75+Math.sqrt(rnd())*190;
       x=center[0]+Math.cos(angle)*rad*1.3;
       z=center[1]+Math.sin(angle)*rad;
     }else{
       x=(rnd()-.5)*1740;z=(rnd()-.5)*1740;
     }
     const villageDistance=Math.hypot(x-100,z-25);
-    if(villageDistance>255&&!nearRiver(x,z,34)&&Math.abs(x)<930&&Math.abs(z)<930){valid=true;break;}
+    if(villageDistance>300&&!nearRiver(x,z,34)&&Math.abs(x)<930&&Math.abs(z)<930){valid=true;break;}
   }
   if(!valid)continue;
   const h=21+rnd()*18,radius=4.5+rnd()*4.8,ground=groundHeight(x,z);
@@ -276,9 +275,9 @@ function makeBramble(){
 }
 const shrubGeo=makeBramble();
 const shrubMat=new THREE.MeshStandardMaterial({color:0x71744c,roughness:1,side:THREE.DoubleSide});
-const shrubs=new THREE.InstancedMesh(shrubGeo,shrubMat,560);
+const shrubs=new THREE.InstancedMesh(shrubGeo,shrubMat,340);
 let shrubPlaced=0;
-for(let i=0;i<560;i++){
+for(let i=0;i<340;i++){
   const x=(rnd()-.5)*1500,z=(rnd()-.5)*1500;
   if(Math.hypot(x-100,z-25)<180||nearRiver(x,z,14))continue;
   treeDummy.position.set(x,groundHeight(x,z)+.025,z);
