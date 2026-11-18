@@ -50,7 +50,7 @@ O HTML carrega os arquivos JavaScript em sequência, mantendo a divisão por res
 - [Documento-base de cânone e interpretação](docs/base-canon-eragon.md)
 - [Checklist de desenvolvimento por fases](docs/checklist-fases-eragon.md)
 
-O documento-base separa descrições diretas do romance das decisões interpretativas (coordenadas, planta da vila e detalhes não descritos). O checklist registra as etapas de construção, interiores, acessos e feira. Os módulos já incluem uma rodada adicional de refinamento de personagens e interiores. A inspeção visual em navegador, a revalidação técnica após essas alterações e a medição de desempenho continuam pendentes.
+O documento-base separa descrições diretas do romance das decisões interpretativas (coordenadas, planta da vila e detalhes não descritos). O checklist registra as etapas de construção, interiores, acessos e feira. A build 08 acrescenta cinco frentes: correção e teste de animação dos moradores, reutilização de geometrias nas construções e interiores, ponto de entrada mais próximo da rua, vegetação de primeiro plano mais presente e cachoeira alinhada à piscina. A validação técnica em Chromium passou na build anterior; a inspeção visual e a medição de desempenho da build 08 permanecem pendentes.
 
 ## Refinamento recente — personagens e interiores
 
@@ -77,3 +77,13 @@ A direção foi ajustada para evitar o aspecto blocado/low-poly. As montanhas ag
 As peças arquitetônicas e o mobiliário receberam arestas suavizadas; troncos e vigas ganharam irregularidade. Moradores e mercadores foram reconstruídos com volumes anatômicos arredondados e articulações reais nos ombros e quadris. A animação agora inclui respiração, mudança de peso, olhares, gestos e pequenos deslocamentos de alguns compradores.
 
 A inspeção visual em navegador continua pendente: as mudanças estão publicadas, mas ainda precisam ser verificadas em execução, especialmente a conexão da catarata com a piscina, a leitura das montanhas, a densidade das copas e a performance.
+
+
+## Build 08 — cinco avanços
+- Ponto inicial aproximado da rua principal para uma leitura mais imediata das construções.
+- Capim e moitas distribuídos também nas bordas da vila, com clareiras para estradas e edifícios.
+- Pinheiros um pouco mais altos e com variação tonal menos clara.
+- Cachoeira mais estreita, posicionada junto à escarpa e curvada em direção à piscina.
+- Textura de madeira mais clara, reutilização de geometrias repetidas e moradores adicionais no eixo da rua.
+
+A validação Chromium da build 07 passou com captura da cena-base e do mercado. A build 08 ainda precisa passar pelo mesmo teste e ter suas novas capturas revisadas antes de ser considerada aprovada.
