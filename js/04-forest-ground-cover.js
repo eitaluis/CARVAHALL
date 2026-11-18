@@ -162,7 +162,7 @@ for(let i=0;i<treeCount;i++){
     if(villageDistance>300&&!nearRiver(x,z,34)&&Math.abs(x)<930&&Math.abs(z)<930){valid=true;break;}
   }
   if(!valid)continue;
-  const h=21+rnd()*18,radius=4.5+rnd()*4.8,ground=groundHeight(x,z);
+  const h=27+rnd()*19,radius=5.2+rnd()*5.6,ground=groundHeight(x,z);
   const rot=rnd()*Math.PI*2;
   treeDummy.position.set(x,ground+h*.34,z);
   treeDummy.rotation.set(0,rot,0);
@@ -173,7 +173,7 @@ for(let i=0;i<treeCount;i++){
   treeDummy.rotation.set(0,rot,0);
   treeDummy.scale.set(radius,h*.82,radius);
   treeDummy.updateMatrix();crownInst.setMatrixAt(placedTrees,treeDummy.matrix);
-  const tint=new THREE.Color().setHSL(.30+(rnd()-.5)*.035,.22,.86+(rnd()-.5)*.12);
+  const tint=new THREE.Color().setHSL(.292+(rnd()-.5)*.028,.29,.69+(rnd()-.5)*.09);
   crownInst.setColorAt(placedTrees,tint);
   firDetailInst.setMatrixAt(placedTrees,treeDummy.matrix);
   placedTrees++;
@@ -229,24 +229,45 @@ uniform float uWindTime;`
     transformed.z+=cos(windPhase*.72+transformed.y*2.3)*transformed.y*.065;`
   );
 };
-const grassCount=9600;
+// Clareiras de circulação ao redor das casas e da rua: o capim cresce em faixas,
+ // não como um tapete uniforme sobre portas, caminhos e margens de água.
+const villageKeepClear=[
+  [76,-42,15],[18,67,18],[206,48,19],[-96,174,15],
+  [28,-18,12],[126,-73,12],[192,-28,12],[255,2,12],
+  [-18,111,13],[69,151,12],[153,145,12],[246,120,12],
+  [-48,35,13],[289,-74,12],[-27,220,12],[206,214,12]
+];
+function villageGrassBlocked(x,z){
+  if(villageKeepClear.some(([cx,cz,r])=>(x-cx)*(x-cx)+(z-cz)*(z-cz)<r*r))return true;
+  for(const curve of roadCurves){
+    for(let j=0;j<=24;j++){
+      const p=curve.getPointAt(j/24),dx=x-p.x,dz=z-p.z;
+      if(dx*dx+dz*dz<6.2*6.2)return true;
+    }
+  }
+  return false;
+}
+const grassCount=14200;
 const grassInst=new THREE.InstancedMesh(grassGeo,grassMat,grassCount);
 const grassDummy=new THREE.Object3D();
 let grassPlaced=0;
 for(let i=0;i<grassCount;i++){
   let x,z;
-  if(i<6800){
-    // Faixas de capim seco no vale aberto, fora do núcleo construído.
-    const a=rnd()*Math.PI*2,rad=70+Math.sqrt(rnd())*420;
+  if(i<6500){
+    // Borda viva da povoação, com tufos visíveis já no enquadramento inicial.
+    const a=rnd()*Math.PI*2,rad=25+Math.sqrt(rnd())*155;
+    x=100+Math.cos(a)*rad;z=25+Math.sin(a)*rad;
+  }else if(i<11200){
+    const a=rnd()*Math.PI*2,rad=150+Math.sqrt(rnd())*340;
     x=100+Math.cos(a)*rad;z=25+Math.sin(a)*rad;
   }else{
     x=(rnd()-.5)*1900;z=(rnd()-.5)*1900;
   }
-  if(Math.hypot(x-100,z-25)<58||nearRiver(x,z,8))continue;
-  const h=.5+rnd()*1.25;
+  if(Math.hypot(x-100,z-25)<19||nearRiver(x,z,8)||villageGrassBlocked(x,z))continue;
+  const h=.58+rnd()*1.5;
   grassDummy.position.set(x,groundHeight(x,z)+.025,z);
   grassDummy.rotation.set((rnd()-.5)*.14,rnd()*Math.PI*2,(rnd()-.5)*.14);
-  grassDummy.scale.set(.58+rnd()*.95,h,.58+rnd()*.95);
+  grassDummy.scale.set(.62+rnd()*1.05,h,.62+rnd()*1.05);
   grassDummy.updateMatrix();grassInst.setMatrixAt(grassPlaced,grassDummy.matrix);
   const tint=new THREE.Color().setHSL(.105+rnd()*.04,.32,.37+rnd()*.16);
   grassInst.setColorAt(grassPlaced,tint);
@@ -275,11 +296,17 @@ function makeBramble(){
 }
 const shrubGeo=makeBramble();
 const shrubMat=new THREE.MeshStandardMaterial({color:0x71744c,roughness:1,side:THREE.DoubleSide});
-const shrubs=new THREE.InstancedMesh(shrubGeo,shrubMat,340);
+const shrubs=new THREE.InstancedMesh(shrubGeo,shrubMat,520);
 let shrubPlaced=0;
-for(let i=0;i<340;i++){
-  const x=(rnd()-.5)*1500,z=(rnd()-.5)*1500;
-  if(Math.hypot(x-100,z-25)<180||nearRiver(x,z,14))continue;
+for(let i=0;i<520;i++){
+  let x,z;
+  if(i<280){
+    const a=rnd()*Math.PI*2,rad=27+Math.sqrt(rnd())*135;
+    x=100+Math.cos(a)*rad;z=25+Math.sin(a)*rad;
+  }else{
+    x=(rnd()-.5)*1500;z=(rnd()-.5)*1500;
+  }
+  if(Math.hypot(x-100,z-25)<20||nearRiver(x,z,14)||villageGrassBlocked(x,z))continue;
   treeDummy.position.set(x,groundHeight(x,z)+.025,z);
   treeDummy.rotation.set(0,rnd()*Math.PI*2,0);
   treeDummy.scale.set(.9+rnd()*1.8,.8+rnd()*.8,.9+rnd()*1.8);
