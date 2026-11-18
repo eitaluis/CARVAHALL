@@ -111,6 +111,13 @@
 - [x] Animar gestos discretos dos moradores de Carvahall ao anoitecer.
 - [x] Corrigir a animação das cataratas para preservar a altura original das quedas.
 - [x] Exibir a mensagem e o arquivo de origem quando ocorrer erro de execução; expor o estado de carregamento dos módulos.
+- [x] Dar ao interior uma leitura de sala construída: tábuas individuais, travessas, prateleiras e luz quente local.
+- [x] Diferenciar a taverna com balcão comprido, bancos, utensílios e os chifres de Urgal descritos no romance (decoração interpretativa na montagem).
+- [x] Enriquecer o açougue com balcão trabalhado, ganchos, prateleiras e palha preservando a sala ampla e limpa.
+- [x] Refinar a forja com áreas de trabalho, barras, ferramentas, bigorna, fole e tanque de resfriamento.
+- [x] Substituir os moradores cilíndricos simples por figuras articuladas com proporções, rosto, olhos, nariz, mãos, botas, cinto e camadas de roupa.
+- [x] Diferenciar figuras de Horst, Sloan e Katrina por vestuário e silhueta, sem afirmar traços físicos não descritos.
+- [x] Diferenciar compradores, vendedores, mulheres, viajantes e crianças no mercado por roupas, capas, aventais e acessórios.
 - [ ] Conferir visualmente a qualidade de cada espaço no navegador.
 
 ## Fase 9 — QA técnico e desempenho
@@ -144,3 +151,16 @@
 - `js/06-winter-market.js`: acampamento, feira, cavalos e multidão de inverno.
 - `js/07-points-minimap-shortcuts.js`: pontos, minimapa e teletransportes.
 - `js/08-player-animation.js`: jogador, colisões, controles e animação.
+
+
+## Fase 10 — personagens e interiores (refinamento atual)
+- [x] Criar rostos mais legíveis em escala de exploração: olhos, sobrancelhas, nariz, orelhas e cabelo.
+- [x] Dar volume corporal e roupa em camadas: ombros, gola, túnica, barra, cinto, mangas, mãos e botas.
+- [x] Criar silhuetas distintas para Horst (avental e barba), Sloan (avental e barba), Katrina (saia e xale) e moradores genéricos.
+- [x] Refinar os mercadores com vendedores de avental, viajantes de capa, mulheres com xale e crianças com proporções menores.
+- [x] Reforçar os interiores com tábuas de piso, prateleiras, travessas, luz local e objetos coerentes com cada função.
+- [ ] Inspecionar em primeira pessoa os interiores após publicação: confirmar que o mobiliário não bloqueia a passagem nem fica enterrado/atravessa paredes.
+- [ ] Avaliar a qualidade dos rostos e mãos em distância próxima e ajustar malhas, proporções e animação.
+- [ ] Adicionar animação corporal mais natural (cabeça, braços e pequenos deslocamentos) sem transformar a vila em multidão artificial.
+- [ ] Verificar se os chifres de Urgal na taverna estão posicionados e dimensionados corretamente na cena real.
+- [ ] Fazer captura comparativa da rua, taverna, açougue, forja, tanoaria e feira para validação visual.
