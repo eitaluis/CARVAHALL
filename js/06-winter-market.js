@@ -299,7 +299,7 @@ for(const [x,z,w,d] of [[105,65,22,10],[145,78,25,9],[190,96,29,9],[235,80,25,9]
 // Pessoas no mercado: vendedores, compradores e crianças entre as bancas.
 function marketPerson(parent,x,z,coatColor,heading=0,scale=1,child=false,role='buyer'){
   const g=new THREE.Group();g.position.set(x,groundHeight(x,z),z);g.rotation.y=heading;g.scale.setScalar(scale);parent.add(g);
-  g.userData.baseY=g.position.y;g.userData.baseX=x;g.userData.baseYaw=heading;g.userData.phase=rnd()*Math.PI*2;g.userData.role=role;marketActors.push(g);
+  g.userData.baseY=g.position.y;g.userData.baseX=x;g.userData.baseZ=z;g.userData.baseYaw=heading;g.userData.phase=rnd()*Math.PI*2;g.userData.role=role;marketActors.push(g);
   const coatMat=new THREE.MeshStandardMaterial({color:coatColor,roughness:.95});
   const skinMat=new THREE.MeshStandardMaterial({color:0xb88e6d,roughness:.96});
   const hairMat=new THREE.MeshStandardMaterial({color:0x30231b,roughness:1});
