@@ -40,17 +40,17 @@ for(const inst of pineInst){inst.count=treeCount;inst.instanceMatrix.needsUpdate
 // 9. VEGETAÇÃO BAIXA, CAPIM SECO, MOITAS E SEIXOS
 // ============================================================================
 const grassGeo=new THREE.ConeGeometry(.15,.7,4,1);grassGeo.translate(0,.34,0);
-const grassMat=new THREE.MeshStandardMaterial({color:0x938653,roughness:1});
+const grassMat=new THREE.MeshStandardMaterial({color:0xa18b59,roughness:1});
 const grassInst=new THREE.InstancedMesh(grassGeo,grassMat,1900);
 for(let i=0;i<1900;i++){
   let x=(rnd()-.5)*1450,z=(rnd()-.5)*1450;
   if(Math.hypot(x-100,z)<160 || nearRiver(x,z,8)){x+=250;}
   const h=.35+rnd()*.9;dummy.position.set(x,groundHeight(x,z)+.02+h*.25,z);dummy.rotation.set((rnd()-.5)*.22,rnd()*Math.PI*2,(rnd()-.5)*.22);dummy.scale.set(.35+rnd()*.8,h,.35+rnd()*.8);dummy.updateMatrix();grassInst.setMatrixAt(i,dummy.matrix);
-  grassInst.setColorAt(i,new THREE.Color().setHSL(.13+rnd()*.06,.24,.3+rnd()*.13));
+  grassInst.setColorAt(i,new THREE.Color().setHSL(.105+rnd()*.045,.26,.34+rnd()*.12));
 }
 grassInst.instanceMatrix.needsUpdate=true;scene.add(grassInst);
-const shrubMat=new THREE.MeshStandardMaterial({color:0x4e5637,roughness:1});
-for(let i=0;i<120;i++){
+const shrubMat=new THREE.MeshStandardMaterial({color:0x66603b,roughness:1});
+for(let i=0;i<95;i++){
   const x=(rnd()-.5)*1000,z=(rnd()-.5)*1050;
   if(Math.hypot(x-100,z)<190||nearRiver(x,z,10))continue;
   const bush=new THREE.Mesh(new THREE.DodecahedronGeometry(1,1),shrubMat);bush.position.set(x,groundHeight(x,z)+.8,z);bush.scale.set(1.3+rnd()*2,.6+rnd()*.8,1+rnd()*1.6);bush.rotation.y=rnd()*Math.PI;scene.add(bush);
