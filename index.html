@@ -3,29 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carvahall — Palancar Valley</title>
+<title>Carvahall — Eragon · Palancar Valley</title>
 <link rel="stylesheet" href="./css/style.css">
 
 </head>
 <body>
-<div id="phase">CARVAHALL · VILA COTIDIANA · VARIANTES HISTÓRICAS</div>
+<div id="phase">CARVAHALL · ERAGON · VILA AO ANOITECER</div>
 <div id="hud">
   <b>CARVAHALL — PALANCAR VALLEY</b><br>
   WASD mover · Mouse olhar · Shift correr · Espaço pular<br>
   <b>H</b> centro · <b>J</b> forja de Horst · <b>G</b> rio Anora · <b>F</b> cataratas<br>
-  <b>L</b> rebanho histórico · <b>P</b> defesas de Eldest · <b>O</b> ruínas pós-incêndio<br>
+  <b>T</b> mercado de inverno dos mercadores<br>
   <b>M/N</b> próximo/anterior ponto · <b>TAB</b> minimapa · roda do mouse no mapa: zoom
 </div>
 <div id="help">
   <b>EXPLORAÇÃO</b><br>
   Clique para capturar o mouse. ESC libera o cursor.<br><br>
   <b>PONTOS</b><br>
-  H — Seven Sheaves / núcleo<br>
+  H — núcleo da vila<br>
   J — oficina de Horst<br>
   G — margem do Anora<br>
   F — cataratas de Igualda<br><br>
-  <b>T</b> acampamento sazonal dos mercadores<br>
-  <b>L</b> rebanho histórico · <b>P</b> defesas temporárias · <b>O</b> vila destruída<br>
+  <b>T</b> mercado de inverno e acampamento dos mercadores<br>
   <span style="color:#b89b70">O arranjo dos edifícios é interpretativo; as relações geográficas principais seguem os livros.</span>
 </div>
 <div id="coords">—</div>
@@ -33,13 +32,13 @@
 <div id="crosshair"></div>
 <div id="map-legend"><span>Norte ↑ · Sul ↓ · Leste → · Oeste ←</span><span id="map-scale">visão geral</span></div>
 <div id="map-wrap"><canvas id="map" width="220" height="220"></canvas></div>
-<div id="layout-note">Estado cotidiano por padrão · L rebanho · P defesas · O ruínas · posições interpretativas quando não fixadas no texto</div>
+<div id="layout-note">Cena-base: Carvahall em Eragon · T ativa o mercado de inverno · posições internas interpretativas quando não fixadas no texto</div>
 <div id="start"><div class="card">
   <h1>CARVAHALL</h1>
   <div class="sub">um vilarejo no vale Palancar</div>
-  <p>Casas robustas de troncos, telhados baixos de palha ou tábuas, varandas largas, fumaça de lenha, campos abertos e o rio Anora guardando o flanco oeste. Ao norte, a Espinha e as cataratas de Igualda.</p>
-  <div class="keyline">WASD · mouse · Shift · Espaço · H vila · J forja · G Anora · F cataratas · L rebanho · P defesas · O ruínas · M/N pontos · TAB mapa</div>
-  <span class="warning">Clique para entrar. Vila cotidiana como estado-base; L/P/O ativam variantes históricas. A posição exata de vários edifícios não é determinada pelos livros.</span>
+  <p>Casas robustas de troncos, telhados baixos de palha ou tábuas, varandas largas, fumaça de lenha e janelas acesas no crepúsculo. Ao redor, campos de terra clara e capim seco; mais ao norte, as cataratas de Igualda e a Espinha.</p>
+  <div class="keyline">WASD · mouse · Shift · Espaço · H vila · J forja · G Anora · F cataratas · T mercado de inverno · M/N pontos · TAB mapa</div>
+  <span class="warning">Clique para entrar. T ativa a visita de inverno dos mercadores, também descrita em Eragon. A posição exata de várias casas não é determinada pelo texto.</span>
 </div></div>
 <div id="resume"><div class="card">Clique para retomar a exploração</div></div>
 
@@ -54,12 +53,9 @@ const scripts = [
   "./js/03-river-roads-falls.js",
   "./js/04-forest-ground-cover.js",
   "./js/05-rural-architecture.js",
-  "./js/06-rural-life-details.js",
-  "./js/06-seasonal-merchants.js",
+  "./js/06-winter-market.js",
   "./js/07-points-minimap-shortcuts.js",
-  "./js/08-player-animation.js",
-  "./js/09-wartime-defenses.js",
-  "./js/10-burned-village.js"
+  "./js/08-player-animation.js"
 ];
 
 const phase = document.getElementById("phase");
