@@ -354,7 +354,8 @@ function addInterior(parent,kind,w,d,eave=4.25,rise=2.8){
       const post=new THREE.Mesh(new THREE.CylinderGeometry(.06,.085,.68,9),woodMat);
       post.position.set(bedX+dx*.88,.87,bedZ+dz*.82);parent.add(post);
     }
-    const mattress=new THREE.Mesh(new THREE.CapsuleGeometry(.48,2.05,5,12),linen);
+    const mattressMat=new THREE.MeshStandardMaterial({color:0xb8aa8e,roughness:1});
+    const mattress=new THREE.Mesh(new THREE.CapsuleGeometry(.48,2.05,5,12),mattressMat);
     mattress.rotation.x=Math.PI/2;mattress.position.set(bedX,1.0,bedZ);mattress.scale.set(.9,.72,.75);parent.add(mattress);
     const blanket=new THREE.Mesh(new THREE.SphereGeometry(1,16,10),new THREE.MeshStandardMaterial({color:0x887052,roughness:1}));
     blanket.scale.set(1,.12,1.22);blanket.position.set(bedX,1.18,bedZ+.48);parent.add(blanket);
