@@ -150,7 +150,7 @@ const historicFlock = (() => {
 
 let historicFlockVisible=false;
 addEventListener('keydown',event=>{
-  if(event.code!=='KeyL'||event.repeat)return;
+  if(event.code!=='KeyL'||event.repeat||window.carvahallBurnedMode)return;
   historicFlockVisible=!historicFlockVisible;
   historicFlock.visible=historicFlockVisible;
   const tp=document.getElementById('tp');
