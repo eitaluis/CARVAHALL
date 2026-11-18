@@ -297,10 +297,9 @@ for(const [x,z,w,d] of [[105,65,22,10],[145,78,25,9],[190,96,29,9],[235,80,25,9]
 }
 
 // Pessoas no mercado: vendedores, compradores e crianças entre as bancas.
-function marketPerson(parent,x,z,coatColor,heading=0,scale=1,child=false){
+function marketPerson(parent,x,z,coatColor,heading=0,scale=1,child=false,role='buyer'){
   const g=new THREE.Group();g.position.set(x,groundHeight(x,z),z);g.rotation.y=heading;g.scale.setScalar(scale);parent.add(g);
-  g.userData.baseY=g.position.y;g.userData.baseYaw=heading;g.userData.phase=rnd()*6.28;
-  marketActors.push(g);
+  g.userData.baseY=g.position.y;g.userData.baseYaw=heading;g.userData.phase=rnd()*6.28;g.userData.role=role;marketActors.push(g);
   const coatMat=new THREE.MeshStandardMaterial({color:coatColor,roughness:1});
   const shirtMat=new THREE.MeshStandardMaterial({color:0xc2b08b,roughness:1});
   const skinMat=new THREE.MeshStandardMaterial({color:0xb88e6d,roughness:1});
@@ -309,27 +308,51 @@ function marketPerson(parent,x,z,coatColor,heading=0,scale=1,child=false){
   const torsoH=child?.72:1.02,headY=child?1.36:1.82;
   const torso=new THREE.Mesh(new THREE.BoxGeometry(child?.43:.52,torsoH,child?.3:.34),coatMat);
   torso.position.y=child?.75:1.15;torso.castShadow=true;g.add(torso);
-  const head=new THREE.Mesh(new THREE.SphereGeometry(child?.19:.21,9,8),skinMat);
-  head.position.set(0,headY,0);g.add(head);
-  const hair=new THREE.Mesh(new THREE.SphereGeometry(child?.2:.22,8,7),hairMat);
-  hair.scale.set(1,.52,1);hair.position.set(0,headY+.13,0);g.add(hair);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(child?.19:.22,12,10),skinMat);
+  head.position.set(0,headY,0);head.scale.set(1,1.12,.92);g.add(head);
+  const hair=new THREE.Mesh(new THREE.SphereGeometry(child?.2:.23,10,8),hairMat);
+  hair.scale.set(1,.55,1);hair.position.set(0,headY+.14,0);g.add(hair);
+  const eyes=new THREE.MeshStandardMaterial({color:0x29231e,roughness:1});
   const movingArms=[];
-  const armLength=child?.52:.7;
   for(const side of [-1,1]){
-    const arm=new THREE.Mesh(new THREE.CylinderGeometry(.07,.09,armLength,7),coatMat);
-    arm.position.set(side*(child?.29:.35),child?.78:1.25,.02);
-    arm.rotation.z=side*(.14+(side===1?.12:0));g.add(arm);movingArms.push({mesh:arm,side,baseZ:arm.rotation.z});
-    const leg=new THREE.Mesh(new THREE.CylinderGeometry(.075,.06,child?.43:.7,7),bootMat);
+    const eye=new THREE.Mesh(new THREE.SphereGeometry(.024,7,6),eyes);
+    eye.position.set(side*(child?.065:.08),headY+.005,.19);g.add(eye);
+    const arm=new THREE.Mesh(new THREE.CylinderGeometry(.07,.09,child?.52:.72,8),coatMat);
+    arm.position.set(side*(child?.29:.36),child?.78:1.25,.02);
+    arm.rotation.z=side*(role==='vendor'&&side===1?-.65:.15);g.add(arm);movingArms.push({mesh:arm,side,baseZ:arm.rotation.z});
+    const hand=new THREE.Mesh(new THREE.SphereGeometry(.085,7,6),skinMat);
+    hand.position.set(side*(child?.29:.36),child?.49:.88,.04);g.add(hand);
+    const leg=new THREE.Mesh(new THREE.CylinderGeometry(.075,.06,child?.43:.7,8),bootMat);
     leg.position.set(side*.13,child?.22:.36,0);g.add(leg);
     const foot=new THREE.Mesh(new THREE.BoxGeometry(.16,.12,.28),bootMat);
     foot.position.set(side*.13,.06,.07);g.add(foot);
   }
-  // Algumas figuras carregam uma cesta ou um pequeno embrulho.
+  const collar=new THREE.Mesh(new THREE.CylinderGeometry(.22,.25,.13,8),shirtMat);
+  collar.position.y=child?1.18:1.56;g.add(collar);
+  // Capas de roupa e silhuetas distintas: mantos, aventais e xales.
+  if(role==='vendor'){
+    const apron=new THREE.Mesh(new THREE.BoxGeometry(.42,.72,.07),new THREE.MeshStandardMaterial({color:0x51402f,roughness:1}));
+    apron.position.set(0,1.02,.19);g.add(apron);
+    const hood=new THREE.Mesh(new THREE.SphereGeometry(.25,9,7),coatMat);
+    hood.scale.set(1,.7,.85);hood.position.set(0,headY+.04,-.06);g.add(hood);
+  }else if(role==='traveller'){
+    const cloak=new THREE.Mesh(new THREE.ConeGeometry(.46,.82,8,1,true),coatMat);
+    cloak.position.set(0,.88,-.03);g.add(cloak);
+    const hood=new THREE.Mesh(new THREE.SphereGeometry(.25,9,7),coatMat);
+    hood.scale.set(1,.7,.9);hood.position.set(0,headY+.04,-.07);g.add(hood);
+  }else if(role==='woman'){
+    const skirt=new THREE.Mesh(new THREE.CylinderGeometry(.3,.47,.68,10),shirtMat);
+    skirt.position.y=.54;g.add(skirt);
+    const shawl=new THREE.Mesh(new THREE.BoxGeometry(.68,.18,.34),new THREE.MeshStandardMaterial({color:0x8b5140,roughness:1}));
+    shawl.position.set(0,1.47,0);g.add(shawl);
+  }else if(role==='child'){
+    const hood=new THREE.Mesh(new THREE.SphereGeometry(.22,8,7),coatMat);
+    hood.scale.set(1,.72,1);hood.position.set(0,headY+.03,-.03);g.add(hood);
+  }
   g.userData.head=head;g.userData.movingArms=movingArms;
-  if(Math.abs(x%3)<1.35){
-    const parcel=new THREE.Mesh(new THREE.BoxGeometry(.32,.27,.28),
-      new THREE.MeshStandardMaterial({color:0x9a744c,roughness:1}));
-    parcel.position.set(.42,.78,.12);g.add(parcel);
+  if(role==='buyer'||role==='woman'||role==='child'){
+    const parcel=new THREE.Mesh(new THREE.BoxGeometry(.32,.27,.28),new THREE.MeshStandardMaterial({color:0x9a744c,roughness:1}));
+    parcel.position.set(.42,child?.62:.78,.12);g.add(parcel);
   }
   return g;
 }
@@ -342,11 +365,11 @@ const crowdSpots=[
 ];
 for(let i=0;i<crowdSpots.length;i++){
   const [x,z]=crowdSpots[i];
-  marketPerson(marketCrowd,x,z,crowdPalette[i%crowdPalette.length],(rnd()-.5)*Math.PI*2,1+(rnd()-.5)*.08,false);
+  marketPerson(marketCrowd,x,z,crowdPalette[i%crowdPalette.length],(rnd()-.5)*Math.PI*2,1+(rnd()-.5)*.08,false,i%5===0?'vendor':i%4===0?'woman':'buyer');
 }
 // Crianças entre os adultos, perto das bordas da rua.
 for(const [x,z] of [[189,69],[258,106],[305,85],[335,56]]){
-  marketPerson(marketCrowd,x,z,0x866342,(rnd()-.5)*Math.PI*2,.78,true);
+  marketPerson(marketCrowd,x,z,0x866342,(rnd()-.5)*Math.PI*2,.78,true,'child');
 }
 
 // Animação leve das chamas controlada pelo loop do jogador.
