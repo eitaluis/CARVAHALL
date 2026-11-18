@@ -157,5 +157,54 @@ for(const [x,z,w,d] of [[105,65,22,10],[145,78,25,9],[190,96,29,9],[235,80,25,9]
   patch.rotation.x=-Math.PI/2;patch.position.set(x,groundHeight(x,z)+.09,z);streetMarket.add(patch);
 }
 
+// Pessoas no mercado: vendedores, compradores e crianças entre as bancas.
+function marketPerson(parent,x,z,coatColor,heading=0,scale=1,child=false){
+  const g=new THREE.Group();g.position.set(x,groundHeight(x,z),z);g.rotation.y=heading;g.scale.setScalar(scale);parent.add(g);
+  const coatMat=new THREE.MeshStandardMaterial({color:coatColor,roughness:1});
+  const shirtMat=new THREE.MeshStandardMaterial({color:0xc2b08b,roughness:1});
+  const skinMat=new THREE.MeshStandardMaterial({color:0xb88e6d,roughness:1});
+  const hairMat=new THREE.MeshStandardMaterial({color:0x30231b,roughness:1});
+  const bootMat=new THREE.MeshStandardMaterial({color:0x302a24,roughness:1});
+  const torsoH=child?.72:1.02,headY=child?1.36:1.82;
+  const torso=new THREE.Mesh(new THREE.BoxGeometry(child?.43:.52,torsoH,child?.3:.34),coatMat);
+  torso.position.y=child?.75:1.15;torso.castShadow=true;g.add(torso);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(child?.19:.21,9,8),skinMat);
+  head.position.set(0,headY,0);g.add(head);
+  const hair=new THREE.Mesh(new THREE.SphereGeometry(child?.2:.22,8,7),hairMat);
+  hair.scale.set(1,.52,1);hair.position.set(0,headY+.13,0);g.add(hair);
+  const armLength=child?.52:.7;
+  for(const side of [-1,1]){
+    const arm=new THREE.Mesh(new THREE.CylinderGeometry(.07,.09,armLength,7),coatMat);
+    arm.position.set(side*(child?.29:.35),child?.78:1.25,.02);
+    arm.rotation.z=side*(.14+(side===1?.12:0));g.add(arm);
+    const leg=new THREE.Mesh(new THREE.CylinderGeometry(.075,.06,child?.43:.7,7),bootMat);
+    leg.position.set(side*.13,child?.22:.36,0);g.add(leg);
+    const foot=new THREE.Mesh(new THREE.BoxGeometry(.16,.12,.28),bootMat);
+    foot.position.set(side*.13,.06,.07);g.add(foot);
+  }
+  // Algumas figuras carregam uma cesta ou um pequeno embrulho.
+  if(Math.abs(x%3)<1.35){
+    const parcel=new THREE.Mesh(new THREE.BoxGeometry(.32,.27,.28),
+      new THREE.MeshStandardMaterial({color:0x9a744c,roughness:1}));
+    parcel.position.set(.42,.78,.12);g.add(parcel);
+  }
+  return g;
+}
+const marketCrowd=new THREE.Group();streetMarket.add(marketCrowd);
+const crowdPalette=[0x544638,0x5b473a,0x62624b,0x7d4b38,0x4d5960,0x83704e,0x6c4539,0x4e493e];
+const crowdSpots=[
+  [166,83],[181,111],[197,92],[205,71],[216,101],[224,63],[240,73],
+  [248,95],[260,48],[270,78],[292,67],[302,33],[315,60],[331,31],
+  [175,58],[239,112],[285,91],[319,74]
+];
+for(let i=0;i<crowdSpots.length;i++){
+  const [x,z]=crowdSpots[i];
+  marketPerson(marketCrowd,x,z,crowdPalette[i%crowdPalette.length],(rnd()-.5)*Math.PI*2,1+(rnd()-.5)*.08,false);
+}
+// Crianças entre os adultos, perto das bordas da rua.
+for(const [x,z] of [[189,69],[258,106],[305,85],[335,56]]){
+  marketPerson(marketCrowd,x,z,0x866342,(rnd()-.5)*Math.PI*2,.78,true);
+}
+
 // Animação leve das chamas controlada pelo loop do jogador.
 const marketFires=[campFireA,campFireB,campFireC];
