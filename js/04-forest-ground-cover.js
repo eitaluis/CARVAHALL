@@ -2,42 +2,52 @@
 // Instancing mantém a densidade de vegetação sem criar milhares de chamadas de desenho.
 
 function makeFirCrown(){
-  const profile=[
-    [0.00,.10],[.08,.34],[.17,.53],[.25,.45],[.36,.72],
-    [.46,.57],[.57,.70],[.68,.50],[.78,.58],[.89,.30],[1,.015]
-  ];
-  const segments=32,verts=[],colors=[],indices=[],col=new THREE.Color();
-  for(let r=0;r<profile.length;r++){
-    const y=profile[r][0],baseRadius=profile[r][1];
-    for(let s=0;s<=segments;s++){
-      const a=s/segments*Math.PI*2;
-      const lobe=1+.12*Math.sin(a*7+r*.73)+.065*Math.sin(a*13-r*1.2);
-      const noise=(hash2(r*17+s*3.1, s*11-r*5.7)-.5)*.12;
-      const radius=baseRadius*(lobe+noise);
-      const centerX=Math.sin(r*.65)*.025,centerZ=Math.cos(r*.52)*.025;
-      verts.push(
-        Math.cos(a)*radius+centerX,
-        y+(hash2(s*2.7,r*13.1)-.5)*.018,
-        Math.sin(a)*radius+centerZ
-      );
-      const shade=.17+y*.055+(hash2(s*4.3,r*19.7)-.5)*.045;
-      col.setHSL(.30+(hash2(s*8,r*5)-.5)*.035,.31,shade);
-      colors.push(col.r,col.g,col.b);
-      if(r<profile.length-1&&s<segments){
-        const a0=r*(segments+1)+s,b0=a0+1,c0=a0+segments+1,d0=c0+1;
-        indices.push(a0,c0,b0,b0,c0,d0);
+  // Copas compostas por tufos independentes: sem faixa contínua de cone/árvore de Natal.
+  const verts=[],colors=[],indices=[],col=new THREE.Color();
+  const tiers=[.19,.30,.42,.54,.66,.77,.87,.94];
+  const spreads=[.48,.62,.67,.64,.57,.47,.34,.20];
+  const sphere=new THREE.SphereGeometry(1,10,7);
+  const pos=sphere.attributes.position;
+  for(let tier=0;tier<tiers.length;tier++){
+    for(let branch=0;branch<9;branch++){
+      const angle=branch/9*Math.PI*2+tier*.37+(hash2(tier,branch)-.5)*.28;
+      const radial=new THREE.Vector3(Math.cos(angle),0,Math.sin(angle));
+      const tangent=new THREE.Vector3(-radial.z,0,radial.x);
+      const center=radial.clone().multiplyScalar(spreads[tier]*.57);
+      center.y=tiers[tier]+(hash2(branch,tier*7)-.5)*.035;
+      const length=spreads[tier]*(.62+hash2(tier,branch)*.22);
+      const width=.13+hash2(branch,tier+3)*.055;
+      const height=.085+hash2(branch+8,tier)*.045;
+      const base=verts.length/3;
+      for(let i=0;i<pos.count;i++){
+        const p=new THREE.Vector3(pos.getX(i),pos.getY(i),pos.getZ(i));
+        const along=p.x*length;
+        const around=p.z*width;
+        const y=p.y*height;
+        const out=center.clone().addScaledVector(radial,along).addScaledVector(tangent,around);
+        out.y+=y;
+        out.x+=(hash2(i,tier*11+branch)-.5)*.018;
+        out.z+=(hash2(i+5,tier*13+branch)-.5)*.018;
+        verts.push(out.x,out.y,out.z);
+        const light=.19+tiers[tier]*.075+(hash2(i,branch*9+tier)-.5)*.055;
+        col.setHSL(.285+(hash2(i,branch)-.5)*.045,.34,light);
+        colors.push(col.r,col.g,col.b);
+        if(i%pos.count>=0){} 
       }
+      for(let i=0;i<pos.count;i+=1){
+        // Preserve the sphere's indexed triangles while duplicating each soft foliage tuft.
+      }
+      const sphereIndex=sphere.index.array;
+      for(let k=0;k<sphereIndex.length;k++)indices.push(base+sphereIndex[k]);
     }
   }
   const g=new THREE.BufferGeometry();
   g.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
   g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
-  g.setIndex(indices);g.computeVertexNormals();
-  return g;
+  g.setIndex(indices);g.computeVertexNormals();return g;
 }
-
 const firCrownGeo=makeFirCrown();
-const trunkGeo=new THREE.CylinderGeometry(.13,.38,1,9,5);
+const trunkGeo=new THREE.CylinderGeometry(.13,.38,1,16,7);
 {
   const a=trunkGeo.attributes.position;
   for(let i=0;i<a.count;i++){
