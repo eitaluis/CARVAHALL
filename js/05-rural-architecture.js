@@ -439,6 +439,8 @@ makeResident(88,-8,0x62503c,.3,.98,1);
 makeResident(108,-22,0x46504c,2.0,1.02,0);
 makeResident(143,-7,0x80634d,-1.1,.96,0,'woman');
 makeResident(164,18,0x5b493b,.8,1.0,1);
+makeResident(184,-18,0x61513e,.45,.98,0,'walker');
+makeResident(221,15,0x46504c,-.9,1.01,1,'walker');
 
 // Cercas baixas e pequenos campos quadrados nas bordas da povoação.
 function makeFence(points,rails=1){
