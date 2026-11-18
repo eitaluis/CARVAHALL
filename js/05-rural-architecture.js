@@ -192,8 +192,8 @@ function addHearth(parent,x,z,forgeMode=false){
 }
 function addInterior(parent,kind,w,d){
   const floorMat=new THREE.MeshStandardMaterial({color:0x59432e,roughness:1});
-  const floor=new THREE.Mesh(new THREE.BoxGeometry(w-.45,.16,d-.45),floorMat);
-  floor.position.set(0,.48,0);parent.add(floor);
+  const floor=softBox(parent,w-.45,.16,d-.45,floorMat,0,.48,0);
+
   // Tábuas individuais, travessas e luz ambiente tornam o espaço legível
   // quando observado da porta; a disposição do mobiliário é interpretativa.
   const plankMat=[darkWoodMat,woodMat,paleWoodMat];
