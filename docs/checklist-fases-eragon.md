@@ -195,7 +195,7 @@
 - [ ] **Medição de desempenho:** comparar chamadas de desenho, triângulos, tempo de renderização e estabilidade em exploração contínua.
 
 
-## Fase 13 — reconstrução estrutural da arquitetura e das cataratas
+## Fase 13 — reconstrução estrutural da arquitetura e das cataratas (build 09)
 - [x] Recuperar e validar a integridade do módulo de arquitetura antes de consolidar a nova versão.
 - [x] Substituir portas retangulares simples por portas arqueadas com folhas de tábuas, dobradiças e ferragens.
 - [x] Reforçar as empenas com vigas inclinadas, travessas, pontalete central e acabamento estrutural.
@@ -203,6 +203,7 @@
 - [x] Reconstruir os interiores com tábuas corridas, rodapés, postes, caibros visíveis e iluminação ambiente.
 - [x] Diferenciar taverna, açougue, forja, casa e tanoaria com mobiliário de uso próprio.
 - [x] Recriar as fachadas das casas com vãos efetivos para portas e janelas, fundação de pedra e telhados mais inclinados.
+- [x] Substituir a textura de telhas retangulares por telhas sobrepostas, arredondadas e com desgaste irregular.
 - [x] Recriar a catarata como queda vertical junto à escarpa, com poço de impacto, espuma, névoa baixa e canal de saída para o Anora.
 - [x] Corrigir a dependência de material do colchão no interior residencial.
 - [ ] Conferir as capturas de cada interior e da catarata; ajustar passagens, altura do teto, aberturas e disposição dos móveis.
