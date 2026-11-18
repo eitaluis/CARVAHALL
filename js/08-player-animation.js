@@ -106,8 +106,13 @@ function animate(){
   // Fumaça leve, que sobe e se desfaz visualmente acima das chaminés.
   for(const s of smokeSprites){s.position.y=s.userData.baseY+Math.sin(waterTime*.7+s.userData.phase)*.16+((waterTime*.18+s.userData.phase)%1)*.7;s.material.opacity=.08+Math.sin(waterTime+s.userData.phase)*.025;}
   for(let i=0;i<falls.length;i++){
-    const fall=falls[i];
-    fall.position.y=fall.userData.baseY;
+    const fall=falls[i];fall.position.y=fall.userData.baseY;
+    const attr=fall.geometry.attributes.position,base=fall.userData.basePositions;
+    for(let v=0;v<attr.count;v++){
+      const x=base[v*3],y=base[v*3+1],z=base[v*3+2];
+      attr.setZ(v,z+Math.sin(y*.14+waterTime*3.1+x*.11)*.16);
+    }
+    attr.needsUpdate=true;fall.geometry.computeVertexNormals();
   }
   riverMesh.material.opacity=.86+Math.sin(waterTime*1.7)*.025;
   if(waterfallMist){
