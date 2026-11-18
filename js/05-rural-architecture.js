@@ -5,6 +5,16 @@
 
 const BUILDINGS=[];
 const smokeSprites=[];
+const smokeCanvas=document.createElement('canvas');
+smokeCanvas.width=smokeCanvas.height=128;
+const smokeCtx=smokeCanvas.getContext('2d');
+const smokeGrad=smokeCtx.createRadialGradient(64,64,3,64,64,62);
+smokeGrad.addColorStop(0,'rgba(83,79,70,.38)');
+smokeGrad.addColorStop(.45,'rgba(104,100,90,.17)');
+smokeGrad.addColorStop(1,'rgba(122,117,104,0)');
+smokeCtx.fillStyle=smokeGrad;smokeCtx.fillRect(0,0,128,128);
+const smokeTexture=new THREE.CanvasTexture(smokeCanvas);
+smokeTexture.colorSpace=THREE.SRGBColorSpace;
 
 function box(parent,w,h,d,mat,x,y,z,rx=0,ry=0,rz=0){
   const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
@@ -30,45 +40,82 @@ function addStoneChimney(parent,x,z,yTop=6.0,sooty=false){
   const opening=new THREE.Mesh(new THREE.BoxGeometry(.58,.06,.58),new THREE.MeshBasicMaterial({color:0x191714}));
   opening.position.set(x,yTop+.11,z);parent.add(opening);
   for(let i=0;i<5;i++){
-    const puff=new THREE.Mesh(
-      new THREE.SphereGeometry(.37+rnd()*.25,7,6),
-      new THREE.MeshBasicMaterial({color:sooty?0x4a443d:0xbebbb1,transparent:true,opacity:sooty?.13:.085,depthWrite:false})
-    );
-    puff.position.set(x+(rnd()-.5)*.5,yTop+.5+i*.62,z+(rnd()-.5)*.35);
+    const puff=new THREE.Sprite(new THREE.SpriteMaterial({
+      map:smokeTexture,color:sooty?0x77736b:0xd0cbc0,
+      transparent:true,opacity:sooty?.16:.105,depthWrite:false
+    }));
+    puff.scale.set(2.1+rnd()*.8,2.5+rnd()*.9,1);
+    puff.position.set(x+(rnd()-.5)*.7,yTop+.4+i*.72,z+(rnd()-.5)*.45);
     puff.userData.baseY=puff.position.y;puff.userData.phase=rnd()*6.28;
     parent.add(puff);smokeSprites.push(puff);
   }
 }
 function addWindow(parent,x,y,z,rotY=0,lit=false){
   const frame=new THREE.Group();frame.position.set(x,y,z);frame.rotation.y=rotY;parent.add(frame);
-  box(frame,1.12,1.02,.16,darkWoodMat,0,0,0);
-  box(frame,.82,.74,.10,lit?warmGlassMat:glassMat,0,0,.1);
-  box(frame,.09,.83,.1,paleWoodMat,0,0,.17);
-  box(frame,.92,.09,.1,paleWoodMat,0,0,.17);
-  box(frame,.07,.82,.11,darkWoodMat,-.65,0,.04);
-  box(frame,.07,.82,.11,darkWoodMat,.65,0,.04);
+  box(frame,1.34,1.18,.2,darkWoodMat,0,0,0);
+  box(frame,1.02,.88,.10,lit?warmGlassMat:glassMat,0,.015,.12);
+  box(frame,.105,.94,.11,paleWoodMat,0,0,.2);
+  box(frame,1.08,.105,.11,paleWoodMat,0,0,.2);
+  // Batentes laterais, peitoril profundo e pingadeira.
+  box(frame,.11,1.05,.14,darkWoodMat,-.73,0,.02);
+  box(frame,.11,1.05,.14,darkWoodMat,.73,0,.02);
+  box(frame,1.55,.13,.34,woodMat,0,-.61,.13);
+  box(frame,1.48,.11,.25,darkWoodMat,0,.66,.02);
+  // Duas folhas de veneziana, com réguas aparentes e ferragens.
+  for(const side of [-1,1]){
+    const shutter=new THREE.Group();shutter.position.set(side*.82,0,.09);frame.add(shutter);
+    box(shutter,.32,.94,.11,woodMat,0,0,0);
+    for(let row=0;row<5;row++)box(shutter,.29,.075,.045,paleWoodMat,0,-.35+row*.17,.075);
+    box(shutter,.35,.08,.07,darkWoodMat,0,.46,.04);
+    box(shutter,.35,.08,.07,darkWoodMat,0,-.46,.04);
+    const hinge=box(shutter,.045,.22,.06,ironMat,side*.12,0,.105);
+    hinge.rotation.z=.12;
+  }
+  if(lit){
+    const glow=new THREE.PointLight(0xffc47a,.16,7);
+    glow.position.set(x,y,z+1.1);parent.add(glow);
+  }
 }
 function addDoor(parent,w,d,doorW=1.5){
-  const doorH=2.25;
-  box(parent,doorW+.3,doorH+.22,.22,darkWoodMat,0,1.7,-d/2-.035);
-  const leaf=new THREE.Group();leaf.position.set(-doorW/2,0,-d/2-.15);parent.add(leaf);
-  box(leaf,doorW,doorH,.15,woodMat,doorW/2,doorH/2,0,0,-.07,0);
-  for(let i=0;i<5;i++)box(leaf,.055,doorH-.12,.08, darkWoodMat,.12+i*(doorW-.24)/4,doorH/2,-.095);
-  box(parent,doorW+.38,.16,.22,paleWoodMat,0,2.88,-d/2-.08);
+  const doorH=2.32,front=-d/2-.12;
+  box(parent,doorW+.42,doorH+.28,.28,darkWoodMat,0,1.78,front);
+  box(parent,doorW+.14,.13,.34,paleWoodMat,0,3.02,front-.035);
+  const leaf=new THREE.Group();leaf.position.set(-doorW/2,0,front-.17);parent.add(leaf);
+  box(leaf,doorW,doorH,.17,woodMat,doorW/2,doorH/2,0,0,-.07,0);
+  for(let i=0;i<5;i++)box(leaf,.065,doorH-.14,.085,darkWoodMat,.12+i*(doorW-.24)/4,doorH/2,-.105);
+  for(const y of [.36,doorH-.34]){
+    const hinge=box(leaf,.62,.09,.07,ironMat,.36,y,-.19);
+    hinge.rotation.z=.02;
+  }
+  const latch= new THREE.Mesh(new THREE.SphereGeometry(.075,8,6),ironMat);
+  latch.position.set(doorW-.18,1.18,-.19);leaf.add(latch);
+  // Porta deixada entreaberta para que a entrada e o interior sejam legíveis.
+  leaf.rotation.y=-.62;
 }
 function addPorch(parent,w,d){
-  const depth=2.65,z=-d/2-depth/2;
-  box(parent,w*.84,.2,depth,woodMat,0,.62,z);
-  for(const x of [-w*.39,0,w*.39]){
-    box(parent,.19,2.45,.19,darkWoodMat,x,1.9,-d/2-depth+.13);
-    box(parent,.25,.18,.25,paleWoodMat,x,3.18,-d/2-depth+.13);
+  const depth=3.05,z=-d/2-depth/2,front=-d/2-depth;
+  box(parent,w*.9,.24,depth,woodMat,0,.62,z);
+  for(const x of [-w*.42,-w*.14,w*.14,w*.42]){
+    box(parent,.22,2.85,.22,darkWoodMat,x,1.98,front+.16);
+    box(parent,.3,.18,.3,paleWoodMat,x,3.43,front+.16);
+    const brace=box(parent,1.15,.14,.16,darkWoodMat,x+(x<0?.36:-.36),3.03,front+.18);
+    brace.rotation.z=x<0?-.72:.72;
   }
-  box(parent,w*.88,.17,.2,darkWoodMat,0,3.03,-d/2-depth+.13);
-  for(const x of [-w*.4,w*.4]){
-    box(parent,.15,.52,depth*.78,paleWoodMat,x,.91,z);
+  box(parent,w*.96,.22,.27,darkWoodMat,0,3.34,front+.16);
+  box(parent,w*.97,.17,.24,woodMat,0,3.58,front+.16);
+  // Guarda-corpos baixos e corrimãos nas laterais da varanda.
+  for(const x of [-w*.46,w*.46]){
+    box(parent,.17,.72,depth*.82,darkWoodMat,x,.98,z);
+    for(const zz of [-depth*.36,depth*.36])box(parent,.18,1.03,.18,paleWoodMat,x,1.05,z+zz);
+    box(parent,.16,.14,depth*.88,paleWoodMat,x,1.42,z);
   }
-  box(parent,w*.22,.16,.92,paleWoodMat,0,.3,-d/2-depth-.42);
-  box(parent,w*.24,.16,.92,paleWoodMat,0,.14,-d/2-depth-.93);
+  // Três degraus de madeira, largos e visíveis na aproximação.
+  for(let step=0;step<3;step++){
+    box(parent,w*.28,.17,.54,paleWoodMat,0,.49-step*.16,front-.28-step*.48);
+  }
+  // Banco corrido encostado à fachada.
+  box(parent,w*.28,.15,.58,darkWoodMat,w*.23,.94,-d/2-.39);
+  for(const x of [w*.11,w*.35])box(parent,.12,.72,.13,darkWoodMat,x,.58,-d/2-.39);
 }
 function addHearth(parent,x,z,forgeMode=false){
   const hearthMat=new THREE.MeshStandardMaterial({color:0x625b4f,roughness:1});
