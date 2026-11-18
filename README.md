@@ -10,6 +10,9 @@ A entrada padrão reproduz a vila ao anoitecer: construções robustas de tronco
 
 A tecla **T** ativa o mercado de inverno, outra situação descrita no mesmo romance.
 
+## Direção visual
+A apresentação visual foi refinada para uma ambientação naturalista e cinematográfica, tendo como referência de qualidade ambiental jogos de mundo aberto como **Assassin's Creed**. Isso é uma escolha artística, não um detalhe canônico do romance: horizonte velado por neblina, céu em gradiente, terreno orgânico, árvores de copas irregulares, escarpas contínuas e construções rurais com estrutura, volume e sinais de uso.
+
 ## Controles
 - **WASD**: mover
 - **Mouse**: olhar
@@ -45,7 +48,7 @@ O HTML carrega os arquivos JavaScript em sequência, mantendo a divisão por res
 - [Documento-base de cânone e interpretação](docs/base-canon-eragon.md)
 - [Checklist de desenvolvimento por fases](docs/checklist-fases-eragon.md)
 
-O documento-base separa descrições diretas do romance das decisões interpretativas (coordenadas, planta da vila e detalhes não descritos). O checklist registra o que já foi reconstruído e o que ainda precisa de validação visual.
+O documento-base separa descrições diretas do romance das decisões interpretativas (coordenadas, planta da vila e detalhes não descritos). O checklist registra a revisão da direção visual e mantém a validação final da cena como pendente até a inspeção no navegador.
 
 ## Desempenho
 A separação em módulos facilita manutenção e evolução, mas não aumenta FPS por si só. O desempenho depende principalmente da geometria, do número de chamadas de desenho, das sombras, dos materiais e da distância de renderização.
