@@ -202,15 +202,18 @@ addMountainRidge('z',-980,1040,-1280,430,245,-20,5.1);
 addMountainRidge('z',-980,1040,850,410,230,-18,8.3);
 
 // CATARATAS DE IGUALDA — cortinas d'água com bordas quebradas e névoa baixa.
+const waterfallBottom=groundHeight(-146,-564)+.38;
+const waterfallTop=cliffTop(-146)-4.5;
+const waterfallHeight=Math.max(82,waterfallTop-waterfallBottom);
 const fallsGlow=new THREE.PointLight(0xdce8e8,1.15,260);
-fallsGlow.position.set(-146,28,-603);scene.add(fallsGlow);
+fallsGlow.position.set(-146,waterfallBottom+waterfallHeight*.28,-603);scene.add(fallsGlow);
 const fallMat=new THREE.MeshStandardMaterial({
   color:0xd5e0dc,transparent:true,opacity:.73,roughness:.2,metalness:.04,
   side:THREE.DoubleSide,emissive:0x506d70,emissiveIntensity:.2,depthWrite:false
 });
 const falls=[];
 for(let k=0;k<5;k++){
-  const width=11+(k%2)*5,height=100+(k%3)*9;
+  const width=11+(k%2)*5,height=waterfallHeight*(.92+(k%3)*.025);
   const geo=new THREE.PlaneGeometry(width,height,5,28);
   const a=geo.attributes.position;
   for(let i=0;i<a.count;i++){
@@ -220,7 +223,7 @@ for(let k=0;k<5;k++){
   }
   geo.computeVertexNormals();
   const mesh=new THREE.Mesh(geo,fallMat);
-  mesh.position.set(-181+k*15,54+(k%2)*3,-622+(k%3)*1.7);
+  mesh.position.set(-181+k*15,waterfallBottom+height/2+(k%2)*.25,-622+(k%3)*1.7);
   mesh.userData.baseY=mesh.position.y;
   scene.add(mesh);falls.push(mesh);
 }
@@ -228,7 +231,7 @@ const pool=new THREE.Mesh(
   new THREE.CircleGeometry(36,56),
   new THREE.MeshStandardMaterial({color:0x789499,roughness:.24,transparent:true,opacity:.88})
 );
-pool.rotation.x=-Math.PI/2;pool.position.set(-146,groundHeight(-146,-564)-.62,-564);scene.add(pool);
+pool.rotation.x=-Math.PI/2;pool.position.set(-146,waterfallBottom-.18,-564);scene.add(pool);
 
 // Rochas de base da cachoeira: fragmentos angulares apoiados no chão, não empilhados em esfera.
 const talusGeo=new THREE.IcosahedronGeometry(1,1);
