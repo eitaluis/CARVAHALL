@@ -87,8 +87,10 @@
 - [x] Corrigir a orientação dos caibros e retirar as falsas hastes acima dos telhados.
 - [x] Clarear a resposta da madeira e a iluminação difusa de fim de tarde.
 - [x] Aumentar a presença de capim seco e aproximar os bosques de pinheiros do vale aberto.
+- [x] Animar o balanço suave do capim com um shader de vento.
 - [x] Tornar as cristas montanhosas mais quebradas e aplicar relevo/textura de rocha.
 - [x] Mover o atalho do mercado para junto do acampamento, voltado para as tendas.
+- [x] Dar textura de trama, dobras, costuras, franjas, estacas e cordas às tendas dos mercadores.
 - [ ] Inspecionar novamente as capturas da versão atual e ajustar a composição final.
 
 ## Fase 7 — validação de fidelidade
