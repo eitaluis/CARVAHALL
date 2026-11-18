@@ -85,6 +85,12 @@
 - [ ] Inspecionar a nova composição no navegador e ajustar densidade, escala e iluminação a partir da imagem real.
 
 ## Fase 7 — validação de fidelidade
+- [ ] Testar a página publicada no navegador.
+- [ ] Percorrer a rua principal e visitar cada edifício.
+- [ ] Inspecionar o açougue, a forja e a tanoaria por dentro.
+- [ ] Ativar o mercado de inverno e conferir a ligação entre campo e rua.
+- [ ] Corrigir os pontos indicados na exploração antes de considerar a versão aprovada.
+
 ## Fase 8 — vida cotidiana, interiores e acessos
 - [x] Construir coberturas de varanda alinhadas com os telhados principais.
 - [x] Deixar portas entreabertas e passagens de entrada legíveis.
@@ -101,14 +107,10 @@
 - [x] Validar a sintaxe dos nove módulos individualmente.
 - [x] Validar a sintaxe do conjunto dos nove módulos na ordem de carregamento.
 - [x] Conferir as principais dependências entre módulos (terreno, rio, fumaça, mercado e animações).
+- [x] Registrar contagem de quadros renderizados, chamadas de desenho, triângulos e objetos para diagnóstico.
 - [ ] Executar teste real de navegador e confirmar que pelo menos um quadro 3D é renderizado.
 - [ ] Medir desempenho e estabilidade durante a exploração.
 - [ ] Fazer a última revisão de fidelidade, densidade e escala depois do teste visual.
-- [ ] Testar a página publicada no navegador.
-- [ ] Percorrer a rua principal e visitar cada edifício.
-- [ ] Inspecionar o açougue, a forja e a tanoaria por dentro.
-- [ ] Ativar o mercado de inverno e conferir a ligação entre campo e rua.
-- [ ] Corrigir os pontos indicados na exploração antes de considerar a versão aprovada.
 
 ## Exclusões de escopo
 - Não criar versões de Carvahall pertencentes a acontecimentos fora do escopo deste romance.
