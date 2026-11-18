@@ -226,144 +226,145 @@ function addHearth(parent,x,z,forgeMode=false){
   beamBetween(parent,new THREE.Vector3(x-.78,1.48,z-.43),new THREE.Vector3(x+.78,1.48,z-.43),.105,masonry);
   return flame;
 }
-function addInterior(parent,kind,w,d){
-  const floorMat=new THREE.MeshStandardMaterial({color:0x59432e,roughness:1});
-  const floor=softBox(parent,w-.45,.16,d-.45,floorMat,0,.48,0);
+function makeOvalTable(parent,x,z,width,depth,height=1.02,material=woodMat){
+  const top=new THREE.Mesh(new THREE.CylinderGeometry(.5,.52,.14,24,2),material);
+  top.scale.set(width,1,depth);top.position.set(x,height,z);top.castShadow=true;top.receiveShadow=true;parent.add(top);
+  const legGeo=new THREE.CylinderGeometry(.065,.105,Math.max(.35,height-.68),9,2);
+  for(const sx of [-1,1])for(const sz of [-1,1]){
+    const leg=new THREE.Mesh(legGeo,darkWoodMat);
+    leg.position.set(x+sx*width*.72,height/2-.02,z+sz*depth*.70);parent.add(leg);
+  }
+  beamBetween(parent,new THREE.Vector3(x-width*.7,height*.48,z),new THREE.Vector3(x+width*.7,height*.48,z),.045,darkWoodMat,8);
+}
+function makeSeat(parent,x,z,length=.95){
+  const top=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,.12,16,1),woodMat);
+  top.scale.set(length,.7,.34);top.position.set(x,.91,z);top.castShadow=true;parent.add(top);
+  for(const sx of [-1,1]){
+    const leg=new THREE.Mesh(new THREE.CylinderGeometry(.055,.085,.50,8),darkWoodMat);
+    leg.position.set(x+sx*length*.65,.69,z);parent.add(leg);
+  }
+}
+function addInterior(parent,kind,w,d,eave=4.25,rise=2.8){
+  const floorTop=.59;
+  const floorMat=new THREE.MeshStandardMaterial({color:0x604a34,roughness:.98,map:barkTex});
+  softBox(parent,w-.55,.15,d-.55,floorMat,0,.49,0);
+  // Tábuas estreitas no sentido do comprimento, com juntas visíveis.
+  const floorPalette=[woodMat,darkWoodMat,paleWoodMat],boardCount=Math.floor((w-1)/.34);
+  for(let i=0;i<boardCount;i++){
+    const x=-(boardCount-1)*.17+i*.34;
+    softBox(parent,.30,.045,d-.85,floorPalette[i%3],x,floorTop,0);
+  }
+  // Rodapés, postes e caibros fecham a leitura do cômodo.
+  for(const side of [-1,1]){
+    const z=side*(d/2-.38);
+    softBox(parent,w-1,.12,.13,darkWoodMat,0,.78,z);
+    for(let x=-w*.42;x<=w*.42;x+=Math.max(2.5,w*.25))
+      beamBetween(parent,new THREE.Vector3(x,.66,z),new THREE.Vector3(x,Math.min(eave-.28,4.15),z),.075,woodMat);
+  }
+  for(const side of [-1,1]){
+    const x=side*(w/2-.40);
+    softBox(parent,.13,.12,d-.9,darkWoodMat,x,.78,0);
+    for(let z=-d*.34;z<=d*.34;z+=d*.34)
+      beamBetween(parent,new THREE.Vector3(x,.66,z),new THREE.Vector3(x,Math.min(eave-.28,4.15),z),.075,woodMat);
+  }
+  for(let x=-w*.42;x<=w*.42;x+=2.5){
+    beamBetween(parent,new THREE.Vector3(x,eave+rise-.22,0),new THREE.Vector3(x,eave-.12,-Math.min(d/2-.25,d/2+.85)),.085,darkWoodMat);
+    beamBetween(parent,new THREE.Vector3(x,eave+rise-.22,0),new THREE.Vector3(x,eave-.12,Math.min(d/2-.25,d/2+.85)),.085,darkWoodMat);
+  }
+  for(const z of [-d*.32,0,d*.32])logBeam(parent,w-1.1,.10,0,eave-.18,z,'x',darkWoodMat);
 
-  // Tábuas individuais, travessas e luz ambiente tornam o espaço legível
-  // quando observado da porta; a disposição do mobiliário é interpretativa.
-  const plankMat=[darkWoodMat,woodMat,paleWoodMat];
-  for(let i=0;i<Math.floor((w-.8)/1.05);i++){
-    const x=-(w-.8)/2+i*1.05;
-    softBox(parent,1.0,.035,d-.8,plankMat[i%3],x,.585,0);
-    softBox(parent,.035,.035,d-.8,darkWoodMat,x+.5,.586,0);
-  }
-  for(const z of [-d*.39,d*.39]){
-    softBox(parent,w-.9,.18,.2,darkWoodMat,0,4.18,z);
-    for(let x=-w*.42;x<=w*.42;x+=w*.21)
-      softBox(parent,.16,.62,.18,darkWoodMat,x,3.9,z);
-  }
-  const warmRoomLight=new THREE.PointLight(kind==='forge'?0xff9a55:0xffc17a,kind==='forge'?1.05:.72,kind==='forge'?18:14);
-  warmRoomLight.position.set(0,3.25,0);parent.add(warmRoomLight);
+  const warmRoomLight=new THREE.PointLight(kind==='forge'?0xff9a55:0xffc17a,kind==='forge'?1.35:.92,kind==='forge'?22:18);
+  warmRoomLight.position.set(0,3.1,0);parent.add(warmRoomLight);
+  const secondaryGlow=new THREE.Mesh(new THREE.SphereGeometry(.12,10,8),warmGlassMat);
+  secondaryGlow.position.set(-w*.28,2.2,-d*.25);parent.add(secondaryGlow);
   const wallShelf=(x,y,z,length)=>{
-    softBox(parent,length,.13,.5,darkWoodMat,x,y,z);
-    for(let i=0;i<Math.max(2,Math.floor(length/.55));i++){
-      const px=x-length*.42+i*(length*.84/Math.max(1,Math.floor(length/.55)-1));
-      softBox(parent,.09,.45,.1,darkWoodMat,px,y-.28,z+.13);
+    softBox(parent,length,.12,.34,darkWoodMat,x,y,z);
+    for(let n=0;n<Math.max(2,Math.floor(length/.72));n++){
+      const px=x-length*.42+n*(length*.84/Math.max(1,Math.floor(length/.72)-1));
+      beamBetween(parent,new THREE.Vector3(px,y-.05,z),new THREE.Vector3(px,y-.48,z),.035,woodMat,7);
     }
   };
-
   if(kind==='butcher'){
-    // Açougue de Sloan: sala ampla, lareira de pedra, balcão simples ao fundo,
-    // piso de palha e limpeza rigorosa — sem aparência de loja moderna.
     addHearth(parent,-w*.34,-d*.28,false);
-    softBox(parent,w*.67,.12,1.1,paleWoodMat,0,1.08,d*.28);
-    softBox(parent,w*.68,.12,1.18,darkWoodMat,0,1.42,d*.28);
-    for(let i=0;i<7;i++)softBox(parent,.045,.48,.055,darkWoodMat,-w*.29+i*w*.096,1.72,d*.28);
-    const strawMat=new THREE.MeshStandardMaterial({color:0xb8a06a,roughness:1});
-    for(let i=0;i<34;i++){
-      const straw=new THREE.Mesh(new THREE.CylinderGeometry(.012,.018,.45+rnd()*.65,4),strawMat);
-      straw.rotation.z=Math.PI/2+(rnd()-.5)*.35;
-      straw.position.set((rnd()-.5)*(w-2),.61,(rnd()-.5)*(d-2));parent.add(straw);
-    }
-    for(let i=0;i<4;i++){
-      const hook=new THREE.Mesh(new THREE.TorusGeometry(.11,.025,5,8,Math.PI),ironMat);
-      hook.position.set(-w*.25+i*1.05,2.55,-d*.34);hook.rotation.z=Math.PI;parent.add(hook);
-      const blade=softBox(parent,.045,.46,.035,ironMat,-w*.25+i*1.05,2.17,-d*.34);blade.rotation.z=-.08;
-    }
-    wallShelf(w*.29,2.7,-d*.39,3.4);
-  } else if(kind==='forge'){
-    addHearth(parent,w*.25,-d*.26,true);
-    const anvilX=-w*.22,anvilZ=d*.15;
-    softBox(parent,1.3,.94,1.08,darkWoodMat,anvilX,.95,anvilZ);
-    softBox(parent,1.6,.2,.78,ironMat,anvilX,1.53,anvilZ);
-    softBox(parent,1.18,.28,.62,ironMat,anvilX,1.76,anvilZ);
-    const horn=new THREE.Mesh(new THREE.CylinderGeometry(.055,.19,.72,9),ironMat);
-    horn.rotation.z=Math.PI/2;horn.position.set(anvilX-.98,1.68,anvilZ);parent.add(horn);
-    softBox(parent,.42,.25,.65,ironMat,anvilX+.95,1.68,anvilZ);
-    for(const sx of [-.48,.48])for(const sz of [-.34,.34])softBox(parent,.14,.4,.14,ironMat,anvilX+sx,.24,anvilZ+sz);
-    const leather=new THREE.MeshStandardMaterial({color:0x68452f,roughness:1});
-    softBox(parent,1.35,.62,.48,leather,w*.33,1.05,-d*.12,0,0,-.18);
-    softBox(parent,1.42,.1,.55,darkWoodMat,w*.33,1.38,-d*.12,0,0,-.18);
-    const nozzle=new THREE.Mesh(new THREE.CylinderGeometry(.09,.13,.85,8),ironMat);
-    nozzle.rotation.z=Math.PI/2;nozzle.position.set(w*.24,1.22,-d*.2);parent.add(nozzle);
-    const trough=new THREE.Mesh(new THREE.BoxGeometry(2.25,.68,.82),darkWoodMat);
-    trough.position.set(-w*.05,.47,d*.34);parent.add(trough);
-    const water=new THREE.Mesh(new THREE.BoxGeometry(2.0,.055,.58),new THREE.MeshStandardMaterial({color:0x536f70,roughness:.25,metalness:.12}));
-    water.position.set(-w*.05,.83,d*.34);parent.add(water);
-    for(let i=0;i<5;i++)logBeam(parent,1.15,.07,-w*.33+i*.42,1.95,d*.3,'x',ironMat);
-    const rackZ=-d*.41;softBox(parent,w*.43,.16,.2,darkWoodMat,0,2.65,rackZ);
-    for(let i=0;i<6;i++){
-      const tx=-w*.19+i*w*.076;
-      const handle=new THREE.Mesh(new THREE.CylinderGeometry(.045,.06,.78,7),woodMat);
-      handle.position.set(tx,2.12,rackZ-.12);parent.add(handle);
-      softBox(parent,.46,.17,.22,ironMat,tx,2.47,rackZ-.12);
-    }
-    softBox(parent,2.9,.2,1.0,darkWoodMat,w*.32,.95,d*.24);
-    softBox(parent,2.98,.12,1.08,paleWoodMat,w*.32,1.12,d*.24);
-    for(let i=0;i<4;i++)logBeam(parent,.9,.035,w*.22+i*.22,1.82,d*.24,'z',ironMat);
-    // Escória, barras e tenazes junto à área de trabalho.
-    for(let i=0;i<8;i++){
-      const billet=softBox(parent,.85,.09,.12,i%2?ironMat:darkWoodMat,-w*.39+(i%4)*.42,.68+i%2*.1,-d*.03+Math.floor(i/4)*.25);
-      billet.rotation.y=(rnd()-.5)*.18;
-    }
-  } else if(kind==='tavern'){
-    // Morn's tavern: bar longo e baixo; os chifres de Urgal sobre a entrada
-    // e os bastões riscados são detalhes descritos no primeiro romance.
-    addHearth(parent,-w*.34,-d*.28,false);
-    softBox(parent,w*.68,.22,1.05,darkWoodMat,0,1.05,-d*.27);
-    softBox(parent,w*.7,.14,1.12,paleWoodMat,0,1.23,-d*.27);
-    for(let i=0;i<9;i++){
-      const stave=softBox(parent,.09,.48,.09,woodMat,-w*.29+i*w*.073,1.55,-d*.27);
-      stave.rotation.z=(rnd()-.5)*.05;
-      for(let mark=0;mark<3;mark++)softBox(parent,.012,.12,.012,ironMat,-w*.29+i*w*.073-.025,1.42+mark*.12,-d*.315);
-    }
-    for(const z of [-d*.04,d*.29]){
-      softBox(parent,w*.39,.18,.95,woodMat,0,1.02,z);
-      softBox(parent,w*.41,.14,1.02,paleWoodMat,0,1.43,z);
-      for(const side of [-1,1]){
-        const benchZ=z+side*.91;
-        softBox(parent,w*.3,.16,.43,darkWoodMat,0,.68,benchZ);
-        for(const x of [-w*.13,w*.13])softBox(parent,.12,.58,.12,darkWoodMat,x,.37,benchZ);
-      }
-      for(let i=0;i<4;i++){
-        const mug=new THREE.Mesh(new THREE.CylinderGeometry(.09,.1,.24,9),new THREE.MeshStandardMaterial({color:0x8b765d,roughness:.9}));
-        mug.position.set(-w*.14+i*w*.095,1.54,z);parent.add(mug);
-        const rim=new THREE.Mesh(new THREE.TorusGeometry(.09,.018,5,10),darkWoodMat);
-        rim.rotation.x=Math.PI/2;rim.position.set(-w*.14+i*w*.095,1.67,z);parent.add(rim);
-      }
-    }
-    // Par de chifres curvos, montados acima do campo de visão da porta.
-    for(const side of [-1,1]){
-      const hornCurve=new THREE.CatmullRomCurve3([
-        new THREE.Vector3(side*.22,2.75,0),new THREE.Vector3(side*.55,2.82,0),
-        new THREE.Vector3(side*.9,3.08,0),new THREE.Vector3(side*1.18,3.42,.02)
-      ]);
-      const hornMesh=new THREE.Mesh(new THREE.TubeGeometry(hornCurve,12,.105,7,false),darkWoodMat);
-      hornMesh.position.set(0,0,-d*.43);parent.add(hornMesh);
-    }
-    addBarrel(parent,-w*.36,.05,d*.29,.9);addBarrel(parent,w*.36,.05,d*.29,.9);
-    wallShelf(w*.27,2.65,d*.37,4.2);
-  } else {
-    addHearth(parent,-w*.3,-d*.26,false);
-    softBox(parent,2.45,.16,1.45,darkWoodMat,w*.18,.92,d*.16);
-    softBox(parent,2.55,.12,1.5,paleWoodMat,w*.18,1.08,d*.16);
-    for(const x of [w*.07,w*.29])for(const z of [d*.08,d*.25])softBox(parent,.14,.78,.14,darkWoodMat,x,.45,z);
-    softBox(parent,2.15,.5,3.0,darkWoodMat,-w*.25,.8,d*.23);
-    softBox(parent,2.02,.2,2.75,paleWoodMat,-w*.25,1.14,d*.23);
-    softBox(parent,2.1,.24,2.8,new THREE.MeshStandardMaterial({color:0x74614a,roughness:1}),-w*.25,1.34,d*.23);
-    softBox(parent,1.15,.72,.82,woodMat,w*.31,.85,-d*.15);
-    softBox(parent,1.25,.12,.9,paleWoodMat,w*.31,1.27,-d*.15);
-    softBox(parent,2.8,.14,.55,darkWoodMat,-w*.1,2.52,-d*.38);
-    for(let i=0;i<4;i++){
-      const pot=new THREE.Mesh(new THREE.SphereGeometry(.16,8,7),new THREE.MeshStandardMaterial({color:0x89785f,roughness:.9}));
-      pot.scale.set(.8,1.1,.8);pot.position.set(-w*.2+i*.48,2.73,-d*.35);parent.add(pot);
-    }
-    // Baú menor, banquinho, cesto e utensílios domésticos.
-    softBox(parent,1.25,.82,1.0,darkWoodMat,-w*.37,.91,-d*.12);
+    makeOvalTable(parent,w*.12,d*.28,w*.30,.48,1.12,paleWoodMat);
+    makeOvalTable(parent,-w*.20,d*.02,1.22,.62,.98,woodMat);
+    wallShelf(w*.28,2.65,-d*.39,3.7);
     for(let i=0;i<5;i++){
-      const bowl=new THREE.Mesh(new THREE.SphereGeometry(.17,8,6,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0x987d5d,roughness:1}));
-      bowl.position.set(-w*.16+i*.55,1.7,-d*.36);parent.add(bowl);
+      const hook=new THREE.Mesh(new THREE.TorusGeometry(.105,.022,6,12,Math.PI),ironMat);
+      hook.rotation.z=Math.PI;hook.position.set(-w*.25+i*1.05,2.45,-d*.38);parent.add(hook);
+      const blade=new THREE.Mesh(new THREE.CapsuleGeometry(.035,.29,3,7),ironMat);
+      blade.position.set(-w*.25+i*1.05,2.05,-d*.38);blade.rotation.z=.08;parent.add(blade);
+    }
+    const block=new THREE.Mesh(new THREE.CylinderGeometry(.42,.48,.76,14,2),woodMat);
+    block.position.set(-w*.30,.99,d*.25);block.castShadow=true;parent.add(block);
+  }else if(kind==='forge'){
+    addHearth(parent,-w*.30,-d*.28,true);
+    const anvilShape=new THREE.Shape();
+    anvilShape.moveTo(-.55,0);anvilShape.lineTo(-.43,.24);anvilShape.lineTo(-.22,.36);
+    anvilShape.lineTo(-.19,.68);anvilShape.lineTo(-.49,.77);anvilShape.lineTo(-.49,.91);
+    anvilShape.lineTo(.42,.91);anvilShape.lineTo(.42,.76);anvilShape.lineTo(.18,.67);
+    anvilShape.lineTo(.18,.36);anvilShape.lineTo(.42,.24);anvilShape.lineTo(.55,0);anvilShape.closePath();
+    const anvilGeo=new THREE.ExtrudeGeometry(anvilShape,{depth:.42,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.035,bevelThickness:.035,curveSegments:6});
+    const anvil=new THREE.Mesh(anvilGeo,ironMat);anvil.position.set(-w*.05,.65,-d*.02);anvil.castShadow=true;parent.add(anvil);
+    const horn=new THREE.Mesh(new THREE.CylinderGeometry(.025,.15,.62,12,3),ironMat);
+    horn.rotation.z=Math.PI/2;horn.position.set(-w*.05-.78,1.45,-d*.02);parent.add(horn);
+    makeOvalTable(parent,w*.29,d*.22,2.5,.58,.95,darkWoodMat);
+    const tub=new THREE.Mesh(new THREE.CylinderGeometry(.73,.82,.74,18,2,true),darkWoodMat);
+    tub.position.set(w*.28,.94,d*.34);parent.add(tub);
+    const water=new THREE.Mesh(new THREE.CircleGeometry(.68,24),new THREE.MeshStandardMaterial({color:0x5e7f81,roughness:.18,metalness:.08}));
+    water.rotation.x=-Math.PI/2;water.position.set(w*.28,1.32,d*.34);parent.add(water);
+    wallShelf(w*.30,2.78,-d*.39,4.0);
+    for(let i=0;i<7;i++){
+      const tool=new THREE.Mesh(new THREE.CylinderGeometry(.035,.045,.86,8),woodMat);
+      tool.position.set(-w*.18+i*.62,2.05,-d*.37);tool.rotation.z=(i%2?-.12:.12);parent.add(tool);
+    }
+  }else if(kind==='tavern'){
+    addHearth(parent,-w*.34,-d*.28,false);
+    makeOvalTable(parent,0,d*.31,w*.53,.49,1.12,woodMat);
+    for(const x of [-w*.28,-w*.09,w*.12,w*.29]){
+      const mug=new THREE.Mesh(new THREE.CylinderGeometry(.085,.095,.22,12),new THREE.MeshStandardMaterial({color:0x8c7458,roughness:.9}));
+      mug.position.set(x,1.31,d*.31);parent.add(mug);
+      const rim=new THREE.Mesh(new THREE.TorusGeometry(.09,.016,5,12),darkWoodMat);
+      rim.rotation.x=Math.PI/2;rim.position.set(x,1.43,d*.31);parent.add(rim);
+    }
+    for(const [x,z] of [[-w*.26,-.25],[w*.23,-.15],[-w*.05,d*.02]]){
+      makeOvalTable(parent,x,z,1.12,.82,.99,woodMat);
+      for(const [dx,dz] of [[-.95,0],[.95,0],[0,-.82],[0,.82]])makeSeat(parent,x+dx,z+dz,.72);
+    }
+    wallShelf(w*.28,2.72,d*.38,4.4);
+    for(const side of [-1,1]){
+      const curve=new THREE.CatmullRomCurve3([
+        new THREE.Vector3(side*.2,2.8,0),new THREE.Vector3(side*.54,2.86,0),
+        new THREE.Vector3(side*.88,3.08,.02),new THREE.Vector3(side*1.15,3.40,.04)
+      ]);
+      const horn=new THREE.Mesh(new THREE.TubeGeometry(curve,18,.085,9,false),darkWoodMat);
+      horn.position.set(0,0,-d*.43);parent.add(horn);
+    }
+  }else if(kind==='tannery'){
+    makeOvalTable(parent,-w*.22,d*.12,w*.32,.48,1.02,darkWoodMat);
+    makeOvalTable(parent,w*.24,-d*.12,w*.25,.45,.92,woodMat);
+    wallShelf(w*.20,2.5,-d*.37,3.3);
+    const tub=new THREE.Mesh(new THREE.CylinderGeometry(.78,.85,.8,18,2,true),darkWoodMat);
+    tub.position.set(0,.98,d*.28);parent.add(tub);
+  }else{
+    addHearth(parent,-w*.32,-d*.27,false);
+    const bedX=-w*.22,bedZ=d*.20;
+    softBox(parent,2.25,.28,3.0,darkWoodMat,bedX,.78,bedZ);
+    for(const [dx,dz] of [[-1,-1.35],[1,-1.35],[-1,1.35],[1,1.35]]){
+      const post=new THREE.Mesh(new THREE.CylinderGeometry(.06,.085,.68,9),woodMat);
+      post.position.set(bedX+dx*.88,.87,bedZ+dz*.82);parent.add(post);
+    }
+    const mattress=new THREE.Mesh(new THREE.CapsuleGeometry(.48,2.05,5,12),linen);
+    mattress.rotation.x=Math.PI/2;mattress.position.set(bedX,1.0,bedZ);mattress.scale.set(.9,.72,.75);parent.add(mattress);
+    const blanket=new THREE.Mesh(new THREE.SphereGeometry(1,16,10),new THREE.MeshStandardMaterial({color:0x887052,roughness:1}));
+    blanket.scale.set(1,.12,1.22);blanket.position.set(bedX,1.18,bedZ+.48);parent.add(blanket);
+    makeOvalTable(parent,w*.22,-d*.12,1.45,.82,.96,woodMat);
+    makeSeat(parent,w*.22+1.25,-d*.12,.72);
+    softBox(parent,1.1,.78,.85,darkWoodMat,w*.30,.98,d*.31);
+    wallShelf(w*.25,2.72,-d*.38,3.5);
+    for(let i=0;i<4;i++){
+      const bowl=new THREE.Mesh(new THREE.SphereGeometry(.15,12,9,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0x987d5d,roughness:1}));
+      bowl.position.set(-w*.18+i*.55,2.82,-d*.35);parent.add(bowl);
     }
   }
 }
