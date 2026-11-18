@@ -19,6 +19,7 @@ const marketSnow=new THREE.Points(marketSnowGeometry,new THREE.PointsMaterial({
 }));
 traderCamp.add(marketSnow);
 traderCamp.visible=false;
+window.CARVAHALL_MARKET_VISIBLE=false;
 
 // Carroça de mercadores: estrutura de madeira, rodas e eixo.
 function makeWagon(x,z,scale=1,parent=scene){
