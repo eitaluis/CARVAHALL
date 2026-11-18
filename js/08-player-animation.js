@@ -108,6 +108,8 @@ function animate(){
     }
   }
   drawMap();renderer.render(scene,camera);
+  window.CARVAHALL_RENDERED_FRAMES=(window.CARVAHALL_RENDERED_FRAMES||0)+1;
+  window.CARVAHALL_RENDER_STATS={drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,objects:scene.children.length};
 }
 animate();
 
