@@ -166,20 +166,25 @@ buildEscarpment();
 
 // Cadeias montanhosas longas, com cristas irregulares, encostas e silhuetas sobrepostas.
 function addMountainRidge(axis,alongStart,alongEnd,front,depth,amplitude,base,phase){
-  const na=176,nd=42,verts=[],colors=[],indices=[],color=new THREE.Color();
+  const na=210,nd=48,verts=[],colors=[],uvs=[],indices=[],color=new THREE.Color();
   for(let j=0;j<=nd;j++){
-    const v=j/nd,profile=Math.pow(Math.max(0,Math.sin(Math.PI*v)),.76);
+    const v=j/nd,profile=Math.pow(Math.max(0,Math.sin(Math.PI*v)),.62);
     for(let i=0;i<=na;i++){
       const u=i/na,along=alongStart+(alongEnd-alongStart)*u;
-      const peaks=.58+.34*fbm(u*5.7+phase,phase*1.7,4)+.12*Math.abs(Math.sin(u*39+phase));
-      const fine=(fbm(u*38+phase,v*28-phase,3)-.5)*10;
+      // Cristas quebradas em picos de alturas diferentes, evitando o perfil de morro arredondado.
+      const broad=.42+.34*fbm(u*5.7+phase,phase*1.7,4);
+      const sharp=Math.pow(Math.abs(Math.sin(u*18.4+phase)),1.65)*.28+
+        Math.pow(Math.abs(Math.sin(u*43.7-phase*.72)),2.6)*.16;
+      const peaks=broad+sharp;
+      const fine=(fbm(u*41+phase,v*31-phase,3)-.5)*15;
       let x,z;
       if(axis==='x'){x=along;z=front+v*depth;}
       else {x=front+v*depth;z=along;}
-      const y=base+profile*(amplitude*peaks+fine)+(fbm(u*23,v*17+phase,3)-.5)*3.5;
-      verts.push(x,y,z);
-      const h=THREE.MathUtils.clamp(profile*.7+fbm(u*16,v*12+phase,3)*.22,.05,.92);
-      color.setHSL(.105,.075,.22+h*.28);
+      const shoulder=(fbm(u*14+phase,v*9,3)-.5)*9;
+      const y=base+profile*(amplitude*peaks+fine)+shoulder;
+      verts.push(x,y,z);uvs.push(u*7,v*4);
+      const h=THREE.MathUtils.clamp(profile*.76+fbm(u*16,v*12+phase,3)*.2,.05,.96);
+      color.setHSL(.105,.085,.265+h*.31);
       colors.push(color.r,color.g,color.b);
       if(i<na&&j<nd){
         const a=j*(na+1)+i,b=a+1,c=a+na+1,d=c+1;
@@ -191,8 +196,10 @@ function addMountainRidge(axis,alongStart,alongEnd,front,depth,amplitude,base,ph
   const g=new THREE.BufferGeometry();
   g.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
   g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+  g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
   g.setIndex(indices);g.computeVertexNormals();
   const mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({
+    map:stoneTex,normalMap:stoneNormalTex,normalScale:new THREE.Vector2(.33,.33),
     vertexColors:true,roughness:1,side:THREE.DoubleSide
   }));
   mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
