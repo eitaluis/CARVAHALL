@@ -51,7 +51,7 @@ O HTML carrega os arquivos JavaScript em sequência, mantendo a divisão por res
 O documento-base separa descrições diretas do romance das decisões interpretativas (coordenadas, planta da vila e detalhes não descritos). O checklist registra as etapas de construção, interiores, acessos e feira. Os testes de sintaxe foram executados; a inspeção visual em navegador e a medição de desempenho continuam pendentes.
 
 ## Diagnóstico
-A página mostra o nome do arquivo e a mensagem quando ocorre um erro de execução. Também expõe `window.CARVAHALL_READY` e `window.CARVAHALL_LOADED_MODULES` para conferir o carregamento dos módulos.
+A página mostra o nome do arquivo e a mensagem quando ocorre um erro de execução. Também expõe `window.CARVAHALL_READY`, `window.CARVAHALL_LOADED_MODULES`, `window.CARVAHALL_RENDERED_FRAMES` e `window.CARVAHALL_RENDER_STATS` para conferir o carregamento, a renderização e métricas básicas da cena. Erros do cliente ficam registrados em `window.CARVAHALL_RUNTIME_ERRORS`.
 
 ## Desempenho
 A separação em módulos facilita manutenção e evolução, mas não aumenta FPS por si só. O desempenho depende principalmente da geometria, do número de chamadas de desenho, das sombras, dos materiais e da distância de renderização.
