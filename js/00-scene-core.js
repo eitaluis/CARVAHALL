@@ -3,7 +3,7 @@
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xbfc0b6);
 scene.fog = new THREE.Fog(0xbfc0b6, 260, 1320);
-const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.1, 2800);
+const camera = new THREE.PerspectiveCamera(68, innerWidth/innerHeight, 0.1, 2800);
 camera.rotation.order = 'YXZ';
 const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
 renderer.setSize(innerWidth, innerHeight);
