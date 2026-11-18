@@ -482,13 +482,14 @@ function createTannery(x,z){
     }else logBeam(g,w+.45,.18,0,y,-d/2,'x',mat);
     logBeam(g,w+.45,.18,0,y,d/2,'x',mat);
   }
-  const shedEave=2.92,shedRise=1.15;
+  const shedEave=2.92,shedRise=2.15,shedRun=d/2+.9;
   addGableEnd(g,w,-d/2-.06,shedEave,shedRise);
   addGableEnd(g,w,d/2+.06,shedEave,shedRise);
-  const slope=Math.atan2(shedRise,d/2+.25),roofLen=Math.hypot(shedRise,d/2+.25);
-  box(g,w+1.1,.24,roofLen,shingleMat,0,shedEave+shedRise/2,-(d/2+.25)/2,-slope,0,0);
-  box(g,w+1.1,.24,roofLen,shingleMat,0,shedEave+shedRise/2,(d/2+.25)/2,slope,0,0);
+  addRoofHalf(g,w,shedRun,shedEave,shedRise,-1,shingleMat);
+  addRoofHalf(g,w,shedRun,shedEave,shedRise,1,shingleMat);
+  logBeam(g,w+1.35,.14,0,shedEave+shedRise,0,'x',darkWoodMat);
   addDoor(g,w,d,1.35);
+  addInterior(g,'tannery',w,d,shedEave,shedRise);
 
   // O barracão fica encaixado numa encosta irregular, com terra e rocha
   // subindo atrás da construção em vez de uma parede artificial isolada.
