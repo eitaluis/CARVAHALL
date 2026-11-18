@@ -519,7 +519,7 @@ function makeResident(x,z,coatColor,yaw=0,scale=1,gesture=0){
   for(const side of [-1,1]){
     const arm=new THREE.Mesh(new THREE.CylinderGeometry(.075,.09,.7,6),coat);
     arm.position.set(side*.34,1.25,0);
-    arm.rotation.z=side*(gesture&&side===1?-.75:.12);g.add(arm);movingArms.push({mesh:arm,side});
+    arm.rotation.z=side*(gesture&&side===1?-.75:.12);g.add(arm);movingArms.push({mesh:arm,side,baseZ:arm.rotation.z});
     const leg=new THREE.Mesh(new THREE.CylinderGeometry(.095,.075,.72,6),boots);
     leg.position.set(side*.14,.42,0);g.add(leg);
   }
