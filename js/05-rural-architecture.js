@@ -105,7 +105,7 @@ function addPorch(parent,w,d,roofMat=thatchMat){
   const canopyLength=Math.hypot(canopyDepth,canopyRise);
   const canopySlope=Math.atan2(canopyRise,canopyDepth);
   const canopyCenterZ=-d/2-canopyDepth/2+.12;
-  const canopyCenterY=3.82;
+  const canopyCenterY=4.15;
   box(parent,w+1.05,.2,canopyLength,roofMat,0,canopyCenterY,canopyCenterZ,-canopySlope,0,0);
   for(let i=0;i<7;i++){
     const x=-w*.43+i*w*.143;
