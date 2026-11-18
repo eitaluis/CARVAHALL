@@ -79,7 +79,7 @@ As peças arquitetônicas e o mobiliário receberam arestas suavizadas; troncos 
 A inspeção visual em navegador continua pendente: as mudanças estão publicadas, mas ainda precisam ser verificadas em execução, especialmente a conexão da catarata com a piscina, a leitura das montanhas, a densidade das copas e a performance.
 
 
-## Build 08 — cinco avanços
+## Build 09 — reconstrução estrutural e novos avanços
 - Ponto inicial aproximado da rua principal para uma leitura mais imediata das construções.
 - Capim e moitas distribuídos também nas bordas da vila, com clareiras para estradas e edifícios.
 - Pinheiros um pouco mais altos e com variação tonal menos clara.
@@ -97,3 +97,6 @@ Os interiores agora têm piso em tábuas corridas, rodapés, postes de madeira e
 A catarata foi substituída por uma queda vertical junto à escarpa, com poço de impacto, névoa e espuma local, mais um canal que segue em direção ao Anora. As árvores agora usam três variantes de copa; os caminhos receberam ombros de terra, sulcos e cascalho; moradores adicionais caminham lentamente pela rua.
 
 O teste automático passou a produzir imagens separadas para cada interior e para a catarata. A revisão visual dessas capturas e a confirmação da navegação interna continuam pendentes até a execução do teste e inspeção das imagens.
+
+
+A cobertura de shingles também deixou de usar retângulos regulares em grade: a nova textura usa telhas sobrepostas, bordas arredondadas, larguras variadas, fibras e desgaste irregular para afastar a leitura de blocos. A nova versão usa o cache-buster `20261118-09`.
