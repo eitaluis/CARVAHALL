@@ -42,6 +42,28 @@
 </div></div>
 <div id="resume"><div class="card">Clique para retomar a exploração</div></div>
 
+<script>
+(() => {
+  const showSceneError = message => {
+    const phase = document.getElementById("phase");
+    if (!phase) return;
+    phase.textContent = "ERRO NA CENA · " + message;
+    phase.style.maxWidth = "min(70vw, 760px)";
+    phase.style.whiteSpace = "normal";
+    phase.style.color = "#ffd1b5";
+    console.error("Carvahall runtime:", message);
+  };
+  window.addEventListener("error", event => {
+    const where = event.filename ? " · " + event.filename.split("/").pop() + ":" + event.lineno : "";
+    showSceneError((event.message || "erro de execução") + where);
+  });
+  window.addEventListener("unhandledrejection", event => {
+    const reason = event.reason && event.reason.message ? event.reason.message : String(event.reason);
+    showSceneError(reason);
+  });
+})();
+</script>
+
 <script type="module">
 import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
 window.THREE = THREE;
@@ -59,20 +81,28 @@ const scripts = [
 ];
 
 const phase = document.getElementById("phase");
+window.CARVAHALL_LOADED_MODULES = [];
 try {
   for (const src of scripts) {
     await new Promise((resolve, reject) => {
       const script = document.createElement("script");
       script.src = src;
-      script.onload = resolve;
+      script.onload = () => {
+        window.CARVAHALL_LOADED_MODULES.push(src);
+        resolve();
+      };
       script.onerror = () => reject(new Error("Falha ao carregar " + src));
       document.body.appendChild(script);
     });
   }
+  window.CARVAHALL_READY = true;
   phase.textContent = "CARVAHALL · PALANCAR VALLEY · MÓDULOS CARREGADOS";
 } catch (error) {
   console.error(error);
-  phase.textContent = "ERRO AO CARREGAR A CENA — atualize a página";
+  phase.textContent = "FALHA AO CARREGAR · " + error.message;
+  phase.style.maxWidth = "min(70vw, 760px)";
+  phase.style.whiteSpace = "normal";
+  phase.style.color = "#ffd1b5";
 }
 </script>
 </body>
