@@ -20,7 +20,7 @@ addEventListener('keydown',e=>{
   if(e.code==='KeyJ')teleport(2);
   if(e.code==='KeyG')teleport(6);
   if(e.code==='KeyF')teleport(8);
-  if(e.code==='KeyT'){traderCamp.visible=!traderCamp.visible;document.getElementById('tp').textContent=traderCamp.visible?'Mercado de inverno — Eragon':'Carvahall ao anoitecer';}
+  if(e.code==='KeyT'){traderCamp.visible=!traderCamp.visible;window.CARVAHALL_MARKET_VISIBLE=traderCamp.visible;document.getElementById('tp').textContent=traderCamp.visible?'Mercado de inverno — Eragon':'Carvahall ao anoitecer';}
 });
 addEventListener('keyup',e=>{keys[e.code]=false;});
 function localOf(b,x,z){const dx=x-b.x,dz=z-b.z,c=Math.cos(b.rot),s=Math.sin(b.rot);return {x:c*dx-s*dz,z:s*dx+c*dz};}
