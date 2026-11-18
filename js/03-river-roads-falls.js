@@ -213,7 +213,7 @@ const waterfallBottom=groundHeight(-146,-646)+.38;
 const waterfallTop=cliffTop(-146)-1.8;
 const waterfallHeight=Math.max(82,waterfallTop-waterfallBottom);
 const fallsGlow=new THREE.PointLight(0xc8d9d9,.82,170);
-fallsGlow.position.set(-146,waterfallBottom+waterfallHeight*.2,-642);scene.add(fallsGlow);
+fallsGlow.position.set(-146,waterfallBottom+waterfallHeight*.2,-626);scene.add(fallsGlow);
 const fallMat=new THREE.MeshStandardMaterial({
   color:0xc5d7d6,vertexColors:true,transparent:true,opacity:.64,roughness:.16,metalness:.025,
   side:THREE.DoubleSide,emissive:0x263f42,emissiveIntensity:.14,depthWrite:false
@@ -230,7 +230,7 @@ const falls=[];
       const y=bottom+(top-bottom)*v;
       const waviness=Math.sin(v*19+u*8)*.28+Math.sin(v*43-u*17)*.09;
       // A lâmina acompanha a face rochosa; não avança dezenas de metros pelo ar.
-      const z=-646+(1-v)*3.2+waviness;
+      const z=-630+(1-v)*2.8+waviness;
       verts.push(x,y-waterfallBottom,z);
       uvs.push(u*2.8,v*4.2);
       const streak=.5+.5*Math.sin(u*92+Math.sin(v*13)*2);
@@ -256,8 +256,8 @@ const falls=[];
 }
 // A água sai do pé da escarpa por um canal raso até a piscina e se une ao rio.
 const fallRunoutCurve=new THREE.CatmullRomCurve3([
-  new THREE.Vector3(-146,0,-644),new THREE.Vector3(-146,0,-630),
-  new THREE.Vector3(-145,0,-614),new THREE.Vector3(-148,0,-596),
+  new THREE.Vector3(-146,0,-628),new THREE.Vector3(-146,0,-620),
+  new THREE.Vector3(-145,0,-612),new THREE.Vector3(-148,0,-596),
   new THREE.Vector3(-150,0,-578)
 ]);
 const fallRunout=makeRibbon(fallRunoutCurve,15,waterMat,-.18,46,t=>12.5+2*Math.sin(t*Math.PI));
@@ -272,7 +272,7 @@ const mistGeo=new THREE.BufferGeometry(),mistPositions=new Float32Array(42*3);
 for(let i=0;i<42;i++){
   mistPositions[i*3]=-146+(rnd()-.5)*48;
   mistPositions[i*3+1]=waterfallBottom+.45+rnd()*3.2;
-  mistPositions[i*3+2]=-625+(rnd()-.5)*18;
+  mistPositions[i*3+2]=-612+(rnd()-.5)*18;
 }
 mistGeo.setAttribute('position',new THREE.BufferAttribute(mistPositions,3));
 const waterfallMist=new THREE.Points(mistGeo,new THREE.PointsMaterial({
