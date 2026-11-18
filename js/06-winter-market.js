@@ -223,7 +223,7 @@ function marketPerson(parent,x,z,coatColor,heading=0,scale=1,child=false){
   for(const side of [-1,1]){
     const arm=new THREE.Mesh(new THREE.CylinderGeometry(.07,.09,armLength,7),coatMat);
     arm.position.set(side*(child?.29:.35),child?.78:1.25,.02);
-    arm.rotation.z=side*(.14+(side===1?.12:0));g.add(arm);movingArms.push({mesh:arm,side});
+    arm.rotation.z=side*(.14+(side===1?.12:0));g.add(arm);movingArms.push({mesh:arm,side,baseZ:arm.rotation.z});
     const leg=new THREE.Mesh(new THREE.CylinderGeometry(.075,.06,child?.43:.7,7),bootMat);
     leg.position.set(side*.13,child?.22:.36,0);g.add(leg);
     const foot=new THREE.Mesh(new THREE.BoxGeometry(.16,.12,.28),bootMat);
