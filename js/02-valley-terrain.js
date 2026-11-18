@@ -29,6 +29,8 @@ terrainGeo.computeVertexNormals();
 
 const terrainMat=new THREE.MeshStandardMaterial({
   map:groundTex,
+  normalMap:groundNormalTex,
+  normalScale:new THREE.Vector2(.22,.22),
   vertexColors:true,
   roughness:1,
   metalness:0
