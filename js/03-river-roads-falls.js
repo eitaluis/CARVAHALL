@@ -208,35 +208,33 @@ addMountainRidge('x',-1420,1420,-1160,440,315,-18,2.2);
 addMountainRidge('z',-980,1040,-1280,430,245,-20,5.1);
 addMountainRidge('z',-980,1040,850,410,230,-18,8.3);
 
-// CATARATAS DE IGUALDA — queda vertical presa à escarpa, com saída natural para o Anora.
-const waterfallBottom=groundHeight(-146,-646)+.38;
+// CATARATAS DE IGUALDA — uma queda contínua presa à face da escarpa.
+const waterfallBottom=groundHeight(-146,-564)+.42;
 const waterfallTop=cliffTop(-146)-1.8;
 const waterfallHeight=Math.max(82,waterfallTop-waterfallBottom);
-const fallsGlow=new THREE.PointLight(0xc8d9d9,.82,170);
-fallsGlow.position.set(-146,waterfallBottom+waterfallHeight*.2,-626);scene.add(fallsGlow);
+const fallsGlow=new THREE.PointLight(0xc8d9d9,.72,190);
+fallsGlow.position.set(-146,waterfallBottom+waterfallHeight*.22,-613);scene.add(fallsGlow);
 const fallMat=new THREE.MeshStandardMaterial({
-  color:0xc5d7d6,vertexColors:true,transparent:true,opacity:.64,roughness:.16,metalness:.025,
-  side:THREE.DoubleSide,emissive:0x263f42,emissiveIntensity:.14,depthWrite:false
+  color:0xc5d7d6,vertexColors:true,transparent:true,opacity:.58,roughness:.18,metalness:.025,
+  side:THREE.DoubleSide,emissive:0x263f42,emissiveIntensity:.12,depthWrite:false
 });
 const falls=[];
 {
-  const nx=88,ny=64,verts=[],uvs=[],colors=[],indices=[],col=new THREE.Color();
+  const nx=72,ny=54,verts=[],uvs=[],colors=[],indices=[],col=new THREE.Color();
   for(let j=0;j<=ny;j++){
     const v=j/ny;
     for(let i=0;i<=nx;i++){
       const u=i/nx,x=(u-.5)*62;
       const top=cliffTop(-146+x)-1.8;
-      const bottom=waterfallBottom+Math.sin(u*Math.PI)*.34;
+      const bottom=waterfallBottom+Math.sin(u*Math.PI)*.6;
       const y=bottom+(top-bottom)*v;
-      const waviness=Math.sin(v*19+u*8)*.28+Math.sin(v*43-u*17)*.09;
-      // A lâmina acompanha a face rochosa; não avança dezenas de metros pelo ar.
-      const z=-630+(1-v)*2.8+waviness;
+      const waviness=Math.sin(v*19+u*8)*.34+Math.sin(v*43-u*17)*.12;
+      const z=-646+(1-v)*82+waviness;
       verts.push(x,y-waterfallBottom,z);
-      uvs.push(u*2.8,v*4.2);
+      uvs.push(u*2.5,v*3.8);
       const streak=.5+.5*Math.sin(u*92+Math.sin(v*13)*2);
-      const rivulet=.5+.5*Math.sin(u*39+v*2.2);
-      const shade=.7+streak*.2+rivulet*.07;
-      col.setRGB(shade*.8,shade*.91,shade*.93);
+      const shade=.72+streak*.18;
+      col.setRGB(shade*.82,shade*.91,shade*.92);
       colors.push(col.r,col.g,col.b);
       if(i<nx&&j<ny){
         const n=j*(nx+1)+i;
@@ -254,32 +252,24 @@ const falls=[];
   sheet.userData.baseY=waterfallBottom;sheet.userData.basePositions=new Float32Array(geo.attributes.position.array);
   scene.add(sheet);falls.push(sheet);
 }
-// A água sai do pé da escarpa por um canal raso até a piscina e se une ao rio.
-const fallRunoutCurve=new THREE.CatmullRomCurve3([
-  new THREE.Vector3(-146,0,-628),new THREE.Vector3(-146,0,-620),
-  new THREE.Vector3(-145,0,-612),new THREE.Vector3(-148,0,-596),
-  new THREE.Vector3(-150,0,-578)
-]);
-const fallRunout=makeRibbon(fallRunoutCurve,15,waterMat,-.18,46,t=>12.5+2*Math.sin(t*Math.PI));
-const poolY=groundHeight(-146,-606)-.16;
 const pool=new THREE.Mesh(
-  new THREE.CircleGeometry(30,96),
-  new THREE.MeshStandardMaterial({color:0x718b8e,roughness:.2,metalness:.045,transparent:true,opacity:.86})
+  new THREE.CircleGeometry(28,72),
+  new THREE.MeshStandardMaterial({color:0x718b8e,roughness:.22,metalness:.04,transparent:true,opacity:.82})
 );
-pool.rotation.x=-Math.PI/2;pool.position.set(-146,poolY,-606);scene.add(pool);
-// Névoa baixa e localizada na base, sem partículas suspensas na silhueta do céu.
-const mistGeo=new THREE.BufferGeometry(),mistPositions=new Float32Array(42*3);
-for(let i=0;i<42;i++){
-  mistPositions[i*3]=-146+(rnd()-.5)*48;
-  mistPositions[i*3+1]=waterfallBottom+.45+rnd()*3.2;
-  mistPositions[i*3+2]=-612+(rnd()-.5)*18;
+pool.rotation.x=-Math.PI/2;pool.position.set(-146,waterfallBottom-.22,-588);scene.add(pool);
+// Névoa fina e baixa no encontro da água, sem véus soltos no céu.
+const mistGeo=new THREE.BufferGeometry(),mistPositions=new Float32Array(38*3);
+for(let i=0;i<38;i++){
+  mistPositions[i*3]=-146+(rnd()-.5)*56;
+  mistPositions[i*3+1]=waterfallBottom+.6+rnd()*5;
+  mistPositions[i*3+2]=-583+(rnd()-.5)*18;
 }
 mistGeo.setAttribute('position',new THREE.BufferAttribute(mistPositions,3));
 const waterfallMist=new THREE.Points(mistGeo,new THREE.PointsMaterial({
-  color:0xd7e0dc,size:1.05,transparent:true,opacity:.105,depthWrite:false,sizeAttenuation:true
+  color:0xd7e0dc,size:1.25,transparent:true,opacity:.12,depthWrite:false,sizeAttenuation:true
 }));
 scene.add(waterfallMist);
-// Blocos de talude pequenos, irregulares e apoiados no leito da piscina.
+// Rochas de base da cachoeira: fragmentos angulares apoiados no chão, não empilhados em esfera.
 const talusGeo=new THREE.IcosahedronGeometry(1,1);
 {
   const a=talusGeo.attributes.position;
@@ -289,12 +279,12 @@ const talusGeo=new THREE.IcosahedronGeometry(1,1);
   }
   talusGeo.computeVertexNormals();
 }
-const talus=new THREE.InstancedMesh(talusGeo,cliffMat,42);
-for(let i=0;i<42;i++){
-  const x=-153+(rnd()-.5)*88,z=-612+(rnd()-.5)*58;
+const talus=new THREE.InstancedMesh(talusGeo,cliffMat,34);
+for(let i=0;i<34;i++){
+  const x=-153+(rnd()-.5)*92,z=-556+(rnd()-.5)*66;
   bankDummy.position.set(x,groundHeight(x,z)+.08,z);
   bankDummy.rotation.set((rnd()-.5)*.23,rnd()*Math.PI*2,(rnd()-.5)*.18);
-  bankDummy.scale.set(1.6+rnd()*6,.35+rnd()*1.8,1.2+rnd()*4.8);
+  bankDummy.scale.set(2+rnd()*8,.5+rnd()*2.4,1.5+rnd()*6);
   bankDummy.updateMatrix();talus.setMatrixAt(i,bankDummy.matrix);
 }
 talus.instanceMatrix.needsUpdate=true;talus.castShadow=true;scene.add(talus);
