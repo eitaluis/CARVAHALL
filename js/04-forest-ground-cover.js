@@ -193,9 +193,25 @@ function makeGrassTuft(){
   g.setIndex(indices);g.computeVertexNormals();return g;
 }
 const grassGeo=makeGrassTuft();
+let grassWindShader=null;
 const grassMat=new THREE.MeshStandardMaterial({
   color:0xb4a071,roughness:1,side:THREE.DoubleSide
 });
+grassMat.onBeforeCompile=shader=>{
+  shader.uniforms.uWindTime={value:0};
+  grassWindShader=shader;
+  shader.vertexShader=shader.vertexShader.replace(
+    '#include <common>',
+    '#include <common>\nuniform float uWindTime;'
+  );
+  shader.vertexShader=shader.vertexShader.replace(
+    '#include <begin_vertex>',
+    `#include <begin_vertex>
+    float windPhase=uWindTime*1.15+dot(instanceMatrix[3].xz,vec2(.017,.013));
+    transformed.x+=sin(windPhase+transformed.y*3.1)*transformed.y*.095;
+    transformed.z+=cos(windPhase*.72+transformed.y*2.3)*transformed.y*.065;`
+  );
+};
 const grassCount=12000;
 const grassInst=new THREE.InstancedMesh(grassGeo,grassMat,grassCount);
 const grassDummy=new THREE.Object3D();
