@@ -69,3 +69,11 @@ A separação em módulos facilita manutenção e evolução, mas não aumenta F
 
 ## Escopo
 Carvahall deve permanecer fiel ao primeiro romance. A feira de inverno é a única alternância de situação narrativa incluída nesta versão; não há variantes de épocas posteriores. A fazenda de Garrow é um cenário separado e distante da vila, não parte do núcleo urbano.
+
+
+## Nova rodada de naturalismo visual
+A direção foi ajustada para evitar o aspecto blocado/low-poly. As montanhas agora usam encostas assimétricas e cristas menos repetitivas; a catarata foi reconstruída como uma queda contínua que conecta a escarpa ao leito, com fluxo e névoa local animados. As copas dos pinheiros passaram a ser compostas por tufos orgânicos independentes, com vento sutil, e a vegetação rasteira foi adensada.
+
+As peças arquitetônicas e o mobiliário receberam arestas suavizadas; troncos e vigas ganharam irregularidade. Moradores e mercadores foram reconstruídos com volumes anatômicos arredondados e articulações reais nos ombros e quadris. A animação agora inclui respiração, mudança de peso, olhares, gestos e pequenos deslocamentos de alguns compradores.
+
+A inspeção visual em navegador continua pendente: as mudanças estão publicadas, mas ainda precisam ser verificadas em execução, especialmente a conexão da catarata com a piscina, a leitura das montanhas, a densidade das copas e a performance.
