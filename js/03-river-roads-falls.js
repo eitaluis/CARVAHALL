@@ -166,30 +166,30 @@ buildEscarpment();
 
 // Cadeias montanhosas longas, com cristas irregulares, encostas e silhuetas sobrepostas.
 function addMountainRidge(axis,alongStart,alongEnd,front,depth,amplitude,base,phase){
-  const na=210,nd=48,verts=[],colors=[],uvs=[],indices=[],color=new THREE.Color();
+  const na=250,nd=64,verts=[],colors=[],uvs=[],indices=[],color=new THREE.Color();
   for(let j=0;j<=nd;j++){
-    const v=j/nd,profile=Math.pow(Math.max(0,Math.sin(Math.PI*v)),.62);
+    const v=j/nd;
+    // A encosta cai para trás de modo assimétrico; evita o perfil de lona triangular.
+    const profile=Math.pow(1-v,1.38)*(1-.08*Math.sin(v*Math.PI));
     for(let i=0;i<=na;i++){
       const u=i/na,along=alongStart+(alongEnd-alongStart)*u;
-      // Cristas quebradas em picos de alturas diferentes, evitando o perfil de morro arredondado.
-      const broad=.42+.34*fbm(u*5.7+phase,phase*1.7,4);
-      const sharp=Math.pow(Math.abs(Math.sin(u*18.4+phase)),1.65)*.28+
-        Math.pow(Math.abs(Math.sin(u*43.7-phase*.72)),2.6)*.16;
+      const broad=.26+.72*fbm(u*4.4+phase,phase*1.9,5);
+      const peakNoise=fbm(u*17.5+phase*2.3,phase*3.7,3);
+      const sharp=Math.pow(Math.max(0,Math.sin(u*25.7+phase+peakNoise*2.2)),2.4)*(.08+peakNoise*.22);
       const peaks=broad+sharp;
-      const fine=(fbm(u*41+phase,v*31-phase,3)-.5)*15;
-      let x,z;
-      if(axis==='x'){x=along;z=front+v*depth;}
-      else {x=front+v*depth;z=along;}
-      const shoulder=(fbm(u*14+phase,v*9,3)-.5)*9;
-      const y=base+profile*(amplitude*peaks+fine)+shoulder;
-      verts.push(x,y,z);uvs.push(u*7,v*4);
-      const h=THREE.MathUtils.clamp(profile*.76+fbm(u*16,v*12+phase,3)*.2,.05,.96);
-      color.setHSL(.105,.085,.265+h*.31);
+      const fine=(fbm(u*53+phase,v*37-phase,4)-.5)*12;
+      const shoulder=(fbm(u*13+phase,v*11,4)-.5)*13;
+      const gullies=Math.pow(Math.abs(Math.sin(u*12.1+phase*1.3+v*2)),7)*8;
+      let x,z;if(axis==='x'){x=along;z=front+v*depth;}else{x=front+v*depth;z=along;}
+      const y=base+profile*(amplitude*peaks+fine)+shoulder-gullies*profile;
+      verts.push(x,y,z);uvs.push(u*8,v*5);
+      const altitude=THREE.MathUtils.clamp(profile*.72+fbm(u*19,v*15+phase,4)*.22,.03,.96);
+      const rockWarm=.5+fbm(u*7+phase,v*6,3)*.5;
+      color.setHSL(.095+rockWarm*.018,.055+altitude*.055,.19+altitude*.29);
       colors.push(color.r,color.g,color.b);
       if(i<na&&j<nd){
-        const a=j*(na+1)+i,b=a+1,c=a+na+1,d=c+1;
-        if(axis==='x')indices.push(a,c,b,b,c,d);
-        else indices.push(a,b,c,b,d,c);
+        const a=j*(na+1)+i,b=a+1,d=a+na+1,e=d+1;
+        if(axis==='x')indices.push(a,d,b,b,d,e);else indices.push(a,b,d,b,e,d);
       }
     }
   }
@@ -199,7 +199,7 @@ function addMountainRidge(axis,alongStart,alongEnd,front,depth,amplitude,base,ph
   g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
   g.setIndex(indices);g.computeVertexNormals();
   const mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({
-    map:stoneTex,normalMap:stoneNormalTex,normalScale:new THREE.Vector2(.33,.33),
+    map:stoneTex,normalMap:stoneNormalTex,normalScale:new THREE.Vector2(.42,.42),
     vertexColors:true,roughness:1,side:THREE.DoubleSide
   }));
   mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
