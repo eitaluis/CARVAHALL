@@ -91,6 +91,17 @@ A cena de mercado é uma alternativa sazonal dentro do próprio romance, não um
 
 **Importante:** a fazenda de Garrow não deve ser colocada dentro do agrupamento de Carvahall. É uma possível cena complementar, separada e distante.
 
+## Direção visual da reconstrução
+
+A direção visual é uma interpretação artística, separada do cânone textual. O objetivo é uma ambientação 3D naturalista e cinematográfica, comparável em qualidade de cenário a jogos de mundo aberto como *Assassin's Creed*, sem copiar arquitetura, clima ou elementos narrativos desses jogos.
+
+- Horizonte distante suavizado por neblina atmosférica; céu em gradiente, sem fundo chapado.
+- Solo com variação mineral, manchas de terra batida, pequenas pedras e capim seco, sem aparência quadriculada.
+- Montanhas como cadeias e escarpas contínuas, com estratos e silhuetas irregulares; evitar cones, esferas ou agrupamentos de rochas com aparência de objetos soltos.
+- Pinheiros altos, com troncos visíveis e copas em camadas orgânicas, distribuídos em bosques nas bordas do vale.
+- Casas com escala legível em relação ao jogador, empenas preenchidas, estrutura de telhado, portas, janelas, varandas e objetos de uso.
+- A aparência cinematográfica não autoriza acrescentar neve, fortificações, monumentos ou qualquer elemento que contrarie o que o primeiro romance descreve.
+
 ## 5. Cânone e interpretação
 
 ### Elementos diretamente descritos
