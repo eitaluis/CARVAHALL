@@ -1,23 +1,24 @@
 // FLORESTA E COBERTURA DO SOLO — PINHEIROS ALTOS, COPAS IRREGULARES E CAPIM SECO
 // Instancing mantém a densidade de vegetação sem criar milhares de chamadas de desenho.
 
-function makeFirCrown(){
+function makeFirCrown(variant=0){
   // Copas compostas por tufos independentes: sem faixa contínua de cone/árvore de Natal.
   const verts=[],colors=[],indices=[],col=new THREE.Color();
-  const tiers=[.19,.30,.42,.54,.66,.77,.87,.94];
-  const spreads=[.48,.62,.67,.64,.57,.47,.34,.20];
+  const tiers=variant===0?[.19,.30,.42,.54,.66,.77,.87,.94]:variant===1?[.16,.28,.39,.51,.64,.76,.88,.95]:[.21,.34,.47,.59,.70,.80,.89,.96];
+  const spreads=variant===0?[.48,.62,.67,.64,.57,.47,.34,.20]:variant===1?[.58,.68,.61,.72,.58,.43,.30,.16]:[.42,.57,.72,.66,.62,.51,.37,.22];
+  const branches=variant===1?8:variant===2?10:9;
   const sphere=new THREE.SphereGeometry(1,8,5);
   const pos=sphere.attributes.position;
   for(let tier=0;tier<tiers.length;tier++){
-    for(let branch=0;branch<9;branch++){
-      const angle=branch/9*Math.PI*2+tier*.37+(hash2(tier,branch)-.5)*.28;
+    for(let branch=0;branch<branches;branch++){
+      const angle=branch/branches*Math.PI*2+tier*(variant===1?.29:variant===2?.43:.37)+(hash2(tier,branch+variant*17)-.5)*.36;
       const radial=new THREE.Vector3(Math.cos(angle),0,Math.sin(angle));
       const tangent=new THREE.Vector3(-radial.z,0,radial.x);
       const center=radial.clone().multiplyScalar(spreads[tier]*.57);
       center.y=tiers[tier]+(hash2(branch,tier*7)-.5)*.035;
-      const length=spreads[tier]*(.62+hash2(tier,branch)*.22);
-      const width=.13+hash2(branch,tier+3)*.055;
-      const height=.085+hash2(branch+8,tier)*.045;
+      const length=spreads[tier]*(.57+hash2(tier,branch+variant*13)*.29);
+      const width=.12+hash2(branch+variant*11,tier+3)*.075;
+      const height=.075+hash2(branch+8+variant*5,tier)*.065;
       const base=verts.length/3;
       for(let i=0;i<pos.count;i++){
         const p=new THREE.Vector3(pos.getX(i),pos.getY(i),pos.getZ(i));
@@ -29,7 +30,7 @@ function makeFirCrown(){
         out.x+=(hash2(i,tier*11+branch)-.5)*.018;
         out.z+=(hash2(i+5,tier*13+branch)-.5)*.018;
         verts.push(out.x,out.y,out.z);
-        const light=.19+tiers[tier]*.075+(hash2(i,branch*9+tier)-.5)*.055;
+        const light=.18+tiers[tier]*.075+(hash2(i,branch*9+tier+variant*23)-.5)*.065;
         col.setHSL(.285+(hash2(i,branch)-.5)*.045,.34,light);
         colors.push(col.r,col.g,col.b);
       }
@@ -42,7 +43,7 @@ function makeFirCrown(){
   g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
   g.setIndex(indices);g.computeVertexNormals();return g;
 }
-const firCrownGeo=makeFirCrown();
+const firCrownGeos=[makeFirCrown(0),makeFirCrown(1),makeFirCrown(2)];
 const trunkGeo=new THREE.CylinderGeometry(.13,.38,1,16,7);
 {
   const a=trunkGeo.attributes.position;
@@ -142,7 +143,8 @@ const treeClusters=[
 ];
 const treeCount=520;
 const trunkInst=new THREE.InstancedMesh(trunkGeo,trunkMat,treeCount);
-const crownInst=new THREE.InstancedMesh(firCrownGeo,crownMat,treeCount);
+const crownInsts=firCrownGeos.map(geo=>new THREE.InstancedMesh(geo,crownMat,treeCount));
+const crownCounts=[0,0,0];
 const firDetailInst=new THREE.InstancedMesh(firDetailGeo,firDetailMat,treeCount);
 const treeDummy=new THREE.Object3D();
 let placedTrees=0;
@@ -171,20 +173,25 @@ for(let i=0;i<treeCount;i++){
 
   treeDummy.position.set(x,ground+h*.19,z);
   treeDummy.rotation.set(0,rot,0);
-  treeDummy.scale.set(radius,h*.82,radius);
-  treeDummy.updateMatrix();crownInst.setMatrixAt(placedTrees,treeDummy.matrix);
-  const tint=new THREE.Color().setHSL(.292+(rnd()-.5)*.028,.29,.69+(rnd()-.5)*.09);
-  crownInst.setColorAt(placedTrees,tint);
+  const crownVariant=Math.floor(rnd()*3),crownInst=crownInsts[crownVariant],crownSlot=crownCounts[crownVariant]++;
+  const widthFactor=crownVariant===1?.92:crownVariant===2?1.08:1;
+  treeDummy.scale.set(radius*widthFactor,h*(crownVariant===1?.88:crownVariant===2?.78:.82),radius*widthFactor);
+  treeDummy.updateMatrix();crownInst.setMatrixAt(crownSlot,treeDummy.matrix);
+  const tint=new THREE.Color().setHSL(.292+(rnd()-.5)*.055,.30,.64+(rnd()-.5)*.11);
+  crownInst.setColorAt(crownSlot,tint);
   firDetailInst.setMatrixAt(placedTrees,treeDummy.matrix);
   placedTrees++;
 }
-trunkInst.count=placedTrees;crownInst.count=placedTrees;firDetailInst.count=placedTrees;
-trunkInst.instanceMatrix.needsUpdate=true;crownInst.instanceMatrix.needsUpdate=true;firDetailInst.instanceMatrix.needsUpdate=true;
-if(crownInst.instanceColor)crownInst.instanceColor.needsUpdate=true;
+trunkInst.count=placedTrees;firDetailInst.count=placedTrees;
+for(let variant=0;variant<3;variant++){
+  const crown=crownInsts[variant];crown.count=crownCounts[variant];
+  crown.instanceMatrix.needsUpdate=true;crown.castShadow=false;crown.receiveShadow=true;
+  if(crown.instanceColor)crown.instanceColor.needsUpdate=true;
+}
+trunkInst.instanceMatrix.needsUpdate=true;firDetailInst.instanceMatrix.needsUpdate=true;
 trunkInst.castShadow=false;trunkInst.receiveShadow=true;
-crownInst.castShadow=false;crownInst.receiveShadow=true;
 firDetailInst.castShadow=false;firDetailInst.receiveShadow=true;
-scene.add(trunkInst,crownInst,firDetailInst);
+scene.add(trunkInst,...crownInsts,firDetailInst);
 
 // Tufo de capim: folhas finas, curvas e pontiagudas em vez de cones geométricos.
 function makeGrassTuft(){
