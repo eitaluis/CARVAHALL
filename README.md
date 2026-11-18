@@ -50,7 +50,13 @@ O HTML carrega os arquivos JavaScript em sequência, mantendo a divisão por res
 - [Documento-base de cânone e interpretação](docs/base-canon-eragon.md)
 - [Checklist de desenvolvimento por fases](docs/checklist-fases-eragon.md)
 
-O documento-base separa descrições diretas do romance das decisões interpretativas (coordenadas, planta da vila e detalhes não descritos). O checklist registra as etapas de construção, interiores, acessos e feira. Os testes de sintaxe foram executados; a inspeção visual em navegador e a medição de desempenho continuam pendentes.
+O documento-base separa descrições diretas do romance das decisões interpretativas (coordenadas, planta da vila e detalhes não descritos). O checklist registra as etapas de construção, interiores, acessos e feira. Os módulos já incluem uma rodada adicional de refinamento de personagens e interiores. A inspeção visual em navegador, a revalidação técnica após essas alterações e a medição de desempenho continuam pendentes.
+
+## Refinamento recente — personagens e interiores
+
+Os moradores agora têm proporções corporais mais definidas, rosto legível, olhos, nariz, orelhas, cabelo, mãos, botas, cinto e roupas em camadas. Horst, Sloan e Katrina recebem silhuetas e vestuário diferenciados; os traços físicos não descritos no romance permanecem decisões artísticas. Na feira, vendedores, compradores, mulheres, viajantes e crianças também têm roupas e acessórios distintos.
+
+Os interiores ganharam tábuas de piso, estrutura de madeira, prateleiras e luz local. A taverna permanece sem nome e recebe elementos descritos no romance, como os chifres de Urgal; o açougue mantém a sala ampla, lareira, balcão e palha; a forja ganha mais leitura de oficina. A disposição dos objetos e a decoração não descrita são interpretações.
 
 ## Teste automático de navegador
 O GitHub Actions executa um teste headless com Chromium a cada atualização de código. Ele confirma o carregamento dos nove módulos, a produção de quadros e triângulos WebGL, e o atalho T do mercado de inverno. As capturas da cena-base e do mercado ficam disponíveis como artefato na execução do workflow: [Carvahall browser smoke test](https://github.com/eitaluis/CARVAHALL/actions/workflows/carvahall-smoke-test.yml).
