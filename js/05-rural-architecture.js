@@ -117,6 +117,34 @@ function addPorch(parent,w,d){
   box(parent,w*.28,.15,.58,darkWoodMat,w*.23,.94,-d/2-.39);
   for(const x of [w*.11,w*.35])box(parent,.12,.72,.13,darkWoodMat,x,.58,-d/2-.39);
 }
+function addGableEnd(parent,w,z,eave,rise){
+  const shape=new THREE.Shape();
+  shape.moveTo(-w/2,0);shape.lineTo(w/2,0);shape.lineTo(0,rise);shape.closePath();
+  const panel=new THREE.Mesh(
+    new THREE.ShapeGeometry(shape,16),
+    new THREE.MeshStandardMaterial({map:barkTex,color:0x846143,roughness:1,side:THREE.DoubleSide})
+  );
+  panel.position.set(0,eave,z);panel.castShadow=true;panel.receiveShadow=true;parent.add(panel);
+  // Pranchas verticais e travessas dão espessura visual às empenas.
+  for(let i=-5;i<=5;i++){
+    const x=i*w*.085,height=rise*(1-Math.abs(x)/(w/2));
+    if(height>.22)box(parent,.13,height,.12,paleWoodMat,x,eave+height/2,z+(z<0?-.08:.08));
+  }
+  box(parent,w*.94,.19,.16,darkWoodMat,0,eave+.12,z+(z<0?-.09:.09));
+  const king=box(parent,.2,rise,.18,darkWoodMat,0,eave+rise/2,z+(z<0?-.1:.1));
+  king.rotation.z=0;
+}
+function addBarrel(parent,x,y,z,scale=1){
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(.43*scale,.36*scale,1.05*scale,12,1),woodMat);
+  body.position.set(x,y+.53*scale,z);body.castShadow=true;body.receiveShadow=true;parent.add(body);
+  for(const yy of [.22,.82]){
+    const hoop=new THREE.Mesh(new THREE.TorusGeometry(.405*scale,.035*scale,6,14),ironMat);
+    hoop.rotation.x=Math.PI/2;hoop.position.set(x,y+yy*scale,z);parent.add(hoop);
+  }
+  const lid=new THREE.Mesh(new THREE.CircleGeometry(.37*scale,12),darkWoodMat);
+  lid.rotation.x=-Math.PI/2;lid.position.set(x,y+1.06*scale,z);parent.add(lid);
+  return body;
+}
 function addHearth(parent,x,z,forgeMode=false){
   const hearthMat=new THREE.MeshStandardMaterial({color:0x625b4f,roughness:1});
   box(parent,1.75,2.1,1.15,hearthMat,x,1.1,z);
@@ -181,65 +209,97 @@ function addInterior(parent,kind,w,d){
     }
   } else {
     addHearth(parent,-w*.3,-d*.26,false);
-    box(parent,2.1,.75,1.0,darkWoodMat,w*.2,.9,d*.18);
-    box(parent,2.25,.14,1.08,paleWoodMat,w*.2,1.34,d*.18);
+    // Interior doméstico: mesa, cama, baú, banco e prateleiras.
+    box(parent,2.45,.16,1.45,darkWoodMat,w*.18,.92,d*.16);
+    box(parent,2.55,.12,1.5,paleWoodMat,w*.18,1.08,d*.16);
+    for(const x of [w*.07,w*.29])for(const z of [d*.08,d*.25])
+      box(parent,.14,.78,.14,darkWoodMat,x,.45,z);
+    box(parent,2.15,.5,3.0,darkWoodMat,-w*.25,.8,d*.23);
+    box(parent,2.02,.2,2.75,paleWoodMat,-w*.25,1.14,d*.23);
+    box(parent,2.1,.24,2.8,new THREE.MeshStandardMaterial({color:0x74614a,roughness:1}),-w*.25,1.34,d*.23);
+    box(parent,1.15,.72,.82,woodMat,w*.31,.85,-d*.15);
+    box(parent,1.25,.12,.9,paleWoodMat,w*.31,1.27,-d*.15);
+    // Prateleira com louça e pequenos recipientes.
+    box(parent,2.8,.14,.55,darkWoodMat,-w*.1,2.52,-d*.38);
+    for(let i=0;i<4;i++){
+      const pot=new THREE.Mesh(new THREE.SphereGeometry(.16,8,7),new THREE.MeshStandardMaterial({color:0x89785f,roughness:.9}));
+      pot.scale.set(.8,1.1,.8);pot.position.set(-w*.2+i*.48,2.73,-d*.35);parent.add(pot);
+    }
   }
 }
 function createCabin(name,x,z,rot=0,opts={}){
-  const w=opts.w||11.5,d=opts.d||9.5,base=.6,kind=opts.kind||'home';
-  const roofType=opts.roof||'thatch',doorW=opts.doorW||1.5;
+  const w=opts.w||13.4,d=opts.d||11.2,base=.58,kind=opts.kind||'home';
+  const roofType=opts.roof||'thatch',doorW=opts.doorW||1.65;
   const g=new THREE.Group();
   g.position.set(x,groundHeight(x,z),z);g.rotation.y=rot;scene.add(g);
 
-  // Pedras baixas sob os cantos, sem transformar a casa numa construção de pedra.
-  for(const xx of [-w/2+.65,w/2-.65])for(const zz of [-d/2+.65,d/2-.65]){
-    const stone=new THREE.Mesh(new THREE.DodecahedronGeometry(.55,0),stoneMat);
-    stone.position.set(xx,.28,zz);stone.scale.set(1.35,.72,1.15);g.add(stone);
+  // Fundação irregular de pedra e soleira elevada de madeira.
+  for(const xx of [-w/2+.7,w/2-.7])for(const zz of [-d/2+.7,d/2-.7]){
+    const stone=new THREE.Mesh(new THREE.IcosahedronGeometry(.62,1),stoneMat);
+    stone.position.set(xx,.3,zz);stone.scale.set(1.15,.58,1.05);g.add(stone);
   }
-  box(g,w,.2,d,darkWoodMat,0,.48,0);
+  box(g,w,.24,d,darkWoodMat,0,.48,0);
 
-  // Paredes feitas de cursos contínuos de troncos arredondados, com encaixes
-  // que ultrapassam os cantos. Abertura funcional para a porta na fachada.
-  const radius=.205,step=.37,rows=8;
+  // Paredes de troncos grossos, encaixados nos cantos e com sombras entre cursos.
+  const radius=.235,step=.415,rows=9;
   for(let i=0;i<rows;i++){
-    const y=base+i*step,mat=i%3===0?darkWoodMat:woodMat;
-    logBeam(g,d+.85,radius,-w/2,y,0,'z',mat);
-    logBeam(g,d+.85,radius,w/2,y,0,'z',mat);
-    if(y-base<1.92){
+    const y=base+i*step,mat=i%4===0?darkWoodMat:woodMat;
+    logBeam(g,d+1.15,radius,-w/2,y,0,'z',mat);
+    logBeam(g,d+1.15,radius,w/2,y,0,'z',mat);
+    if(y-base<2.12){
       const segment=(w-doorW)/2;
-      logBeam(g,segment+.18,radius,-w/2+segment/2,y,-d/2,'x',mat);
-      logBeam(g,segment+.18,radius,w/2-segment/2,y,-d/2,'x',mat);
-    }else logBeam(g,w+.85,radius,0,y,-d/2,'x',mat);
-    logBeam(g,w+.85,radius,0,y,d/2,'x',mat);
+      logBeam(g,segment+.25,radius,-w/2+segment/2,y,-d/2,'x',mat);
+      logBeam(g,segment+.25,radius,w/2-segment/2,y,-d/2,'x',mat);
+    }else logBeam(g,w+1.15,radius,0,y,-d/2,'x',mat);
+    logBeam(g,w+1.15,radius,0,y,d/2,'x',mat);
   }
 
-  // Beirais profundos e telhado baixo em duas águas.
-  const eave=base+rows*step+.12,rise=1.38,run=d/2+.82;
+  // Empenas preenchidas, estrutura de sustentação e telhado inclinado com beirais largos.
+  const eave=base+rows*step+.14,rise=1.78,run=d/2+1.12;
+  addGableEnd(g,w,eave,-d/2-.07,eave,rise);
+  addGableEnd(g,w,eave,d/2+.07,eave,rise);
   const slope=Math.atan2(rise,run),length=Math.hypot(run,rise);
   const roofMat=roofType==='shingle'?shingleMat:thatchMat;
-  box(g,w+1.5,.22,length,roofMat,0,eave+rise/2,-run/2,-slope,0,0);
-  box(g,w+1.5,.22,length,roofMat,0,eave+rise/2,run/2,slope,0,0);
-  logBeam(g,w+1.25,.16,0,eave+rise+.02,0,'x',darkWoodMat);
-  for(const xx of [-w/2-.42,w/2+.42]){
-    logBeam(g,length,.115,xx,eave+rise/2,-run/2,'z',darkWoodMat);
-    logBeam(g,length,.115,xx,eave+rise/2,run/2,'z',darkWoodMat);
+  box(g,w+2.0,.30,length,roofMat,0,eave+rise/2,-run/2,-slope,0,0);
+  box(g,w+2.0,.30,length,roofMat,0,eave+rise/2,run/2,slope,0,0);
+  logBeam(g,w+1.65,.2,0,eave+rise+.02,0,'x',darkWoodMat);
+  for(const xx of [-w/2-.5,w/2+.5]){
+    const frontRafter=logBeam(g,length,.14,xx,eave+rise/2,-run/2,'z',darkWoodMat);
+    frontRafter.rotation.x=slope;
+    const backRafter=logBeam(g,length,.14,xx,eave+rise/2,run/2,'z',darkWoodMat);
+    backRafter.rotation.x=-slope;
+  }
+  // Caibros visíveis sob o beiral e testeiras nas laterais.
+  for(const side of [-1,1]){
+    for(const zz of [-d/2-.85,d/2+.85]){
+      const brace=box(g,.15,1.5,.17,darkWoodMat,side*(w/2+.35),eave-.35,zz);
+      brace.rotation.z=side*.38;
+    }
   }
 
-  if(opts.chimney!==false)addStoneChimney(g,w*.29,d*.2,6.1,kind==='forge'||kind==='butcher');
+  if(opts.chimney!==false)addStoneChimney(g,w*.29,d*.18,eave+rise+1.1,kind==='forge'||kind==='butcher');
   addDoor(g,w,d,doorW);addPorch(g,w,d);
-  addWindow(g,-w*.31,2.02,-d/2-.15,0,opts.lit!==false);
-  addWindow(g,w*.31,2.02,-d/2-.15,0,opts.lit!==false);
-  addWindow(g,-w/2-.16,2.02,0,Math.PI/2,false);
-  addWindow(g,w/2+.16,2.02,0,-Math.PI/2,opts.lit===true);
+  addWindow(g,-w*.31,2.35,-d/2-.18,0,opts.lit!==false);
+  addWindow(g,w*.31,2.35,-d/2-.18,0,opts.lit!==false);
+  addWindow(g,-w/2-.18,2.35,0,Math.PI/2,false);
+  addWindow(g,w/2+.18,2.35,0,-Math.PI/2,opts.lit===true);
   addInterior(g,kind,w,d);
 
-  // Lenha empilhada perto da parede: detalhe doméstico, não instalação defensiva.
-  for(let i=0;i<6;i++){
-    const L=1.15+rnd()*.5;
-    const wood=new THREE.Mesh(new THREE.CylinderGeometry(.1,.12,L,7),woodMat);
+  // Elementos de uso diário junto à entrada.
+  for(let i=0;i<7;i++){
+    const L=1.25+rnd()*.65;
+    const wood=new THREE.Mesh(new THREE.CylinderGeometry(.11,.13,L,8),woodMat);
     wood.rotation.z=Math.PI/2;
-    wood.position.set(-w*.32+(i%3)*.42,.72+Math.floor(i/3)*.19,d*.5+.44);
+    wood.position.set(-w*.34+(i%3)*.48,.76+Math.floor(i/3)*.22,d*.5+.5);
     g.add(wood);
+  }
+  if(kind==='tavern'||kind==='butcher'||kind==='forge'){
+    addBarrel(g,-w*.38,.04,d*.5+.95,.92);
+    addBarrel(g,w*.38,.04,d*.5+.95,.78);
+  }else{
+    const bucket=new THREE.Mesh(new THREE.CylinderGeometry(.25,.2,.48,9),darkWoodMat);
+    bucket.position.set(w*.38,.78,d*.5+.58);g.add(bucket);
+    box(g,1.25,.16,.65,paleWoodMat,w*.31,.9,d*.5+.85);
   }
   BUILDINGS.push({name,x,z,rot,w,d,doorW});
   return g;
@@ -295,24 +355,24 @@ function createTannery(x,z){
 // Disposição compacta, em pequenos espaços entre construções; coordenadas
 // individuais não são fornecidas pelo texto e permanecem explicitamente
 // interpretativas. O núcleo é uma clusterização de casas, não um quarteirão.
-const villageTavern=createCabin('Taverna (nome não indicado)',76,-42,.08,{w:14,d:11,kind:'tavern',roof:'thatch'});
-const butcher=createCabin('Açougue de Sloan',18,67,-.18,{w:14,d:11,kind:'butcher',roof:'shingle',lit:true});
-const forge=createCabin('Forja de Horst',206,48,.42,{w:15,d:13,kind:'forge',roof:'shingle',lit:true});
+const villageTavern=createCabin('Taverna (nome não indicado)',76,-42,.08,{w:18,d:14,kind:'tavern',roof:'thatch'});
+const butcher=createCabin('Açougue de Sloan',18,67,-.18,{w:19,d:14,kind:'butcher',roof:'shingle',lit:true});
+const forge=createCabin('Forja de Horst',206,48,.42,{w:20,d:16,kind:'forge',roof:'shingle',lit:true});
 const tannery=createTannery(-96,174);
 
 const villageHouses=[
-  createCabin('Casa de aldeões A',28,-18,.24,{w:10.5,d:8.7,roof:'thatch'}),
-  createCabin('Casa de aldeões B',126,-73,-.18,{w:11.4,d:9,roof:'shingle'}),
-  createCabin('Casa de aldeões C',192,-28,.12,{w:10,d:8.5,roof:'thatch'}),
-  createCabin('Casa de aldeões D',255,2,.48,{w:10.8,d:9.2,roof:'shingle'}),
-  createCabin('Casa de aldeões E',-18,111,-.28,{w:11.8,d:9.5,roof:'thatch'}),
-  createCabin('Casa de aldeões F',69,151,.1,{w:10.5,d:8.7,roof:'shingle'}),
-  createCabin('Casa de aldeões G',153,145,-.1,{w:10.2,d:8.6,roof:'thatch'}),
-  createCabin('Casa de aldeões H',246,120,.18,{w:10.2,d:8.5,roof:'thatch'}),
-  createCabin('Casa de aldeões I',-48,35,.35,{w:11,d:9,roof:'shingle'}),
-  createCabin('Casa de aldeões J',289,-74,-.2,{w:10.4,d:8.7,roof:'thatch'}),
-  createCabin('Casa de aldeões K',-27,220,.14,{w:10.5,d:8.8,roof:'shingle'}),
-  createCabin('Casa de aldeões L',206,214,-.3,{w:11.2,d:9.3,roof:'thatch'})
+  createCabin('Casa de aldeões A',28,-18,.24,{w:13.2,d:10.5,roof:'thatch'}),
+  createCabin('Casa de aldeões B',126,-73,-.18,{w:13.8,d:11,roof:'shingle'}),
+  createCabin('Casa de aldeões C',192,-28,.12,{w:13.4,d:10.8,roof:'thatch'}),
+  createCabin('Casa de aldeões D',255,2,.48,{w:13.6,d:10.8,roof:'shingle'}),
+  createCabin('Casa de aldeões E',-18,111,-.28,{w:14.2,d:11.3,roof:'thatch'}),
+  createCabin('Casa de aldeões F',69,151,.1,{w:13.2,d:10.5,roof:'shingle'}),
+  createCabin('Casa de aldeões G',153,145,-.1,{w:13,d:10.5,roof:'thatch'}),
+  createCabin('Casa de aldeões H',246,120,.18,{w:13.2,d:10.5,roof:'thatch'}),
+  createCabin('Casa de aldeões I',-48,35,.35,{w:13.5,d:10.8,roof:'shingle'}),
+  createCabin('Casa de aldeões J',289,-74,-.2,{w:13.4,d:10.8,roof:'thatch'}),
+  createCabin('Casa de aldeões K',-27,220,.14,{w:13.2,d:10.7,roof:'shingle'}),
+  createCabin('Casa de aldeões L',206,214,-.3,{w:13.8,d:11,roof:'thatch'})
 ];
 
 // Pequenos grupos de moradores ao anoitecer, sugerindo a vida social descrita
