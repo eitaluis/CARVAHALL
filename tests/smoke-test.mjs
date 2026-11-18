@@ -1,8 +1,14 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 
 const baseURL = "http://127.0.0.1:4173";
+const saveCanvas = async (page, path) => {
+  const dataUrl = await page.locator("canvas.webgl").evaluate(canvas => canvas.toDataURL("image/png"));
+  const encoded = dataUrl.split(",")[1];
+  if (!encoded) throw new Error("O canvas não retornou uma imagem PNG.");
+  await writeFile(path, Buffer.from(encoded, "base64"));
+};
 const server = spawn(
   "python3",
   ["-m", "http.server", "4173", "--bind", "127.0.0.1"],
@@ -39,7 +45,7 @@ try {
     if (message.type() === "error") consoleErrors.push(message.text());
   });
 
-  const response = await page.goto(baseURL, {
+  const response = await page.goto(baseURL + "?qa=1", {
     waitUntil: "domcontentloaded",
     timeout: 60000
   });
@@ -88,12 +94,7 @@ try {
     element.style.display = "none";
   });
   await sleep(1200);
-  await page.screenshot({
-    path: "artifacts/carvahall-evening.png",
-    fullPage: false,
-    animations: "disabled",
-    timeout: 120000
-  });
+  await saveCanvas(page, "artifacts/carvahall-evening.png");
 
   // Ativa a feira e avança os pontos até a área do acampamento.
   await page.keyboard.press("t");
@@ -102,12 +103,7 @@ try {
   });
   for (let i = 0; i < 4; i++) await page.keyboard.press("m");
   await sleep(1600);
-  await page.screenshot({
-    path: "artifacts/carvahall-winter-market.png",
-    fullPage: false,
-    animations: "disabled",
-    timeout: 120000
-  });
+  await saveCanvas(page, "artifacts/carvahall-winter-market.png");
 
   const finalState = await page.evaluate(() => ({
     marketVisible: window.CARVAHALL_MARKET_VISIBLE,
