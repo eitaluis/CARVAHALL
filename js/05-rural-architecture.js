@@ -198,24 +198,78 @@ function addInterior(parent,kind,w,d){
     }
   } else if(kind==='forge'){
     addHearth(parent,w*.25,-d*.26,true);
-    // Bigorna, bloco de trabalho e ferramentas simples.
-    box(parent,1.25,.92,1.05,darkWoodMat,-w*.22,.95,d*.15);
-    box(parent,1.55,.22,.74,ironMat,-w*.22,1.52,d*.15);
-    box(parent,.5,.28,.35,ironMat,-w*.22,1.74,d*.15);
-    box(parent,.82,.62,.8,woodMat,w*.27,.82,d*.25);
-    for(let i=0;i<3;i++){
-      const tool=logBeam(parent,.95,.045,-w*.22-.8+i*.24,2.05,d*.15,'z',ironMat);
+    // Bigorna completa: cepo, corpo, face de aço e ponta afilada.
+    const anvilX=-w*.22,anvilZ=d*.15;
+    box(parent,1.3,.94,1.08,darkWoodMat,anvilX,.95,anvilZ);
+    box(parent,1.6,.2,.78,ironMat,anvilX,1.53,anvilZ);
+    box(parent,1.18,.28,.62,ironMat,anvilX,1.76,anvilZ);
+    const horn=new THREE.Mesh(new THREE.CylinderGeometry(.055,.19,.72,9),ironMat);
+    horn.rotation.z=Math.PI/2;
+    horn.position.set(anvilX-.98,1.68,anvilZ);parent.add(horn);
+    const heel=box(parent,.42,.25,.65,ironMat,anvilX+.95,1.68,anvilZ);
+    // Quatro pés e travessas dão leitura de ferramenta pesada, não de mesa.
+    for(const sx of [-.48,.48])for(const sz of [-.34,.34]){
+      const foot=box(parent,.14,.4,.14,ironMat,anvilX+sx,.24,anvilZ+sz);
+    }
+    // Fole manual ao lado da forja.
+    const leather=new THREE.MeshStandardMaterial({color:0x68452f,roughness:1});
+    box(parent,1.35,.62,.48,leather,w*.33,1.05,-d*.12,0,0,-.18);
+    box(parent,1.42,.1,.55,darkWoodMat,w*.33,1.38,-d*.12,0,0,-.18);
+    const nozzle=new THREE.Mesh(new THREE.CylinderGeometry(.09,.13,.85,8),ironMat);
+    nozzle.rotation.z=Math.PI/2;
+    nozzle.position.set(w*.24,1.22,-d*.2);parent.add(nozzle);
+    // Trough of cooling water and a stack of billets.
+    const trough=new THREE.Mesh(new THREE.BoxGeometry(2.25,.68,.82),darkWoodMat);
+    trough.position.set(-w*.05,.47,d*.34);parent.add(trough);
+    const water=new THREE.Mesh(new THREE.BoxGeometry(2.0,.055,.58),
+      new THREE.MeshStandardMaterial({color:0x536f70,roughness:.25,metalness:.12}));
+    water.position.set(-w*.05,.83,d*.34);parent.add(water);
+    for(let i=0;i<5;i++){
+      const billet=logBeam(parent,1.15,.07,-w*.33+i*.42,1.95,d*.3,'x',ironMat);
+      billet.rotation.z=Math.PI/2;
+    }
+    // Ferramentas penduradas num suporte na parede do fundo.
+    const rackZ=-d*.41;
+    box(parent,w*.43,.16,.2,darkWoodMat,0,2.65,rackZ);
+    for(let i=0;i<6;i++){
+      const tx=-w*.19+i*w*.076;
+      const handle=logBeam(parent,.78,.055,tx,2.12,rackZ,'z',woodMat);
+      handle.rotation.x=Math.PI/2;
+      const head=box(parent,.46,.17,.22,ironMat,tx,2.47,rackZ-.12);
+    }
+    // Uma bancada lateral com tenazes, limas e peças de ferro.
+    box(parent,2.9,.2,1.0,darkWoodMat,w*.32,.95,d*.24);
+    box(parent,2.98,.12,1.08,paleWoodMat,w*.32,1.12,d*.24);
+    for(let i=0;i<4;i++){
+      const tool=logBeam(parent,.9,.035,w*.22+i*.22,1.82,d*.24,'z',ironMat);
       tool.rotation.x=Math.PI/2;
     }
   } else if(kind==='tavern'){
-    // A existência de uma taverna é mencionada em Eragon; nome e decoração
-    // específicos não são fornecidos. Bancos e mesas são interpretação.
+    // A existência da taverna é canônica; mobiliário e decoração são interpretação.
     addHearth(parent,-w*.34,-d*.28,false);
     for(const z of [-d*.18,d*.19]){
       box(parent,w*.42,.2,1.0,woodMat,0,1.02,z);
       box(parent,w*.44,.16,1.1,paleWoodMat,0,1.48,z);
-      for(const x of [-w*.17,w*.17])box(parent,.16,.8,.16,darkWoodMat,x,.94,z+1.0);
+      for(const x of [-w*.17,w*.17]){
+        box(parent,.16,.8,.16,darkWoodMat,x,.94,z+1.0);
+      }
+      // Bancos corridos dos dois lados da mesa.
+      for(const side of [-1,1]){
+        const benchZ=z+side*.98;
+        box(parent,w*.31,.16,.48,darkWoodMat,0,.68,benchZ);
+        for(const x of [-w*.13,w*.13])box(parent,.12,.58,.12,darkWoodMat,x,.37,benchZ);
+      }
+      // Canecas e tigelas de barro, sem decoração de estabelecimento nomeado.
+      for(let i=0;i<3;i++){
+        const mug=new THREE.Mesh(new THREE.CylinderGeometry(.09,.1,.24,9),
+          new THREE.MeshStandardMaterial({color:0x8b765d,roughness:.9}));
+        mug.position.set(-w*.13+i*w*.13,1.68,z);parent.add(mug);
+        const rim=new THREE.Mesh(new THREE.TorusGeometry(.09,.018,5,10),darkWoodMat);
+        rim.rotation.x=Math.PI/2;rim.position.set(-w*.13+i*w*.13,1.81,z);parent.add(rim);
+      }
     }
+    addBarrel(parent,-w*.36,.05,d*.29,.9);
+    addBarrel(parent,w*.36,.05,d*.29,.9);
   } else {
     addHearth(parent,-w*.3,-d*.26,false);
     // Interior doméstico: mesa, cama, baú, banco e prateleiras.
