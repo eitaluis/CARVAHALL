@@ -140,7 +140,7 @@ function createCabin(name,x,z,rot=0,opts={}){
     if(y>1.72&&y<3.02){
       frontHoles.push([-w*.31-.83,-w*.31+.83],[w*.31-.83,w*.31+.83]);
     }
-    if(y<2.58)frontHoles.push([-doorW/2-.18,doorW/2+.18]);
+    if(y<3.00)frontHoles.push([-doorW/2-.18,doorW/2+.18]);
     const frontSpans=subtractWallOpenings(-w/2-.55,w/2+.55,frontHoles);
     for(const [lo,hi] of frontSpans)logBeam(g,hi-lo,courseRadius,(lo+hi)/2,y,-d/2,'x',mat);
     logBeam(g,w+1.1,courseRadius,0,y,d/2,'x',mat);
