@@ -44,7 +44,9 @@
 
 <script>
 (() => {
+  window.CARVAHALL_RUNTIME_ERRORS = [];
   const showSceneError = message => {
+    window.CARVAHALL_RUNTIME_ERRORS.push(message);
     const phase = document.getElementById("phase");
     if (!phase) return;
     phase.textContent = "ERRO NA CENA · " + message;
