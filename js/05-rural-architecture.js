@@ -532,7 +532,7 @@ const eveningResidents=new THREE.Group();
 scene.add(eveningResidents);
 function makeResident(x,z,coatColor,yaw=0,scale=1,gesture=0,role='villager'){
   const g=new THREE.Group();g.position.set(x,groundHeight(x,z),z);g.rotation.y=yaw;g.scale.setScalar(scale);
-  g.userData.baseYaw=yaw;g.userData.baseX=x;g.userData.phase=rnd()*Math.PI*2;g.userData.gesture=gesture;g.userData.role=role;
+  g.userData.baseYaw=yaw;g.userData.baseX=x;g.userData.baseZ=z;g.userData.phase=rnd()*Math.PI*2;g.userData.gesture=gesture;g.userData.role=role;
   eveningResidents.add(g);
   const coat=new THREE.MeshStandardMaterial({color:coatColor,roughness:.94});
   const linen=new THREE.MeshStandardMaterial({color:role==='woman'||role==='katrina'?0x9d806d:0xb8aa8e,roughness:1});
