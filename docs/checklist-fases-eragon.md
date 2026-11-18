@@ -24,9 +24,12 @@
 
 ## Fase 2 — núcleo construído de Carvahall
 - [x] Casas de troncos, marrons, com volumes sólidos e telhados baixos.
+- [x] Silhuetas de moradores em grupos próximos à rua e às varandas.
 - [x] Variação de telhados de palha e shingles.
 - [x] Varandas largas, portas, janelas e chaminés.
 - [x] Fumaça de lenha e luz quente nas janelas.
+- [x] Fumaça escura e mais densa na chaminé do açougue de Sloan.
+- [x] Pequenos grupos de moradores para sugerir a conversa ao anoitecer.
 - [x] Reorganização das casas em agrupamento compacto em torno da rua de entrada.
 - [ ] Revisar número, escala e espaçamento das casas conforme a exploração real.
 - [ ] Melhorar a leitura de cada construção de fora e garantir interiores acessíveis.
