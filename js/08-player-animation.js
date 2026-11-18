@@ -107,9 +107,18 @@ function animate(){
   for(const s of smokeSprites){s.position.y=s.userData.baseY+Math.sin(waterTime*.7+s.userData.phase)*.16+((waterTime*.18+s.userData.phase)%1)*.7;s.material.opacity=.08+Math.sin(waterTime+s.userData.phase)*.025;}
   for(let i=0;i<falls.length;i++){
     const fall=falls[i];
-    fall.position.y=fall.userData.baseY+Math.sin(waterTime*1.8+i)*.18;
+    fall.position.y=fall.userData.baseY;
   }
   riverMesh.material.opacity=.86+Math.sin(waterTime*1.7)*.025;
+  if(waterfallMist){
+    const mist=waterfallMist.geometry.attributes.position.array;
+    for(let i=0;i<mist.length/3;i++){
+      mist[i*3]+=Math.sin(waterTime*.32+i*.7)*dt*.12;
+      mist[i*3+1]=waterfallBottom+.7+((i*.37+waterTime*.22)%1)*4.2;
+      mist[i*3+2]=-583+Math.sin(waterTime*.24+i*.4)*2;
+    }
+    waterfallMist.geometry.attributes.position.needsUpdate=true;
+  }
   for(let i=0;i<marketFires.length;i++){
     const fire=marketFires[i];
     fire.fire.scale.set(.8,.92+Math.sin(waterTime*8+i*1.7)*.13,.8);
