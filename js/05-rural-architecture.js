@@ -227,7 +227,8 @@ function createCabin(name,x,z,rot=0,opts={}){
   const w=opts.w||13.4,d=opts.d||11.2,base=.58,kind=opts.kind||'home';
   const roofType=opts.roof||'thatch',doorW=opts.doorW||1.65;
   const g=new THREE.Group();
-  g.position.set(x,groundHeight(x,z),z);g.rotation.y=rot;scene.add(g);
+  const facing=rot+Math.PI; // Fachadas voltadas para a aproximação pela rua principal.
+  g.position.set(x,groundHeight(x,z),z);g.rotation.y=facing;scene.add(g);
 
   // Fundação irregular de pedra e soleira elevada de madeira.
   for(const xx of [-w/2+.7,w/2-.7])for(const zz of [-d/2+.7,d/2-.7]){
@@ -297,7 +298,7 @@ function createCabin(name,x,z,rot=0,opts={}){
     bucket.position.set(w*.53,.78,-d*.5-2.45);g.add(bucket);
     box(g,1.25,.16,.65,paleWoodMat,w*.53,.9,-d*.5-2.8);
   }
-  BUILDINGS.push({name,x,z,rot,w,d,doorW});
+  BUILDINGS.push({name,x,z,rot:facing,w,d,doorW});
   return g;
 }
 
