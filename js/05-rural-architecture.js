@@ -226,15 +226,14 @@ function addInterior(parent,kind,w,d){
     water.position.set(-w*.05,.83,d*.34);parent.add(water);
     for(let i=0;i<5;i++){
       const billet=logBeam(parent,1.15,.07,-w*.33+i*.42,1.95,d*.3,'x',ironMat);
-      billet.rotation.z=Math.PI/2;
     }
     // Ferramentas penduradas num suporte na parede do fundo.
     const rackZ=-d*.41;
     box(parent,w*.43,.16,.2,darkWoodMat,0,2.65,rackZ);
     for(let i=0;i<6;i++){
       const tx=-w*.19+i*w*.076;
-      const handle=logBeam(parent,.78,.055,tx,2.12,rackZ,'z',woodMat);
-      handle.rotation.x=Math.PI/2;
+      const handle=new THREE.Mesh(new THREE.CylinderGeometry(.045,.06,.78,7),woodMat);
+      handle.position.set(tx,2.12,rackZ-.12);parent.add(handle);
       const head=box(parent,.46,.17,.22,ironMat,tx,2.47,rackZ-.12);
     }
     // Uma bancada lateral com tenazes, limas e peças de ferro.
