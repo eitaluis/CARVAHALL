@@ -87,3 +87,13 @@ A inspeção visual em navegador continua pendente: as mudanças estão publicad
 - Textura de madeira mais clara, reutilização de geometrias repetidas e moradores adicionais no eixo da rua.
 
 A validação Chromium da build 07 passou com captura da cena-base e do mercado. A build 08 ainda precisa passar pelo mesmo teste e ter suas novas capturas revisadas antes de ser considerada aprovada.
+
+
+## Build 09 — reconstrução arquitetônica e dos interiores
+A arquitetura recebeu uma reconstrução estrutural: as casas passam a ter fundação pétrea, paredes de toras com vãos de portas e janelas, empenas reforçadas com vigas, telhados mais inclinados e portas arqueadas. As lareiras receberam alvenaria irregular e boca escurecida.
+
+Os interiores agora têm piso em tábuas corridas, rodapés, postes de madeira e caibros aparentes sob o telhado. Taverna, açougue, forja, moradia e tanoaria têm arranjos próprios de mesas, assentos, prateleiras, instrumentos de trabalho e áreas de uso. A tanoaria também passou a usar a mesma lógica de telhado e sala de trabalho.
+
+A catarata foi substituída por uma queda vertical junto à escarpa, com poço de impacto, névoa e espuma local, mais um canal que segue em direção ao Anora. As árvores agora usam três variantes de copa; os caminhos receberam ombros de terra, sulcos e cascalho; moradores adicionais caminham lentamente pela rua.
+
+O teste automático passou a produzir imagens separadas para cada interior e para a catarata. A revisão visual dessas capturas e a confirmação da navegação interna continuam pendentes até a execução do teste e inspeção das imagens.
