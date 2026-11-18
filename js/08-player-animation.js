@@ -118,7 +118,7 @@ function animate(){
       const x=base[v*3],y=base[v*3+1],z=base[v*3+2];
       attr.setZ(v,z+Math.sin(y*.14+waterTime*3.1+x*.11)*.16);
     }
-    attr.needsUpdate=true;fall.geometry.computeVertexNormals();
+    attr.needsUpdate=true;
   }
   riverMesh.material.opacity=.86+Math.sin(waterTime*1.7)*.025;
   if(waterfallMist){
