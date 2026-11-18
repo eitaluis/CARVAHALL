@@ -47,6 +47,77 @@ const trunkGeo=new THREE.CylinderGeometry(.13,.38,1,9,5);
   }
   trunkGeo.computeVertexNormals();
 }
+// Ramos e tufos de agulhas sobre a copa: a silhueta ganha textura de pinheiro,
+// em vez de parecer uma pilha de cones ou uma massa de esferas verdes.
+function makeFirDetailGeometry(){
+  const verts=[],colors=[],indices=[],col=new THREE.Color();
+  function addBranch(start,end,r1,r2){
+    const axis=new THREE.Vector3().subVectors(end,start).normalize();
+    let u=new THREE.Vector3().crossVectors(axis,new THREE.Vector3(0,1,0));
+    if(u.lengthSq()<.001)u.set(1,0,0);
+    u.normalize();
+    const v=new THREE.Vector3().crossVectors(axis,u).normalize();
+    const sides=5,base=verts.length/3;
+    for(let ring=0;ring<2;ring++){
+      const center=ring?end:start,r=ring?r2:r1;
+      for(let k=0;k<sides;k++){
+        const a=k/sides*Math.PI*2;
+        const p=center.clone().addScaledVector(u,Math.cos(a)*r).addScaledVector(v,Math.sin(a)*r);
+        verts.push(p.x,p.y,p.z);
+        col.setHSL(.09,.22,ring?.15:.19);colors.push(col.r,col.g,col.b);
+      }
+    }
+    for(let k=0;k<sides;k++){
+      const n=(k+1)%sides,a=base+k,b=base+n,d=base+sides+k,e=base+sides+n;
+      indices.push(a,d,b,b,d,e);
+    }
+  }
+  function addNeedle(anchor,radial,tangent,fan,seedValue){
+    const direction=radial.clone().multiplyScalar(.76)
+      .addScaledVector(tangent,fan*.42)
+      .add(new THREE.Vector3(0,.24+((seedValue%3)-1)*.08,0)).normalize();
+    const length=.115+(seedValue%4)*.018,width=.012+(seedValue%3)*.002;
+    const side=new THREE.Vector3().crossVectors(direction,new THREE.Vector3(0,1,0));
+    if(side.lengthSq()<.001)side.set(1,0,0);
+    side.normalize().multiplyScalar(width);
+    const tip=anchor.clone().addScaledVector(direction,length);
+    const n=verts.length/3;
+    verts.push(
+      anchor.x-side.x,anchor.y-side.y,anchor.z-side.z,
+      anchor.x+side.x,anchor.y+side.y,anchor.z+side.z,
+      tip.x,tip.y,tip.z
+    );
+    const light=.18+(seedValue%5)*.018;
+    col.setHSL(.30+(seedValue%4)*.009,.38,light);colors.push(col.r,col.g,col.b);
+    col.setHSL(.32+(seedValue%3)*.008,.42,light+.035);colors.push(col.r,col.g,col.b);
+    col.setHSL(.31,.34,light+.02);colors.push(col.r,col.g,col.b);
+    indices.push(n,n+1,n+2,n+2,n+1,n);
+  }
+
+  const tiers=[.18,.31,.44,.57,.70,.82,.91];
+  const spreads=[.55,.68,.61,.73,.56,.45,.28];
+  for(let tier=0;tier<tiers.length;tier++){
+    const y=tiers[tier],spread=spreads[tier];
+    for(let b=0;b<7;b++){
+      const a=b/7*Math.PI*2+tier*.31;
+      const radial=new THREE.Vector3(Math.cos(a),0,Math.sin(a));
+      const tangent=new THREE.Vector3(-Math.sin(a),0,Math.cos(a));
+      const start=new THREE.Vector3(0,y,0);
+      const end=radial.clone().multiplyScalar(spread).add(new THREE.Vector3(0,-.035,0));
+      addBranch(start,end,.018,.006);
+      for(const t of [.58,.94]){
+        const anchor=start.clone().lerp(end,t);
+        for(let n=0;n<5;n++)addNeedle(anchor,radial,tangent,(n-2)*.48,tier*41+b*7+n);
+      }
+    }
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
+  g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+  g.setIndex(indices);g.computeVertexNormals();return g;
+}
+const firDetailGeo=makeFirDetailGeometry();
+const firDetailMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,side:THREE.DoubleSide});
 const trunkMat=new THREE.MeshStandardMaterial({color:0x56402d,roughness:1});
 const crownMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1});
 const treeClusters=[
@@ -56,6 +127,7 @@ const treeClusters=[
 const treeCount=470;
 const trunkInst=new THREE.InstancedMesh(trunkGeo,trunkMat,treeCount);
 const crownInst=new THREE.InstancedMesh(firCrownGeo,crownMat,treeCount);
+const firDetailInst=new THREE.InstancedMesh(firDetailGeo,firDetailMat,treeCount);
 const treeDummy=new THREE.Object3D();
 let placedTrees=0;
 
@@ -87,14 +159,16 @@ for(let i=0;i<treeCount;i++){
   treeDummy.updateMatrix();crownInst.setMatrixAt(placedTrees,treeDummy.matrix);
   const tint=new THREE.Color().setHSL(.30+(rnd()-.5)*.035,.22,.86+(rnd()-.5)*.12);
   crownInst.setColorAt(placedTrees,tint);
+  firDetailInst.setMatrixAt(placedTrees,treeDummy.matrix);
   placedTrees++;
 }
-trunkInst.count=placedTrees;crownInst.count=placedTrees;
-trunkInst.instanceMatrix.needsUpdate=true;crownInst.instanceMatrix.needsUpdate=true;
+trunkInst.count=placedTrees;crownInst.count=placedTrees;firDetailInst.count=placedTrees;
+trunkInst.instanceMatrix.needsUpdate=true;crownInst.instanceMatrix.needsUpdate=true;firDetailInst.instanceMatrix.needsUpdate=true;
 if(crownInst.instanceColor)crownInst.instanceColor.needsUpdate=true;
 trunkInst.castShadow=false;trunkInst.receiveShadow=true;
 crownInst.castShadow=false;crownInst.receiveShadow=true;
-scene.add(trunkInst,crownInst);
+firDetailInst.castShadow=false;firDetailInst.receiveShadow=true;
+scene.add(trunkInst,crownInst,firDetailInst);
 
 // Tufo de capim: folhas finas, curvas e pontiagudas em vez de cones geométricos.
 function makeGrassTuft(){
