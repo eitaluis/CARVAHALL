@@ -30,6 +30,16 @@ Este documento resume as informações com palavras próprias; não substitui a 
 - Essa defesa é uma condição temporária de guerra e não deve ser confundida com a aparência cotidiana de Carvahall.
 - Mais tarde, a vila é incendiada e destruída. Esse estado pertence a uma fase narrativa posterior.
 
+### Fortificações temporárias
+- A trincheira percorre aproximadamente dois terços do perímetro da povoação e chega ao rio Anora, que protege o flanco oeste.
+- A terra escavada é acumulada pelo lado de dentro; a defesa é reforçada com troncos/estacas afiadas e vegetação espinhosa.
+- A variante pode ser ativada pela tecla P e fica desligada no estado cotidiano.
+
+### Destruição posterior
+- Em uma etapa posterior da narrativa, Carvahall é incendiada e destruída.
+- A tecla O alterna para uma representação interpretativa do estado arruinado: fundações expostas, vigas carbonizadas, telhados abatidos e cinzas.
+- A forma exata de cada ruína é reconstrução visual; os romances não fornecem uma planta detalhada dos escombros.
+
 ### Celeiro e rebanho em Eldest
 - A narrativa associa um incêndio a um celeiro de feno e à casa de Delwin, ressaltando o risco do fogo na vila.
 - Em outro momento, famílias preparam a retirada de seus animais; mais de cem ovelhas são conduzidas do lado oriental do vale Palancar em direção à extremidade norte.
@@ -52,7 +62,7 @@ Os romances não fornecem uma planta cadastral ou coordenadas para todas as cons
 
 ## Separação de fases
 1. **Vila cotidiana:** casas, jardins, varandas, poço, oficina, açougue, taverna, campos e rio.
-2. **Carvahall em preparação defensiva:** trincheira, terra acumulada e paliçada improvisada, ativadas como variante histórica.
-3. **Carvahall destruída:** versão posterior ao incêndio, com ruínas e marcas de fogo.
+2. **Carvahall em preparação defensiva:** trincheira, terra acumulada e paliçada improvisada, ativadas como variante histórica (tecla P).
+3. **Carvahall destruída:** versão posterior ao incêndio, com ruínas e marcas de fogo (tecla O).
 
 As fases não devem ser misturadas automaticamente. A vila cotidiana é o estado-base da exploração atual.
