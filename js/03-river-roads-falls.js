@@ -229,7 +229,7 @@ const falls=[];
       const bottom=waterfallBottom+Math.sin(u*Math.PI)*.6;
       const y=bottom+(top-bottom)*v;
       const waviness=Math.sin(v*19+u*8)*.34+Math.sin(v*43-u*17)*.12;
-      const z=-626+waviness+(1-v)*.6;
+      const z=-646+(1-v)*82+waviness;
       verts.push(x,y-waterfallBottom,z);
       uvs.push(u*2.5,v*3.8);
       const streak=.5+.5*Math.sin(u*92+Math.sin(v*13)*2);
@@ -249,7 +249,7 @@ const falls=[];
   geo.setIndex(indices);geo.computeVertexNormals();
   const sheet=new THREE.Mesh(geo,fallMat);
   sheet.position.set(-146,waterfallBottom,0);
-  sheet.userData.baseY=waterfallBottom;
+  sheet.userData.baseY=waterfallBottom;sheet.userData.basePositions=new Float32Array(geo.attributes.position.array);
   scene.add(sheet);falls.push(sheet);
 }
 const pool=new THREE.Mesh(
