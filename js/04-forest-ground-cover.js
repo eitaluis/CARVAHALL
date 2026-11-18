@@ -124,7 +124,7 @@ const treeClusters=[
   [-310,-310],[-500,-590],[405,-365],[690,-470],
   [-430,315],[520,315],[-520,670],[560,680]
 ];
-const treeCount=640;
+const treeCount=520;
 const trunkInst=new THREE.InstancedMesh(trunkGeo,trunkMat,treeCount);
 const crownInst=new THREE.InstancedMesh(firCrownGeo,crownMat,treeCount);
 const firDetailInst=new THREE.InstancedMesh(firDetailGeo,firDetailMat,treeCount);
@@ -213,13 +213,13 @@ uniform float uWindTime;`
     transformed.z+=cos(windPhase*.72+transformed.y*2.3)*transformed.y*.065;`
   );
 };
-const grassCount=12000;
+const grassCount=9600;
 const grassInst=new THREE.InstancedMesh(grassGeo,grassMat,grassCount);
 const grassDummy=new THREE.Object3D();
 let grassPlaced=0;
 for(let i=0;i<grassCount;i++){
   let x,z;
-  if(i<8500){
+  if(i<6800){
     // Faixas de capim seco no vale aberto, fora do núcleo construído.
     const a=rnd()*Math.PI*2,rad=70+Math.sqrt(rnd())*420;
     x=100+Math.cos(a)*rad;z=25+Math.sin(a)*rad;
