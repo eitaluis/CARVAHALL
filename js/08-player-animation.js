@@ -20,11 +20,12 @@ addEventListener('keydown',e=>{
   if(e.code==='KeyJ')teleport(0);
   if(e.code==='KeyG')teleport(5);
   if(e.code==='KeyF')teleport(8);
-  if(e.code==='KeyT'){traderCamp.visible=!traderCamp.visible;document.getElementById('tp').textContent=traderCamp.visible?'Evento: mercadores na periferia':'Acampamento sazonal oculto';}
+  if(e.code==='KeyT'&&!window.carvahallBurnedMode){traderCamp.visible=!traderCamp.visible;document.getElementById('tp').textContent=traderCamp.visible?'Evento: mercadores na periferia':'Acampamento sazonal oculto';}
 });
 addEventListener('keyup',e=>{keys[e.code]=false;});
 function localOf(b,x,z){const dx=x-b.x,dz=z-b.z,c=Math.cos(b.rot),s=Math.sin(b.rot);return {x:c*dx-s*dz,z:s*dx+c*dz};}
 function collidesBuilding(x,z){
+  if(window.carvahallBurnedMode)return false;
   for(const b of BUILDINGS){const p=localOf(b,x,z),r=jogador.radius+.22;
     const insideX=Math.abs(p.x)<b.w/2+r,insideZ=Math.abs(p.z)<b.d/2+r;
     if(!insideX||!insideZ)continue;
