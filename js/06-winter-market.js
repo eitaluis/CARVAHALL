@@ -323,6 +323,13 @@ function marketPerson(parent,x,z,coatColor,heading=0,scale=1,child=false,role='b
     arm.position.set(side*.015,-.27,0);arm.rotation.z=side*.1;shoulder.add(arm);
     const hand=new THREE.Mesh(new THREE.SphereGeometry(.07,10,8),skinMat);
     hand.position.set(side*.02,-.53,.02);shoulder.add(hand);
+    for(let finger=0;finger<4;finger++){
+      const digit=new THREE.Mesh(new THREE.CapsuleGeometry(.013,.045,3,6),skinMat);
+      digit.position.set(side*.02+(finger-1.5)*.024,-.59,.045);
+      digit.rotation.x=-.16;shoulder.add(digit);
+    }
+    const thumb=new THREE.Mesh(new THREE.CapsuleGeometry(.016,.04,3,6),skinMat);
+    thumb.position.set(side*.075,-.56,.025);thumb.rotation.z=side*.72;shoulder.add(thumb);
     armPivots.push({pivot:shoulder,side,base:0});
     const hip=new THREE.Group();hip.position.set(side*.12,child?.49:.72,0);g.add(hip);
     const leg=new THREE.Mesh(new THREE.CapsuleGeometry(child?.065:.09,child?.3:.47,4,9),clothMat);
