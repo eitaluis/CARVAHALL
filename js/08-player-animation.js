@@ -1,6 +1,6 @@
 // 15. JOGADOR, MOVIMENTO, COLISÕES E POINTER LOCK
 // ============================================================================
-const jogador={pos:new THREE.Vector3(76,2,-18),vel:new THREE.Vector3(),eye:1.68,grounded:true,radius:.36};
+const jogador={pos:new THREE.Vector3(76,2,15),vel:new THREE.Vector3(),eye:1.68,grounded:true,radius:.36};
 camera.position.copy(jogador.pos);camera.position.y=groundHeight(jogador.pos.x,jogador.pos.z)+jogador.eye;camera.rotation.set(0,.02,0);
 const keys={};let locked=false,started=false;
 const startEl=document.getElementById('start'),resumeEl=document.getElementById('resume');
@@ -16,7 +16,7 @@ addEventListener('keydown',e=>{
   if(e.code==='Tab')setMapVisibility(!mapVisible);
   if(e.code==='KeyM')teleport(tpIndex+1);
   if(e.code==='KeyN')teleport(tpIndex-1);
-  if(e.code==='KeyH'){placePlayer(76,-18,.02,0);document.getElementById('tp').textContent='Núcleo de Carvahall';}
+  if(e.code==='KeyH'){placePlayer(76,15,.02,0);document.getElementById('tp').textContent='Núcleo de Carvahall';}
   if(e.code==='KeyJ')teleport(2);
   if(e.code==='KeyG')teleport(6);
   if(e.code==='KeyF')teleport(8);
