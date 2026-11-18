@@ -48,7 +48,7 @@ A reconstrução deve preservar essa leitura espacial: sala ampla, balcão visí
 - Horst é o ferreiro de Carvahall.
 - Seus filhos Albriech e Baldor trabalham com ele na forja.
 - O romance não descreve detalhadamente o exterior nem fornece uma planta da oficina.
-- A representação de uma forja, bigorna, ferramentas e área de trabalho é uma inferência funcional a partir da profissão; não deve ser confundida com uma descrição arquitetônica literal.
+- A representação de uma forja, bigorna, fole, ferramentas, tanque de resfriamento e área de trabalho é uma inferência funcional a partir da profissão; não deve ser confundida com uma descrição arquitetônica literal.
 
 ### Taverna
 - Em outro trecho do mesmo romance, Eragon pensa em buscar comida na taverna da vila.
@@ -60,6 +60,7 @@ A reconstrução deve preservar essa leitura espacial: sala ampla, balcão visí
 - As tinas de curtimento de Gedric ficam nos arredores de Carvahall.
 - Há um barracão encaixado na encosta, usado para armazenar peles curtidas.
 - Peles ficam penduradas em fileiras no teto/interior do barracão.
+- Na cena 3D, a encosta, o pátio e as três tinas posicionadas diante do barracão são soluções de composição interpretativas; a referência textual é a localização periférica, o cheiro e o armazenamento de peles.
 - O cheiro das tinas é forte e desagradável.
 - A tanoaria pertence à periferia da vila, não ao centro da rua principal.
 
