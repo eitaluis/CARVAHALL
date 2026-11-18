@@ -40,38 +40,131 @@ function makeWagon(x,z,scale=1,parent=scene){
   return g;
 }
 
-function marketTent(parent,x,z,w,d,topColor,lowerColor,striped=false){
-  const g=new THREE.Group();g.position.set(x,groundHeight(x,z),z);parent.add(g);
-  const topMat=new THREE.MeshStandardMaterial({color:topColor,roughness:1,side:THREE.DoubleSide});
-  const lowerMat=new THREE.MeshStandardMaterial({color:lowerColor,roughness:1,side:THREE.DoubleSide});
-  const verts=[
-    -w/2,0,-d/2, w/2,0,-d/2, 0,3.6,0,
-    w/2,0,-d/2, w/2,0,d/2, 0,3.6,0,
-    w/2,0,d/2, -w/2,0,d/2, 0,3.6,0,
-    -w/2,0,d/2, -w/2,0,-d/2, 0,3.6,0
-  ];
-  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));geo.setIndex([
-    0,1,2,3,4,5,6,7,8,9,10,11
-  ]);geo.computeVertexNormals();
-  const canopy=new THREE.Mesh(geo,topMat);canopy.castShadow=true;g.add(canopy);
-  // Saias de tecido e listras verticais.
-  for(const side of [-1,1]){
-    const panel=new THREE.Mesh(new THREE.PlaneGeometry(w*.48,1.05),lowerMat);
-    panel.position.set(side*w*.23,.55,-d/2+.03);g.add(panel);
-  }
+function hexColor(value){return "#"+value.toString(16).padStart(6,"0");}
+function clothTexture(baseColor,accentColor,striped=false){
+  const canvas=document.createElement('canvas');canvas.width=canvas.height=256;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle=hexColor(baseColor);ctx.fillRect(0,0,256,256);
   if(striped){
-    for(let i=0;i<6;i++){
-      const stripe=new THREE.Mesh(new THREE.PlaneGeometry(.32,1.0),
-        new THREE.MeshStandardMaterial({color:i%2?0xe8d2a4:lowerColor,roughness:1,side:THREE.DoubleSide}));
-      stripe.position.set(-w*.42+i*w*.168,.55,-d/2-.015);g.add(stripe);
+    for(let i=0;i<8;i++){
+      ctx.fillStyle=i%2===0?hexColor(accentColor):'rgba(246,231,202,.72)';
+      ctx.globalAlpha=.62;
+      ctx.fillRect(i*32,0,16,256);
+    }
+    ctx.globalAlpha=1;
+  }
+  // Trama fina de fios verticais e pequenas irregularidades do tecido.
+  for(let i=0;i<6200;i++){
+    const x=rnd()*256,y=rnd()*256;
+    ctx.strokeStyle=rnd()<.5?'rgba(255,244,220,.12)':'rgba(31,24,18,.075)';
+    ctx.lineWidth=.35+rnd()*.65;
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+(rnd()-.5)*1.2,y+2+rnd()*14);ctx.stroke();
+  }
+  for(let y=0;y<256;y+=32){
+    ctx.strokeStyle='rgba(30,24,18,.09)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(256,y);ctx.stroke();
+  }
+  const tex=new THREE.CanvasTexture(canvas);
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+  tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=8;
+  return tex;
+}
+function tentFabricPanel(parent,a,b,apex,material,segments=14){
+  const verts=[],uvs=[],indices=[];
+  for(let row=0;row<=segments;row++){
+    const v=row/segments;
+    for(let col=0;col<=segments;col++){
+      const u=col/segments;
+      const base=a.clone().lerp(b,u);
+      const point=base.lerp(apex,v);
+      const fold=Math.sin(u*Math.PI*7+.45)*.035*Math.sin(v*Math.PI);
+      point.y+=Math.sin(u*Math.PI)*Math.sin(v*Math.PI)*.065+fold;
+      point.x+=Math.sin(v*Math.PI)*Math.sin(u*Math.PI*3)*.025;
+      verts.push(point.x,point.y,point.z);uvs.push(u*1.2,v*1.5);
+      if(row<segments&&col<segments){
+        const n=row*(segments+1)+col,k=n+1,m=n+segments+1,q=m+1;
+        indices.push(n,m,k,k,m,q);
+      }
     }
   }
-  for(const [px,pz] of [[-w/2,-d/2],[w/2,-d/2],[-w/2,d/2],[w/2,d/2]]){
-    const pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.09,2.1,7),darkWoodMat);
-    pole.position.set(px,.98,pz);pole.castShadow=true;g.add(pole);
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
+  geo.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
+  geo.setIndex(indices);geo.computeVertexNormals();
+  const mesh=new THREE.Mesh(geo,material);
+  mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);
+  return mesh;
+}
+function marketTent(parent,x,z,w,d,topColor,lowerColor,striped=false){
+  const g=new THREE.Group();g.position.set(x,groundHeight(x,z),z);parent.add(g);
+  const accent=striped?0xe8d2a4:lowerColor;
+  const topMat=new THREE.MeshStandardMaterial({
+    map:clothTexture(topColor,accent,striped),color:0xffffff,
+    roughness:1,side:THREE.DoubleSide
+  });
+  const lowerMat=new THREE.MeshStandardMaterial({
+    map:clothTexture(lowerColor,accent,striped),color:0xffffff,
+    roughness:1,side:THREE.DoubleSide
+  });
+  const apex=new THREE.Vector3(0,3.85,0);
+  const corners=[
+    new THREE.Vector3(-w/2,0,-d/2),new THREE.Vector3(w/2,0,-d/2),
+    new THREE.Vector3(w/2,0,d/2),new THREE.Vector3(-w/2,0,d/2)
+  ];
+  for(let i=0;i<4;i++)tentFabricPanel(g,corners[i],corners[(i+1)%4],apex,topMat,16);
+
+  // Saias de lona pendentes com bordas levemente onduladas; a entrada frontal permanece aberta.
+  for(const side of [-1,1]){
+    const panel=new THREE.Mesh(new THREE.PlaneGeometry(w*.46,1.22,12,5),lowerMat);
+    const attr=panel.geometry.attributes.position;
+    for(let i=0;i<attr.count;i++){
+      const px=attr.getX(i),py=attr.getY(i);
+      attr.setZ(i,Math.sin(px*2.8)*.065*(.5+Math.abs(py)));
+      attr.setY(i,py+Math.sin(px*3.4)*.035);
+    }
+    panel.geometry.computeVertexNormals();
+    panel.position.set(side*w*.235,.65,-d/2+.04);
+    g.add(panel);
   }
-  const finial=new THREE.Mesh(new THREE.SphereGeometry(.16,8,7),paleWoodMat);
-  finial.position.y=3.68;g.add(finial);
+  // Faixas verticais e franja de tecido na borda frontal.
+  if(striped){
+    for(let i=0;i<8;i++){
+      const stripe=new THREE.Mesh(new THREE.PlaneGeometry(.25,1.18),
+        new THREE.MeshStandardMaterial({
+          map:clothTexture(i%2?0xe8d2a4:lowerColor,topColor,false),
+          color:0xffffff,roughness:1,side:THREE.DoubleSide
+        }));
+      stripe.position.set(-w*.43+i*w*.123,.64,-d/2-.025);
+      stripe.rotation.y=(rnd()-.5)*.035;g.add(stripe);
+    }
+    for(let i=0;i<12;i++){
+      const tassel=new THREE.Mesh(new THREE.CylinderGeometry(.012,.018,.24,5),
+        new THREE.MeshStandardMaterial({color:accent,roughness:1}));
+      tassel.position.set(-w*.46+i*w*.083,.045,-d/2-.04);g.add(tassel);
+    }
+  }
+
+  const ropeMat=new THREE.MeshStandardMaterial({color:0x9b8968,roughness:1});
+  for(const [px,pz] of [[-w/2,-d/2],[w/2,-d/2],[-w/2,d/2],[w/2,d/2]]){
+    const pole=new THREE.Mesh(new THREE.CylinderGeometry(.065,.085,2.15,8),darkWoodMat);
+    pole.position.set(px,1.02,pz);pole.castShadow=true;g.add(pole);
+    const stake=new THREE.Mesh(new THREE.CylinderGeometry(.045,.075,.48,6),darkWoodMat);
+    const sx=px*1.28,sz=pz*1.38;stake.position.set(sx,.22,sz);stake.rotation.z=(px<0?-.22:.22);g.add(stake);
+    const start=new THREE.Vector3(px,2.02,pz),end=new THREE.Vector3(sx,.36,sz);
+    const direction=new THREE.Vector3().subVectors(end,start),length=direction.length();
+    const rope=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,length,5),ropeMat);
+    rope.position.copy(start).add(end).multiplyScalar(.5);
+    rope.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),direction.normalize());
+    g.add(rope);
+  }
+  // Costura grossa ao longo das quatro águas da cobertura.
+  for(let i=0;i<4;i++){
+    const edge=new THREE.Vector3().lerpVectors(corners[i],apex,.74);
+    const bead=new THREE.Mesh(new THREE.SphereGeometry(.045,7,6),paleWoodMat);
+    bead.position.copy(edge);g.add(bead);
+  }
+  const finial=new THREE.Mesh(new THREE.SphereGeometry(.13,9,7),paleWoodMat);
+  finial.position.y=3.91;g.add(finial);
   return g;
 }
 function marketStall(parent,x,z,color){
