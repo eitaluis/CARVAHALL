@@ -108,6 +108,9 @@
 - [x] Validar a sintaxe do conjunto dos nove módulos na ordem de carregamento.
 - [x] Conferir as principais dependências entre módulos (terreno, rio, fumaça, mercado e animações).
 - [x] Registrar contagem de quadros renderizados, chamadas de desenho, triângulos e objetos para diagnóstico.
+- [x] Adicionar teste headless com Chromium para carregamento, renderização WebGL e alternância da feira.
+- [x] Gerar capturas da cena-base e do mercado como artefatos da execução.
+- [ ] Confirmar que a primeira execução do teste automatizado passou e revisar as capturas.
 - [ ] Executar teste real de navegador e confirmar que pelo menos um quadro 3D é renderizado.
 - [ ] Medir desempenho e estabilidade durante a exploração.
 - [ ] Fazer a última revisão de fidelidade, densidade e escala depois do teste visual.
