@@ -458,7 +458,7 @@ function createTannery(x,z){
   }
 
   // Barracão lateral com peles penduradas em fileiras.
-  const rackX=7.3,rackZ=-2.4;
+  const rackX=4.2,rackZ=1.6;
   for(const xx of [rackX-1.7,rackX+1.7])box(g,.16,3.3,.16,darkWoodMat,xx,1.7,rackZ);
   logBeam(g,3.5,.12,rackX,3.2,rackZ,'x',darkWoodMat);
   const hideMat=new THREE.MeshStandardMaterial({color:0x6e4a31,roughness:1,side:THREE.DoubleSide});
