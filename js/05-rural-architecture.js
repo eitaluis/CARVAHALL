@@ -392,16 +392,69 @@ function createTannery(x,z){
   box(g,w+1.1,.24,roofLen,shingleMat,0,shedEave+shedRise/2,(d/2+.25)/2,slope,0,0);
   addDoor(g,w,d,1.35);
 
-  const vatWood=new THREE.MeshStandardMaterial({color:0x64472e,roughness:1});
+  // O barracão fica encaixado numa encosta irregular, com terra e rocha
+  // subindo atrás da construção em vez de uma parede artificial isolada.
+  {
+    const nx=34,nz=30,verts=[],uv=[],indices=[];
+    const baseY=groundHeight(x,z),cos=Math.cos(rot),sin=Math.sin(rot);
+    for(let j=0;j<=nz;j++){
+      const v=j/nz,lz=3+v*35;
+      for(let i=0;i<=nx;i++){
+        const lx=-18+i/nx*36;
+        const wx=x+cos*lx+sin*lz,wz=z-sin*lx+cos*lz;
+        const side=Math.pow(Math.max(0,1-Math.abs(lx)/18),.72);
+        const rise=(.25+Math.pow(v,1.18)*9.4)*side;
+        const rough=(fbm(wx*.028,wz*.028,3)-.5)*1.35*side;
+        verts.push(lx,groundHeight(wx,wz)-baseY+rise+rough,lz);
+        uv.push(i/nx*4,v*4);
+        if(i<nx&&j<nz){
+          const a=j*(nx+1)+i,b=a+1,d=(j+1)*(nx+1)+i,e=d+1;
+          indices.push(a,d,b,b,d,e);
+        }
+      }
+    }
+    const bankGeo=new THREE.BufferGeometry();
+    bankGeo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
+    bankGeo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+    bankGeo.setIndex(indices);bankGeo.computeVertexNormals();
+    const bank=new THREE.Mesh(bankGeo,new THREE.MeshStandardMaterial({
+      map:groundTex,normalMap:groundNormalTex,normalScale:new THREE.Vector2(.2,.2),
+      color:0x8f7d5c,roughness:1,side:THREE.DoubleSide
+    }));
+    bank.receiveShadow=true;g.add(bank);
+  }
+
+  // Pátio de trabalho em terra batida e três tinas grandes à frente do barracão.
+  const yard=new THREE.Mesh(new THREE.PlaneGeometry(18,8),
+    new THREE.MeshStandardMaterial({map:groundTex,normalMap:groundNormalTex,
+      normalScale:new THREE.Vector2(.15,.15),color:0x96805a,roughness:1}));
+  yard.rotation.x=-Math.PI/2;yard.position.set(0,.055,-d/2-3.9);g.add(yard);
+
+  const vatWood=new THREE.MeshStandardMaterial({color:0x64472e,map:barkTex,roughness:1});
   const liquid=new THREE.MeshStandardMaterial({color:0x484b3d,roughness:.35});
   for(let i=0;i<3;i++){
-    const vx=-8+i*3.5,vz=1.2;
-    const vat=new THREE.Mesh(new THREE.CylinderGeometry(.93,1.02,1.35,11),vatWood);
-    vat.position.set(vx,.72,vz);vat.castShadow=true;g.add(vat);
-    const rim=new THREE.Mesh(new THREE.TorusGeometry(.91,.07,6,14),darkWoodMat);
-    rim.rotation.x=Math.PI/2;rim.position.set(vx,1.4,vz);g.add(rim);
-    const surface=new THREE.Mesh(new THREE.CircleGeometry(.82,12),liquid);
-    surface.rotation.x=-Math.PI/2;surface.position.set(vx,1.405,vz);g.add(surface);
+    const vx=-4.8+i*4.8,vz=-d/2-3.6;
+    const vat=new THREE.Mesh(new THREE.CylinderGeometry(1.08,1.18,1.55,16,2),vatWood);
+    vat.position.set(vx,.82,vz);vat.castShadow=true;vat.receiveShadow=true;g.add(vat);
+    const rim=new THREE.Mesh(new THREE.TorusGeometry(1.05,.075,7,18),darkWoodMat);
+    rim.rotation.x=Math.PI/2;rim.position.set(vx,1.62,vz);g.add(rim);
+    const surface=new THREE.Mesh(new THREE.CircleGeometry(.94,18),liquid);
+    surface.rotation.x=-Math.PI/2;surface.position.set(vx,1.625,vz);g.add(surface);
+    for(let stave=0;stave<8;stave++){
+      const angle=stave/8*Math.PI*2;
+      const slat=new THREE.Mesh(new THREE.BoxGeometry(.055,1.38,.08),paleWoodMat);
+      slat.position.set(vx+Math.cos(angle)*1.08,.82,vz+Math.sin(angle)*1.08);
+      slat.rotation.y=-angle;g.add(slat);
+    }
+  }
+  // Banco de raspagem, baldes e pilhas de couro pronto.
+  box(g,3.8,.22,1.0,darkWoodMat,-1.2,.78,-d/2-7.2);
+  box(g,3.9,.14,1.08,paleWoodMat,-1.2,.96,-d/2-7.2);
+  addBarrel(g,6.1,.03,-d/2-4.2,.82);
+  for(let i=0;i<3;i++){
+    const hideRoll=new THREE.Mesh(new THREE.CylinderGeometry(.28,.32,1.25,10),new THREE.MeshStandardMaterial({color:0x72523a,roughness:1}));
+    hideRoll.rotation.z=Math.PI/2;
+    hideRoll.position.set(-6.8+i*.52,.42,-d/2-5.9);g.add(hideRoll);
   }
 
   // Barracão lateral com peles penduradas em fileiras.
