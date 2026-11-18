@@ -6,6 +6,25 @@ const traderCamp=new THREE.Group();
 scene.add(traderCamp);
 traderCamp.visible=false;
 
+// Carroça de mercadores: estrutura de madeira, rodas e eixo.
+function makeWagon(x,z,scale=1,parent=scene){
+  const g=new THREE.Group();
+  g.position.set(x,groundHeight(x,z),z);
+  g.rotation.y=.16;
+  g.scale.setScalar(scale);
+  parent.add(g);
+  box(g,4.1,.45,2.3,darkWoodMat,0,1.55,0);
+  for(let i=0;i<7;i++)box(g,.12,.85,2.2,paleWoodMat,-1.65+i*.55,2.15,0);
+  for(const sx of [-1.25,1.25])for(const sz of [-1.25,1.25]){
+    const wheel=new THREE.Mesh(new THREE.TorusGeometry(.72,.12,7,14),darkWoodMat);
+    wheel.position.set(sx,.86,sz);wheel.rotation.y=Math.PI/2;g.add(wheel);
+    const hub=new THREE.Mesh(new THREE.CylinderGeometry(.17,.17,.25,9),ironMat);
+    hub.rotation.z=Math.PI/2;hub.position.set(sx,.86,sz);g.add(hub);
+  }
+  logBeam(g,4.5,.1,0,1.25,2.05,'x',darkWoodMat);
+  return g;
+}
+
 function marketTent(parent,x,z,w,d,topColor,lowerColor,striped=false){
   const g=new THREE.Group();g.position.set(x,groundHeight(x,z),z);parent.add(g);
   const topMat=new THREE.MeshStandardMaterial({color:topColor,roughness:1,side:THREE.DoubleSide});
