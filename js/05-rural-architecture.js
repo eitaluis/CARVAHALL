@@ -41,19 +41,39 @@ function softBox(parent,w,h,d,mat,x,y,z,rx=0,ry=0,rz=0){
   mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;
 }
 function logBeam(parent,length,radius,x,y,z,axis='x',mat=woodMat){
-  const beamGeo=new THREE.CylinderGeometry(radius*.94,radius,length,14,5);
+  const beamGeo=new THREE.CylinderGeometry(radius*.94,radius,length,22,5);
   const bp=beamGeo.attributes.position;
   for(let i=0;i<bp.count;i++){
-    const y=bp.getY(i),x=bp.getX(i),z=bp.getZ(i),angle=Math.atan2(z,x);
-    const rough=1+.035*Math.sin(angle*3+y*1.8)+.018*Math.sin(angle*7-y*3);
-    bp.setXYZ(i,x*rough+Math.sin(y*2.4)*radius*.045,y,z*rough+Math.cos(y*1.9)*radius*.035);
+    const yy=bp.getY(i),xx=bp.getX(i),zz=bp.getZ(i),angle=Math.atan2(zz,xx);
+    const rough=1+.026*Math.sin(angle*3+yy*1.8)+.014*Math.sin(angle*7-yy*3);
+    bp.setXYZ(i,xx*rough+Math.sin(yy*2.4)*radius*.035,yy,zz*rough+Math.cos(yy*1.9)*radius*.028);
   }
   beamGeo.computeVertexNormals();
-  const mesh=new THREE.Mesh(beamGeo,mat);
-  mesh.position.set(x,y,z);
+  const mesh=new THREE.Mesh(beamGeo,mat);mesh.position.set(x,y,z);
   if(axis==='x')mesh.rotation.z=Math.PI/2;
   else if(axis==='z')mesh.rotation.x=Math.PI/2;
   mesh.castShadow=false;mesh.receiveShadow=true;parent.add(mesh);return mesh;
+}
+function beamBetween(parent,start,end,radius,mat,segments=12){
+  const delta=new THREE.Vector3().subVectors(end,start);
+  const mesh=new THREE.Mesh(new THREE.CylinderGeometry(radius*.88,radius,delta.length(),segments,3),mat);
+  mesh.position.copy(start).add(end).multiplyScalar(.5);
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());
+  mesh.castShadow=false;mesh.receiveShadow=true;parent.add(mesh);return mesh;
+}
+function addRoofHalf(parent,w,run,eave,rise,side,material){
+  const halfWidth=w/2+1.05,thickness=.24;
+  const top=[[-halfWidth,eave+rise,0],[halfWidth,eave+rise,0],[halfWidth,eave,side*run],[-halfWidth,eave,side*run]];
+  const vertices=[];
+  for(const p of top)vertices.push(...p);
+  for(const p of top)vertices.push(p[0],p[1]-thickness,p[2]);
+  const uv=[0,0,1,0,1,1,0,1,0,0,1,0,1,1,0,1];
+  const indices=[0,2,1,0,3,2,4,5,6,4,6,7,0,1,5,0,5,4,1,2,6,1,6,5,2,3,7,2,7,6,3,0,4,3,4,7];
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+  geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(indices);
+  const flat=geo.toNonIndexed();flat.computeVertexNormals();material.side=THREE.DoubleSide;
+  const mesh=new THREE.Mesh(flat,material);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;
 }
 function addStoneChimney(parent,x,z,yTop=6.0,sooty=false){
   const h=yTop-2.2;
@@ -100,20 +120,24 @@ function addWindow(parent,x,y,z,rotY=0,lit=false){
   }
 }
 function addDoor(parent,w,d,doorW=1.5){
-  const doorH=2.32,front=-d/2-.12;
-  box(parent,doorW+.42,doorH+.28,.28,darkWoodMat,0,1.78,front);
-  box(parent,doorW+.14,.13,.34,paleWoodMat,0,3.02,front-.035);
-  const leaf=new THREE.Group();leaf.position.set(-doorW/2,0,front-.17);parent.add(leaf);
-  box(leaf,doorW,doorH,.17,woodMat,doorW/2,doorH/2,0,0,-.07,0);
-  for(let i=0;i<5;i++)box(leaf,.065,doorH-.14,.085,darkWoodMat,.12+i*(doorW-.24)/4,doorH/2,-.105);
-  for(const y of [.36,doorH-.34]){
-    const hinge=box(leaf,.62,.09,.07,ironMat,.36,y,-.19);
-    hinge.rotation.z=.02;
-  }
-  const latch= new THREE.Mesh(new THREE.SphereGeometry(.075,8,6),ironMat);
-  latch.position.set(doorW-.18,1.18,-.19);leaf.add(latch);
-  // Porta deixada entreaberta para que a entrada e o interior sejam legíveis.
-  leaf.rotation.y=-.62;
+  const front=-d/2-.19,doorH=2.42;
+  beamBetween(parent,new THREE.Vector3(-doorW/2-.14,.58,front),new THREE.Vector3(-doorW/2-.14,3.0,front),.115,darkWoodMat);
+  beamBetween(parent,new THREE.Vector3(doorW/2+.14,.58,front),new THREE.Vector3(doorW/2+.14,3.0,front),.115,darkWoodMat);
+  const arch=new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-doorW/2-.18,2.92,front),new THREE.Vector3(-doorW*.28,3.13,front),
+    new THREE.Vector3(0,3.22,front),new THREE.Vector3(doorW*.28,3.13,front),
+    new THREE.Vector3(doorW/2+.18,2.92,front)
+  ]);
+  parent.add(new THREE.Mesh(new THREE.TubeGeometry(arch,18,.105,9,false),woodMat));
+  const leaf=new THREE.Group();leaf.position.set(-doorW/2,.58,front-.12);parent.add(leaf);
+  const shape=new THREE.Shape();shape.moveTo(0,0);shape.lineTo(doorW,0);shape.lineTo(doorW,2.12);
+  shape.quadraticCurveTo(doorW,2.42,doorW/2,2.42);shape.quadraticCurveTo(0,2.42,0,2.12);shape.closePath();
+  const geo=new THREE.ExtrudeGeometry(shape,{depth:.13,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.025,bevelThickness:.025,curveSegments:10});
+  leaf.add(new THREE.Mesh(geo,woodMat));
+  for(let i=0;i<5;i++)box(leaf,.055,2.24,.045,darkWoodMat,.11+i*(doorW-.22)/4,1.16,-.16);
+  for(const yy of [.42,2.08])box(leaf,.58,.075,.055,ironMat,.34,yy,-.21);
+  const handle=new THREE.Mesh(new THREE.SphereGeometry(.065,12,9),ironMat);
+  handle.position.set(doorW-.19,1.2,-.22);leaf.add(handle);leaf.rotation.y=-.48;
 }
 function addPorch(parent,w,d,roofMat=thatchMat){
   const depth=3.05,z=-d/2-depth/2,front=-d/2-depth;
@@ -154,21 +178,18 @@ function addPorch(parent,w,d,roofMat=thatchMat){
   for(const x of [w*.11,w*.35])box(parent,.12,.72,.13,darkWoodMat,x,.58,-d/2-.39);
 }
 function addGableEnd(parent,w,z,eave,rise){
-  const shape=new THREE.Shape();
-  shape.moveTo(-w/2,0);shape.lineTo(w/2,0);shape.lineTo(0,rise);shape.closePath();
-  const panel=new THREE.Mesh(
-    new THREE.ShapeGeometry(shape,16),
-    new THREE.MeshStandardMaterial({map:barkTex,color:0x846143,roughness:1,side:THREE.DoubleSide})
-  );
+  const shape=new THREE.Shape();shape.moveTo(-w/2,0);shape.lineTo(w/2,0);shape.lineTo(0,rise);shape.closePath();
+  const panel=new THREE.Mesh(new THREE.ShapeGeometry(shape,24),new THREE.MeshStandardMaterial({map:barkTex,color:0x92714f,roughness:1,side:THREE.DoubleSide}));
   panel.position.set(0,eave,z);panel.castShadow=true;panel.receiveShadow=true;parent.add(panel);
-  // Pranchas verticais e travessas dão espessura visual às empenas.
-  for(let i=-5;i<=5;i++){
-    const x=i*w*.085,height=rise*(1-Math.abs(x)/(w/2));
-    if(height>.22)box(parent,.13,height,.12,paleWoodMat,x,eave+height/2,z+(z<0?-.08:.08));
+  const offset=z<0?-.12:.12;
+  beamBetween(parent,new THREE.Vector3(-w/2,eave,z),new THREE.Vector3(0,eave+rise,z),.16,darkWoodMat);
+  beamBetween(parent,new THREE.Vector3(0,eave+rise,z),new THREE.Vector3(w/2,eave,z),.16,darkWoodMat);
+  beamBetween(parent,new THREE.Vector3(-w/2,eave+.08,z+offset),new THREE.Vector3(w/2,eave+.08,z+offset),.11,woodMat);
+  beamBetween(parent,new THREE.Vector3(0,eave+.12,z+offset),new THREE.Vector3(0,eave+rise-.12,z+offset),.09,darkWoodMat);
+  for(let i=-4;i<=4;i++){
+    const x=i*w*.095,height=rise*(1-Math.abs(x)/(w/2));
+    if(height>.45)box(parent,.11,height*.84,.075,paleWoodMat,x,eave+height*.43,z+offset*1.2);
   }
-  box(parent,w*.94,.19,.16,darkWoodMat,0,eave+.12,z+(z<0?-.09:.09));
-  const king=box(parent,.2,rise,.18,darkWoodMat,0,eave+rise/2,z+(z<0?-.1:.1));
-  king.rotation.z=0;
 }
 function addBarrel(parent,x,y,z,scale=1){
   const body=new THREE.Mesh(new THREE.CylinderGeometry(.43*scale,.36*scale,1.05*scale,12,1),woodMat);
@@ -182,18 +203,27 @@ function addBarrel(parent,x,y,z,scale=1){
   return body;
 }
 function addHearth(parent,x,z,forgeMode=false){
-  const hearthMat=new THREE.MeshStandardMaterial({color:0x625b4f,roughness:1});
-  box(parent,1.75,2.1,1.15,hearthMat,x,1.1,z);
-  box(parent,1.13,1.03,.13,darkWoodMat,x,.58,z-.61);
-  const fireMat=new THREE.MeshStandardMaterial({
-    color:forgeMode?0xff7927:0xffa34a,
-    emissive:forgeMode?0xf04a12:0xff8b27,
-    emissiveIntensity:forgeMode?1.5:1.0,roughness:.65
-  });
-  const flame=new THREE.Mesh(new THREE.DodecahedronGeometry(forgeMode?.5:.34,0),fireMat);
-  flame.position.set(x,.65,z-.72);parent.add(flame);
-  const glow=new THREE.PointLight(forgeMode?0xff7e38:0xffb064,forgeMode?1.1:.65,forgeMode?13:9);
-  glow.position.set(x,1.0,z-1);parent.add(glow);
+  const masonry=new THREE.MeshStandardMaterial({color:forgeMode?0x5c5750:0x756b5d,map:stoneTex,normalMap:stoneNormalTex,normalScale:new THREE.Vector2(.24,.24),roughness:1});
+  const rockGeo=new THREE.IcosahedronGeometry(1,1);
+  for(let row=0;row<3;row++)for(let i=0;i<(row===1?5:4);i++){
+    const side=(i-(row===1?2:1.5))*.38+(row%2)*.12;
+    const stone=new THREE.Mesh(rockGeo,masonry);
+    stone.position.set(x+side,.34+row*.34,z-.48);
+    stone.scale.set(.30+rnd()*.07,.24+rnd()*.05,.23+rnd()*.04);
+    stone.rotation.set(rnd()*.12,rnd()*Math.PI,rnd()*.12);parent.add(stone);
+  }
+  const back=new THREE.Mesh(new THREE.SphereGeometry(.56,16,12),new THREE.MeshStandardMaterial({color:0x171512,roughness:1}));
+  back.scale.set(1,.94,.12);back.position.set(x,.88,z-.55);parent.add(back);
+  const fireMat=new THREE.MeshStandardMaterial({color:forgeMode?0xff7927:0xffa34a,emissive:forgeMode?0xf04a12:0xff8b27,emissiveIntensity:forgeMode?1.8:1.1,roughness:.55});
+  const flame=new THREE.Group();
+  for(let i=0;i<3;i++){
+    const core=new THREE.Mesh(new THREE.ConeGeometry(.18-i*.025,.62+i*.12,9,3),fireMat);
+    core.position.set((i-1)*.16,.75+i*.05,-.72+(i%2)*.04);core.rotation.z=(i-1)*.16;flame.add(core);
+  }
+  flame.position.set(x,0,z);parent.add(flame);
+  const glow=new THREE.PointLight(forgeMode?0xff7938:0xffad62,forgeMode?1.4:.9,forgeMode?17:12);
+  glow.position.set(x,1,z-1.05);parent.add(glow);
+  beamBetween(parent,new THREE.Vector3(x-.78,1.48,z-.43),new THREE.Vector3(x+.78,1.48,z-.43),.105,masonry);
   return flame;
 }
 function addInterior(parent,kind,w,d){
