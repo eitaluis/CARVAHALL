@@ -43,12 +43,17 @@ O HTML carrega os arquivos JavaScript em sequência, mantendo a divisão por res
 8. `js/07-points-minimap-shortcuts.js` — pontos de interesse, minimapa e teletransportes
 9. `js/08-player-animation.js` — movimento, colisões, controles e animação ambiente
 10. `css/style.css` — interface e estilos
+11. `tests/smoke-test.mjs` — teste de renderização WebGL e alternância da feira em Chromium
+12. `.github/workflows/carvahall-smoke-test.yml` — execução automática do teste a cada atualização de código
 
 ## Documentação
 - [Documento-base de cânone e interpretação](docs/base-canon-eragon.md)
 - [Checklist de desenvolvimento por fases](docs/checklist-fases-eragon.md)
 
 O documento-base separa descrições diretas do romance das decisões interpretativas (coordenadas, planta da vila e detalhes não descritos). O checklist registra as etapas de construção, interiores, acessos e feira. Os testes de sintaxe foram executados; a inspeção visual em navegador e a medição de desempenho continuam pendentes.
+
+## Teste automático de navegador
+O GitHub Actions executa um teste headless com Chromium a cada atualização de código. Ele confirma o carregamento dos nove módulos, a produção de quadros e triângulos WebGL, e o atalho T do mercado de inverno. As capturas da cena-base e do mercado ficam disponíveis como artefato na execução do workflow: [Carvahall browser smoke test](https://github.com/eitaluis/CARVAHALL/actions/workflows/carvahall-smoke-test.yml).
 
 ## Diagnóstico
 A página mostra o nome do arquivo e a mensagem quando ocorre um erro de execução. Também expõe `window.CARVAHALL_READY`, `window.CARVAHALL_LOADED_MODULES`, `window.CARVAHALL_RENDERED_FRAMES` e `window.CARVAHALL_RENDER_STATS` para conferir o carregamento, a renderização e métricas básicas da cena. Erros do cliente ficam registrados em `window.CARVAHALL_RUNTIME_ERRORS`.
