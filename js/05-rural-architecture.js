@@ -328,16 +328,14 @@ function createCabin(name,x,z,rot=0,opts={}){
   box(g,w+2.0,.30,length,roofMat,0,eave+rise/2,run/2,slope,0,0);
   logBeam(g,w+1.65,.2,0,eave+rise+.02,0,'x',darkWoodMat);
   for(const xx of [-w/2-.5,w/2+.5]){
-    const frontRafter=logBeam(g,length,.14,xx,eave+rise/2,-run/2,'z',darkWoodMat);
-    frontRafter.rotation.x=slope;
-    const backRafter=logBeam(g,length,.14,xx,eave+rise/2,run/2,'z',darkWoodMat);
-    backRafter.rotation.x=-slope;
+    // Caibros acompanham a inclinação do telhado; não são postes verticais.
+    box(g,.17,.17,length,darkWoodMat,xx,eave+rise/2,-run/2,-slope);
+    box(g,.17,.17,length,darkWoodMat,xx,eave+rise/2,run/2,slope);
   }
-  // Caibros visíveis sob o beiral e testeiras nas laterais.
+  // Mãos-francesas curtas sob os beirais laterais.
   for(const side of [-1,1]){
-    for(const zz of [-d/2-.85,d/2+.85]){
-      const brace=box(g,.15,1.5,.17,darkWoodMat,side*(w/2+.35),eave-.35,zz);
-      brace.rotation.z=side*.38;
+    for(const zz of [-d/2-.72,d/2+.72]){
+      const bracket=box(g,.16,.16,.9,darkWoodMat,side*(w/2+.12),eave-.18,zz,.52,0,0);
     }
   }
 
