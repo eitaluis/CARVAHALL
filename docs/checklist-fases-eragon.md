@@ -182,3 +182,14 @@
 - [ ] Avaliar o custo de renderização das novas malhas suavizadas e do vento nas árvores.
 - [ ] Fazer capturas comparativas de exterior, floresta, cachoeira, taverna, açougue, forja e mercado.
 - [ ] Só marcar o refinamento naturalista como concluído depois de inspeção visual no navegador.
+
+
+## Fase 12 — cinco avanços de naturalismo e exploração (build 08)
+- [x] **Estabilidade da animação:** alinhar os nomes dos pivôs dos braços dos moradores com o sistema de animação; o Chromium confirmou a renderização sem erros de execução.
+- [x] **Desempenho de interiores e arquitetura:** compartilhar geometrias cúbicas repetidas entre tábuas, mobiliário e peças estruturais, reduzindo a criação de objetos geométricos duplicados.
+- [x] **Composição de entrada:** aproximar o ponto inicial do eixo da rua principal para reduzir o plano vazio no primeiro enquadramento e aproximar a leitura das fachadas.
+- [x] **Vegetação de primeiro plano:** redistribuir capim e moitas nas bordas da vila, mantendo clareiras para edifícios, estradas e margem do Anora; ampliar a escala e variar a cor dos pinheiros.
+- [x] **Paisagem e vida cotidiana:** estreitar a lâmina da cachoeira e curvá-la em direção à piscina; clarear a textura-base da madeira e acrescentar moradores em pequenos encontros ao longo da rua.
+- [ ] **QA visual da build 08:** revisar as novas capturas da cena-base e da feira, conferir o enquadramento inicial, a densidade do capim, a silhueta das árvores e a ligação da cachoeira com a piscina.
+- [ ] **Inspeção presencial dos interiores:** percorrer taverna, açougue, forja e tanoaria, conferindo escala, passagens e mobiliário em primeira pessoa.
+- [ ] **Medição de desempenho:** comparar chamadas de desenho, triângulos, tempo de renderização e estabilidade em exploração contínua.
