@@ -21,12 +21,18 @@ const skyCanvas=document.createElement('canvas');
 skyCanvas.width=2048;skyCanvas.height=1024;
 const skyCtx=skyCanvas.getContext('2d');
 const skyGradient=skyCtx.createLinearGradient(0,0,0,1024);
-skyGradient.addColorStop(0,'#778994');
-skyGradient.addColorStop(.28,'#9daeb2');
-skyGradient.addColorStop(.58,'#c0c4bc');
-skyGradient.addColorStop(.78,'#d0c9b7');
-skyGradient.addColorStop(1,'#c4b8a4');
+skyGradient.addColorStop(0,'#617b8c');
+skyGradient.addColorStop(.28,'#849ca8');
+skyGradient.addColorStop(.55,'#aeb9b6');
+skyGradient.addColorStop(.76,'#d0c5ad');
+skyGradient.addColorStop(1,'#e1c29a');
 skyCtx.fillStyle=skyGradient;skyCtx.fillRect(0,0,2048,1024);
+// Brilho quente difuso junto ao horizonte, sem um disco solar artificial.
+const horizonGlow=skyCtx.createRadialGradient(620,795,20,620,795,560);
+horizonGlow.addColorStop(0,'rgba(250,218,172,.24)');
+horizonGlow.addColorStop(.42,'rgba(245,215,177,.10)');
+horizonGlow.addColorStop(1,'rgba(245,215,177,0)');
+skyCtx.fillStyle=horizonGlow;skyCtx.fillRect(0,0,2048,1024);
 for(let i=0;i<115;i++){
   const x=(i*173.17)%2048,y=310+((i*71.3)%390),w=70+(i%9)*27,h=5+(i%6)*2;
   const g=skyCtx.createRadialGradient(x,y,2,x,y,w);
@@ -79,8 +85,8 @@ function groundHeight(x,z){
 // 3. ILUMINAÇÃO — FIM DE TARDE FRIO, COM LUZ QUENTE NAS JANELAS
 // ============================================================================
 const hemi = new THREE.HemisphereLight(0xe8e9e3, 0x78644c, 1.58); scene.add(hemi);
-const sun = new THREE.DirectionalLight(0xffe2c0, 2.08);
-sun.position.set(-310,285,330); sun.castShadow=true;
+const sun = new THREE.DirectionalLight(0xffd6a5, 1.92);
+sun.position.set(-310,135,330); sun.castShadow=true;
 sun.shadow.mapSize.set(1536,1536);
 sun.shadow.camera.near=1; sun.shadow.camera.far=1550;
 sun.shadow.camera.left=-620; sun.shadow.camera.right=620;
