@@ -164,3 +164,21 @@
 - [ ] Adicionar animação corporal mais natural (cabeça, braços e pequenos deslocamentos) sem transformar a vila em multidão artificial.
 - [ ] Verificar se os chifres de Urgal na taverna estão posicionados e dimensionados corretamente na cena real.
 - [ ] Fazer captura comparativa da rua, taverna, açougue, forja, tanoaria e feira para validação visual.
+
+
+## Fase 11 — naturalismo visual e vida ambiental (rodada atual)
+- [x] Reesculpir as cadeias montanhosas com cristas menos repetitivas e encostas assimétricas, evitando o aspecto de uma parede triangular.
+- [x] Substituir as cinco cortinas de água separadas por uma única queda contínua que parte da escarpa e chega ao leito do rio/piscina.
+- [x] Remover o balanço artificial da cachoeira inteira; animar apenas o fluxo da superfície e a névoa baixa junto à base.
+- [x] Trocar a copa contínua em faixas por tufos de folhagem separados e irregulares.
+- [x] Acrescentar vento sutil às copas e aumentar a cobertura de arbustos.
+- [x] Suavizar as arestas das peças arquitetônicas e do mobiliário interno com chanfros discretos.
+- [x] Dar irregularidade controlada aos troncos e vigas, evitando cilindros perfeitamente lisos.
+- [x] Reconstruir moradores e mercadores com cápsulas anatômicas, articulações nos ombros e quadris, mãos, roupas mais suaves e rostos arredondados.
+- [x] Acrescentar respiração, mudança de peso, pequenos gestos, movimentos de cabeça e deslocamentos curtos e lentos a parte dos compradores.
+- [ ] Inspecionar a nova silhueta das montanhas e confirmar a conexão visual da cachoeira com a escarpa e a piscina.
+- [ ] Inspecionar as copas em primeira pessoa e confirmar que não ficaram excessivamente densas ou com aspecto de tufos repetidos.
+- [ ] Conferir a animação dos moradores e corrigir eventuais interseções entre braços, roupas, objetos e mobiliário.
+- [ ] Avaliar o custo de renderização das novas malhas suavizadas e do vento nas árvores.
+- [ ] Fazer capturas comparativas de exterior, floresta, cachoeira, taverna, açougue, forja e mercado.
+- [ ] Só marcar o refinamento naturalista como concluído depois de inspeção visual no navegador.
