@@ -101,7 +101,7 @@ for(const curve of roadCurves.slice(0,1)){
 
 // ROCHA — malhas facetadas e estratos alongados, sem cones ou bolas gigantes.
 const cliffMat=new THREE.MeshStandardMaterial({
-  color:0x918b7d,map:stoneTex,roughness:1,metalness:0,side:THREE.DoubleSide
+  color:0x918b7d,map:stoneTex,normalMap:stoneNormalTex,normalScale:new THREE.Vector2(.28,.28),roughness:1,metalness:0,side:THREE.DoubleSide
 });
 const cliffDarkMat=new THREE.MeshStandardMaterial({
   color:0x66645d,roughness:1,side:THREE.DoubleSide
