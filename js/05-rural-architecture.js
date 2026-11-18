@@ -35,7 +35,15 @@ function softBox(parent,w,h,d,mat,x,y,z,rx=0,ry=0,rz=0){
   mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;
 }
 function logBeam(parent,length,radius,x,y,z,axis='x',mat=woodMat){
-  const mesh=new THREE.Mesh(new THREE.CylinderGeometry(radius*.94,radius,length,8,1),mat);
+  const beamGeo=new THREE.CylinderGeometry(radius*.94,radius,length,14,5);
+  const bp=beamGeo.attributes.position;
+  for(let i=0;i<bp.count;i++){
+    const y=bp.getY(i),x=bp.getX(i),z=bp.getZ(i),angle=Math.atan2(z,x);
+    const rough=1+.035*Math.sin(angle*3+y*1.8)+.018*Math.sin(angle*7-y*3);
+    bp.setXYZ(i,x*rough+Math.sin(y*2.4)*radius*.045,y,z*rough+Math.cos(y*1.9)*radius*.035);
+  }
+  beamGeo.computeVertexNormals();
+  const mesh=new THREE.Mesh(beamGeo,mat);
   mesh.position.set(x,y,z);
   if(axis==='x')mesh.rotation.z=Math.PI/2;
   else if(axis==='z')mesh.rotation.x=Math.PI/2;
