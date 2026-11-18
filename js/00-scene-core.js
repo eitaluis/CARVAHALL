@@ -1,8 +1,8 @@
 // 1. CENA, CÂMERA E RENDERER
 // ============================================================================
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xb9c4bf);
-scene.fog = new THREE.FogExp2(0xc1c5b7, 0.00115);
+scene.background = new THREE.Color(0x9faeb0);
+scene.fog = new THREE.FogExp2(0xaab4b1, 0.00105);
 const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.1, 2600);
 camera.rotation.order = 'YXZ';
 const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
@@ -48,14 +48,14 @@ function groundHeight(x,z){
 // ============================================================================
 // 3. ILUMINAÇÃO — FIM DE TARDE FRIO, COM LUZ QUENTE NAS JANELAS
 // ============================================================================
-const hemi = new THREE.HemisphereLight(0xe6eee9, 0x665c44, 1.35); scene.add(hemi);
-const sun = new THREE.DirectionalLight(0xffe4bb, 2.05);
-sun.position.set(-420,520,270); sun.castShadow=true;
+const hemi = new THREE.HemisphereLight(0xdde5e4, 0x665543, 1.12); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xffd8a8, 1.65);
+sun.position.set(-420,260,370); sun.castShadow=true;
 sun.shadow.mapSize.set(1536,1536);
 sun.shadow.camera.near=1; sun.shadow.camera.far=1550;
 sun.shadow.camera.left=-620; sun.shadow.camera.right=620;
 sun.shadow.camera.top=620; sun.shadow.camera.bottom=-620;
 sun.shadow.bias=-0.00018; scene.add(sun); scene.add(sun.target);
-const fill = new THREE.DirectionalLight(0xc3d6d8,.6); fill.position.set(350,180,-430); scene.add(fill);
+const fill = new THREE.DirectionalLight(0x9cb2bd,.42); fill.position.set(350,180,-430); scene.add(fill);
 
 // ============================================================================
