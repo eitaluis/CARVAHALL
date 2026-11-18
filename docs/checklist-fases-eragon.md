@@ -39,8 +39,13 @@
 - [x] Forja de Horst como edifício de trabalho interpretativo.
 - [x] Taverna genérica, sem nome próprio inventado.
 - [x] Tanoaria de Gedric na periferia, com tinas, barracão e peles penduradas.
-- [ ] Ajustar detalhes internos e objetos após inspeção em primeira pessoa.
-- [ ] Conferir acessos, colisões e passagens nas portas.
+- [x] Acrescentar cobertura estruturada às varandas, com caibros e beirais.
+- [x] Orientar fachadas e portas para a aproximação principal.
+- [x] Calcular os atalhos dos edifícios em frente às respectivas portas.
+- [x] Completar a forja com bigorna, fole, tanque de resfriamento e ferramentas.
+- [x] Completar a taverna interpretativa com mesas, bancos e utensílios.
+- [x] Reforçar a tanoaria com encosta, pátio de trabalho e tinas externas.
+- [ ] Inspecionar acessos, colisões e interiores em primeira pessoa.
 
 ## Fase 4 — feira e mercadores de inverno
 - [x] Campo de acampamento na periferia.
@@ -50,6 +55,8 @@
 - [x] Cavalos e figuras humanas estáticas para sugerir a circulação da feira.
 - [x] Neve pisoteada e áreas derretidas por fogueiras.
 - [x] Atalho T para alternar entre o fim de tarde cotidiano e o mercado de inverno.
+- [x] Acrescentar queda de neve na área da feira.
+- [x] Acrescentar fumaça às fogueiras e movimento sutil aos visitantes.
 - [ ] Refinar a densidade de pessoas e a disposição das bancas depois de observar a cena.
 
 ## Fase 5 — atmosfera e exploração
@@ -78,6 +85,25 @@
 - [ ] Inspecionar a nova composição no navegador e ajustar densidade, escala e iluminação a partir da imagem real.
 
 ## Fase 7 — validação de fidelidade
+## Fase 8 — vida cotidiana, interiores e acessos
+- [x] Construir coberturas de varanda alinhadas com os telhados principais.
+- [x] Deixar portas entreabertas e passagens de entrada legíveis.
+- [x] Posicionar os teletransportes diante das fachadas, considerando a rotação real dos edifícios.
+- [x] Completar a forja de Horst com bigorna trabalhada, fole, tanque de água, bancada e ferramentas.
+- [x] Completar a taverna genérica com mesas, bancos, canecas e barris, mantendo o nome indefinido.
+- [x] Construir o contexto de encosta e pátio da tanoaria de Gedric, com tinas externas e peles no barracão.
+- [x] Dar movimento sutil às figuras da feira e acrescentar neve e fumaça ambiente.
+- [x] Corrigir a animação das cataratas para preservar a altura original das quedas.
+- [x] Exibir a mensagem e o arquivo de origem quando ocorrer erro de execução; expor o estado de carregamento dos módulos.
+- [ ] Conferir visualmente a qualidade de cada espaço no navegador.
+
+## Fase 9 — QA técnico e desempenho
+- [x] Validar a sintaxe dos nove módulos individualmente.
+- [x] Validar a sintaxe do conjunto dos nove módulos na ordem de carregamento.
+- [x] Conferir as principais dependências entre módulos (terreno, rio, fumaça, mercado e animações).
+- [ ] Executar teste real de navegador e confirmar que pelo menos um quadro 3D é renderizado.
+- [ ] Medir desempenho e estabilidade durante a exploração.
+- [ ] Fazer a última revisão de fidelidade, densidade e escala depois do teste visual.
 - [ ] Testar a página publicada no navegador.
 - [ ] Percorrer a rua principal e visitar cada edifício.
 - [ ] Inspecionar o açougue, a forja e a tanoaria por dentro.
