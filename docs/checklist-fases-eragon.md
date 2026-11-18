@@ -69,9 +69,7 @@
 - [ ] Corrigir os pontos indicados na exploração antes de considerar a versão aprovada.
 
 ## Exclusões de escopo
-- Não acrescentar muralhas, trincheiras, paliçadas ou construções defensivas.
-- Não acrescentar rebanhos ou acontecimentos que não façam parte do estado de Carvahall mostrado em *Eragon*.
-- Não criar uma versão incendiada ou arruinada da vila.
+- Não criar versões de Carvahall pertencentes a acontecimentos fora do escopo deste romance.
 - Não dar nome próprio à taverna.
 - Não acrescentar poços, oficinas secundárias ou outros estabelecimentos que não estejam descritos neste volume.
 - Não deslocar a fazenda de Garrow para dentro da vila.
