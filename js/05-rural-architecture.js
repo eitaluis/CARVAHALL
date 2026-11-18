@@ -71,10 +71,6 @@ function addWindow(parent,x,y,z,rotY=0,lit=false){
     const hinge=box(shutter,.045,.22,.06,ironMat,side*.12,0,.105);
     hinge.rotation.z=.12;
   }
-  if(lit){
-    const glow=new THREE.PointLight(0xffc47a,.16,7);
-    glow.position.set(x,y,z+1.1);parent.add(glow);
-  }
 }
 function addDoor(parent,w,d,doorW=1.5){
   const doorH=2.32,front=-d/2-.12;
@@ -308,7 +304,7 @@ function createCabin(name,x,z,rot=0,opts={}){
 // A tanoaria é situada nos arredores, como no episódio em que Eragon vai
 // às tinas de Gedric e ao barracão de peles curtidas.
 function createTannery(x,z){
-  const w=10,d=8,rot=-.22;
+  const w=12.5,d=10,rot=-.22;
   const g=new THREE.Group();g.position.set(x,groundHeight(x,z),z);g.rotation.y=rot;scene.add(g);
   for(let i=0;i<6;i++){
     const y=.62+i*.36,mat=i%3===0?darkWoodMat:woodMat;
@@ -321,9 +317,12 @@ function createTannery(x,z){
     }else logBeam(g,w+.45,.18,0,y,-d/2,'x',mat);
     logBeam(g,w+.45,.18,0,y,d/2,'x',mat);
   }
-  const slope=Math.atan2(1.1,d/2+.25),roofLen=Math.hypot(1.1,d/2+.25);
-  box(g,w+.7,.2,roofLen,shingleMat,0,3.38,-d/4,-slope,0,0);
-  box(g,w+.7,.2,roofLen,shingleMat,0,3.38,d/4,slope,0,0);
+  const shedEave=2.92,shedRise=1.15;
+  addGableEnd(g,w,shedEave,-d/2-.06,shedRise);
+  addGableEnd(g,w,d/2+.06,shedEave,shedRise);
+  const slope=Math.atan2(shedRise,d/2+.25),roofLen=Math.hypot(shedRise,d/2+.25);
+  box(g,w+1.1,.24,roofLen,shingleMat,0,shedEave+shedRise/2,-(d/2+.25)/2,-slope,0,0);
+  box(g,w+1.1,.24,roofLen,shingleMat,0,shedEave+shedRise/2,(d/2+.25)/2,slope,0,0);
   addDoor(g,w,d,1.35);
 
   const vatWood=new THREE.MeshStandardMaterial({color:0x64472e,roughness:1});
