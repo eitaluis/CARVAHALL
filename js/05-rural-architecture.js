@@ -32,7 +32,7 @@ function addStoneChimney(parent,x,z,yTop=6.0,sooty=false){
   for(let i=0;i<5;i++){
     const puff=new THREE.Mesh(
       new THREE.SphereGeometry(.37+rnd()*.25,7,6),
-      new THREE.MeshBasicMaterial({color:0xbebbb1,transparent:true,opacity:.085,depthWrite:false})
+      new THREE.MeshBasicMaterial({color:sooty?0x4a443d:0xbebbb1,transparent:true,opacity:sooty?.13:.085,depthWrite:false})
     );
     puff.position.set(x+(rnd()-.5)*.5,yTop+.5+i*.62,z+(rnd()-.5)*.35);
     puff.userData.baseY=puff.position.y;puff.userData.phase=rnd()*6.28;
@@ -267,6 +267,46 @@ const villageHouses=[
   createCabin('Casa de aldeões K',-27,220,.14,{w:10.5,d:8.8,roof:'shingle'}),
   createCabin('Casa de aldeões L',206,214,-.3,{w:11.2,d:9.3,roof:'thatch'})
 ];
+
+// Pequenos grupos de moradores ao anoitecer, sugerindo a vida social descrita
+// no romance. Roupas, rostos e posições individuais são escolhas interpretativas.
+const eveningResidents=new THREE.Group();
+scene.add(eveningResidents);
+function makeResident(x,z,coatColor,yaw=0,scale=1,gesture=0){
+  const g=new THREE.Group();
+  g.position.set(x,groundHeight(x,z),z);g.rotation.y=yaw;g.scale.setScalar(scale);
+  eveningResidents.add(g);
+  const coat=new THREE.MeshStandardMaterial({color:coatColor,roughness:1});
+  const linen=new THREE.MeshStandardMaterial({color:0xb8aa8e,roughness:1});
+  const skin=new THREE.MeshStandardMaterial({color:0xb28a6a,roughness:1});
+  const hair=new THREE.MeshStandardMaterial({color:0x35291f,roughness:1});
+  const boots=new THREE.MeshStandardMaterial({color:0x362d25,roughness:1});
+  const torso=new THREE.Mesh(new THREE.CylinderGeometry(.27,.34,.95,7),coat);
+  torso.position.y=1.13;torso.castShadow=true;g.add(torso);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.205,8,7),skin);
+  head.position.y=1.79;g.add(head);
+  const cap=new THREE.Mesh(new THREE.SphereGeometry(.218,8,7),hair);
+  cap.scale.set(1,.42,1);cap.position.y=1.94;g.add(cap);
+  for(const side of [-1,1]){
+    const arm=new THREE.Mesh(new THREE.CylinderGeometry(.075,.09,.7,6),coat);
+    arm.position.set(side*.34,1.25,0);
+    arm.rotation.z=side*(gesture&&side===1?-.75:.12);g.add(arm);
+    const leg=new THREE.Mesh(new THREE.CylinderGeometry(.095,.075,.72,6),boots);
+    leg.position.set(side*.14,.42,0);g.add(leg);
+  }
+  const collar=new THREE.Mesh(new THREE.CylinderGeometry(.22,.25,.13,8),linen);
+  collar.position.y=1.56;g.add(collar);
+  return g;
+}
+// Homens conversando do lado de fora, perto da taverna.
+makeResident(49,-56,0x5b4937,-.2,1.0,1);
+makeResident(57,-58,0x384b48,.35,1.02,1);
+makeResident(67,-54,0x746144,-.5,.98,0);
+// Moradores próximos à rua e ao açougue.
+makeResident(3,54,0x5b4537,.2,1.0,1);
+makeResident(31,83,0x6d5a43,2.7,.96,0);
+// Uma moradora junto à varanda, em posição de chamar alguém para casa.
+makeResident(140,-64,0x6e5547,-1.2,.94,1);
 
 // Cercas baixas e pequenos campos quadrados nas bordas da povoação.
 function makeFence(points,rails=1){
