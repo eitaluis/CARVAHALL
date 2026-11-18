@@ -193,3 +193,27 @@
 - [ ] **QA visual da build 08:** revisar as novas capturas da cena-base e da feira, conferir o enquadramento inicial, a densidade do capim, a silhueta das árvores e a ligação da cachoeira com a piscina.
 - [ ] **Inspeção presencial dos interiores:** percorrer taverna, açougue, forja e tanoaria, conferindo escala, passagens e mobiliário em primeira pessoa.
 - [ ] **Medição de desempenho:** comparar chamadas de desenho, triângulos, tempo de renderização e estabilidade em exploração contínua.
+
+
+## Fase 13 — reconstrução estrutural da arquitetura e das cataratas
+- [x] Recuperar e validar a integridade do módulo de arquitetura antes de consolidar a nova versão.
+- [x] Substituir portas retangulares simples por portas arqueadas com folhas de tábuas, dobradiças e ferragens.
+- [x] Reforçar as empenas com vigas inclinadas, travessas, pontalete central e acabamento estrutural.
+- [x] Trocar a representação da lareira por alvenaria irregular, boca escura e fogo em volumes menores.
+- [x] Reconstruir os interiores com tábuas corridas, rodapés, postes, caibros visíveis e iluminação ambiente.
+- [x] Diferenciar taverna, açougue, forja, casa e tanoaria com mobiliário de uso próprio.
+- [x] Recriar as fachadas das casas com vãos efetivos para portas e janelas, fundação de pedra e telhados mais inclinados.
+- [x] Recriar a catarata como queda vertical junto à escarpa, com poço de impacto, espuma, névoa baixa e canal de saída para o Anora.
+- [x] Corrigir a dependência de material do colchão no interior residencial.
+- [ ] Conferir as capturas de cada interior e da catarata; ajustar passagens, altura do teto, aberturas e disposição dos móveis.
+- [ ] Validar em primeira pessoa a entrada em cada edifício e a circulação interna.
+- [ ] Inspecionar a catarata no cenário completo e confirmar que a queda está visualmente presa à escarpa e ao rio.
+ 
+## Fase 14 — cinco avanços complementares
+- [x] Criar três variantes de geometria de copa para reduzir a repetição de silhuetas dos pinheiros.
+- [x] Adicionar ombros de terra, sulcos de roda e cascalho nas bordas dos caminhos.
+- [x] Adicionar lanternas de porta e bases pétreas às casas.
+- [x] Adicionar dois moradores com animação de caminhada lenta e deslocamentos curtos na rua central.
+- [x] Expandir o teste headless para gerar capturas dos quatro interiores e da catarata, além da cena-base e do mercado.
+- [ ] Revisar as capturas do exterior, dos quatro interiores e da catarata em escala de exploração.
+- [ ] Medir desempenho após a inclusão das novas estruturas e capturas adicionais.
