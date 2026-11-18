@@ -18,9 +18,7 @@ const smokeTexture=new THREE.CanvasTexture(smokeCanvas);
 smokeTexture.colorSpace=THREE.SRGBColorSpace;
 
 function box(parent,w,h,d,mat,x,y,z,rx=0,ry=0,rz=0){
-  const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
-  mesh.position.set(x,y,z);mesh.rotation.set(rx,ry,rz);
-  mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;
+  return softBox(parent,w,h,d,mat,x,y,z,rx,ry,rz);
 }
 function softBox(parent,w,h,d,mat,x,y,z,rx=0,ry=0,rz=0){
   const bevel=Math.min(.055,w*.12,h*.12,d*.12);
