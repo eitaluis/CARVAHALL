@@ -66,6 +66,38 @@ function updatePlayer(dt){
 // ============================================================================
 // 16. ANIMAÇÃO E LOOP
 // ============================================================================
+function animateAmbientPerson(actor,time,dt,isMarket){
+  const rig=actor.userData.animationRig;if(!rig)return;
+  const phase=actor.userData.phase,role=actor.userData.role||'villager';
+  const slow=time*.7+phase,breath=Math.sin(time*1.35+phase)*.012;
+  actor.rotation.y=actor.userData.baseYaw+Math.sin(time*.31+phase)*.055;
+  actor.position.y=actor.userData.baseY+Math.sin(time*1.7+phase)*.012;
+  actor.position.x=actor.userData.baseX+Math.sin(time*.38+phase)*.045;
+  rig.torso.scale.y=1+breath;
+  rig.torso.position.y=(role==='child'?.76:1.12)+breath*.35;
+  rig.headPivot.rotation.y=Math.sin(time*.48+phase*1.7)*.19;
+  rig.headPivot.rotation.x=Math.sin(time*.73+phase)*.035;
+  rig.headPivot.rotation.z=Math.sin(time*.62+phase)*.025;
+  const talk=(role==='vendor'||role==='sloan'||role==='horst'||actor.userData.gesture)?1:0;
+  for(const arm of rig.armPivots){
+    const gesture=talk&&arm.side===1?Math.sin(time*1.65+phase)*.16:0;
+    const idle=Math.sin(slow*1.55+arm.side)*.055;
+    arm.pivot.rotation.z=arm.base+gesture+idle;
+    arm.pivot.rotation.x=Math.sin(time*.8+phase+arm.side)*.035;
+  }
+  const weight=Math.sin(time*.85+phase)*.025;
+  for(const leg of rig.legPivots){
+    leg.pivot.rotation.x=Math.sin(time*.72+phase+leg.side*.8)*.035;
+    leg.pivot.position.x=leg.side*(.14+weight);
+  }
+  // A cada personagem cabe uma pequena ação recorrente, sem coreografia sincronizada.
+  if(role==='child'){
+    const bounce=Math.max(0,Math.sin(time*2.1+phase))*.018;
+    actor.position.y+=bounce;
+  }else if(role==='woman'||role==='katrina'){
+    rig.headPivot.rotation.z+=Math.sin(time*.42+phase)*.018;
+  }
+}
 const clock=new THREE.Clock();let waterTime=0;
 function animate(){
   requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);waterTime+=dt;
@@ -95,33 +127,12 @@ function animate(){
       positions[n+1]-=dt*(1.25+(i%5)*.22);
       positions[n]+=.09*Math.sin(waterTime*.55+i*.23)*dt;
       positions[n+2]+=.24*dt;
-      if(positions[n+1]<.12){
-        positions[n]=150+Math.random()*355;
-        positions[n+1]=29+Math.random()*10;
-        positions[n+2]=-105+Math.random()*235;
-      }
+      if(positions[n+1]<.12){positions[n]=150+Math.random()*355;positions[n+1]=29+Math.random()*10;positions[n+2]=-105+Math.random()*235;}
     }
     marketSnowGeometry.attributes.position.needsUpdate=true;
-    for(const actor of marketActors){
-      const phase=actor.userData.phase;
-      actor.rotation.y=actor.userData.baseYaw+Math.sin(waterTime*.42+phase)*.045;
-      actor.position.y=actor.userData.baseY+Math.sin(waterTime*1.5+phase)*.012;
-      if(actor.userData.head)actor.userData.head.rotation.y=Math.sin(waterTime*.65+phase)*.16;
-      for(const arm of actor.userData.movingArms||[]){
-        arm.mesh.rotation.z=arm.baseZ+Math.sin(waterTime*1.8+phase+arm.side)*.055;
-      }
-    }
+    for(const actor of marketActors)animateAmbientPerson(actor,waterTime,dt,true);
   }
-  // Moradores na rua conversam e gesticulam; a animação é mínima para preservar
-  // a sensação de uma vila tranquila ao fim da tarde.
-  for(const actor of eveningActors){
-    const phase=actor.userData.phase;
-    actor.rotation.y=actor.userData.baseYaw+Math.sin(waterTime*.32+phase)*.035;
-    for(const arm of actor.userData.movingArms||[]){
-      const target=arm.baseZ+(actor.userData.gesture&&arm.side===1?-.07:0)+Math.sin(waterTime*.9+phase)*.035;
-      arm.mesh.rotation.z+=(target+Math.sin(waterTime*.9+phase)*.08-arm.mesh.rotation.z)*Math.min(1,dt*1.4);
-    }
-  }
+  for(const actor of eveningActors)animateAmbientPerson(actor,waterTime,dt,false);
   drawMap();renderer.render(scene,camera);
   window.CARVAHALL_RENDERED_FRAMES=(window.CARVAHALL_RENDERED_FRAMES||0)+1;
   window.CARVAHALL_RENDER_STATS={drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,objects:scene.children.length};
